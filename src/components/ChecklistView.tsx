@@ -5,9 +5,11 @@ import { PhaseNav } from './PhaseNav'
 import { ChecklistItems } from './ChecklistItems'
 import { EmergencyPanel } from './EmergencyPanel'
 import {
-  ArrowLeft, AlertTriangle, RotateCcw, Menu, X, CheckCircle2, Clock,
+  ArrowLeft, AlertTriangle, RotateCcw, Menu, X, CheckCircle2,
   Moon, Sun, Lightbulb,
 } from 'lucide-react'
+import { PhaseBanner } from './PhaseBanner'
+import { PhaseStrip } from './PhaseStrip'
 
 const CATEGORY_ACCENT: Record<AircraftCategory, string> = {
   SEP:        'text-sky-400',
@@ -54,8 +56,7 @@ export function ChecklistView({ aircraft, onBack, onCycleTheme, theme }: Props) 
   const activePhase = aircraft.phases.find(p => p.id === activePhaseId)
 
   const { checked: phaseChecked, total: phaseTotal } = getPhaseProgress(activePhaseId)
-  const phaseProgress = phaseTotal > 0 ? (phaseChecked / phaseTotal) * 100 : 0
-  const phaseAllChecked = phaseTotal > 0 && phaseChecked === phaseTotal
+const phaseAllChecked = phaseTotal > 0 && phaseChecked === phaseTotal
 
   const totalItems = normalPhases.reduce((sum, p) => sum + p.items.length, 0)
   const totalChecked = normalPhases.reduce((sum, p) => sum + getPhaseProgress(p.id).checked, 0)
@@ -227,53 +228,16 @@ export function ChecklistView({ aircraft, onBack, onCycleTheme, theme }: Props) 
         <main ref={contentRef} className="flex-1 overflow-y-auto">
           {activePhase ? (
             <div className="max-w-2xl mx-auto px-4 py-5 pb-40 lg:pb-10">
-              {/* Phase header */}
-              <div className="mb-5">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex-1 min-w-0">
-                    <h2 className="text-lg font-bold text-cockpit-text-primary leading-tight">{activePhase.name}</h2>
-                    <div className="flex items-center flex-wrap gap-x-3 gap-y-1 mt-1.5">
-                      <span className="text-sm text-cockpit-text-secondary font-mono">
-                        {phaseChecked}/{phaseTotal} items
-                      </span>
-                      {isPhaseComplete(activePhaseId) && (
-                        <span className="flex items-center gap-1 text-xs text-cockpit-green font-semibold">
-                          <CheckCircle2 className="w-3.5 h-3.5" />
-                          Complete
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Phase radial progress */}
-                  <div className="relative flex-shrink-0 w-14 h-14">
-                    <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
-                      <circle cx="18" cy="18" r="15.5" fill="none" strokeWidth="2.5" className="stroke-cockpit-card" />
-                      <circle
-                        cx="18" cy="18" r="15.5"
-                        fill="none" strokeWidth="2.5"
-                        strokeLinecap="round"
-                        stroke={phaseAllChecked ? '#22c55e' : '#f59e0b'}
-                        strokeDasharray={`${phaseProgress} 100`}
-                        style={{ transition: 'stroke-dasharray 0.4s ease' }}
-                      />
-                    </svg>
-                    <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-cockpit-text-primary tabular-nums">
-                      {Math.round(phaseProgress)}%
-                    </span>
-                  </div>
-                </div>
-
-                <div className="mt-3 h-1 bg-cockpit-card rounded-full overflow-hidden">
-                  <div
-                    className="h-full rounded-full transition-all duration-300"
-                    style={{
-                      width: `${phaseProgress}%`,
-                      background: phaseAllChecked ? '#22c55e' : '#f59e0b',
-                    }}
-                  />
-                </div>
-              </div>
+              <PhaseBanner
+                phase={activePhase}
+                checked={phaseChecked}
+                total={phaseTotal}
+                isComplete={isPhaseComplete(activePhaseId)}
+                normalPhases={normalPhases}
+                activePhaseId={activePhaseId}
+                isPhaseComplete={isPhaseComplete}
+                category={aircraft.category}
+              />
 
               {/* Checklist items */}
               <ChecklistItems
@@ -312,26 +276,16 @@ export function ChecklistView({ aircraft, onBack, onCycleTheme, theme }: Props) 
         </main>
       </div>
 
-      {/* Mobile bottom bar */}
-      <div className="lg:hidden safe-bottom flex-shrink-0 bg-cockpit-panel border-t border-cockpit-border px-4 py-2 flex items-center gap-3 z-10">
-        {emergencyPhases.length > 0 && (
-          <button onClick={() => setShowEmergency(true)} className="emergency-btn flex-shrink-0">
-            <AlertTriangle className="w-4 h-4" />
-            <span>EMERG</span>
-          </button>
-        )}
-        <div className="flex-1 flex items-center gap-2 text-xs text-cockpit-text-dim overflow-hidden">
-          <Clock className="w-3.5 h-3.5 flex-shrink-0" />
-          <span className="truncate">{activePhase?.name ?? '—'}</span>
-        </div>
-        <button
-          onClick={() => setShowResetConfirm(true)}
-          className="p-2 rounded-xl text-cockpit-text-dim hover:text-cockpit-amber transition-colors flex-shrink-0"
-          title="New flight"
-        >
-          <RotateCcw className="w-4 h-4" />
-        </button>
-      </div>
+      <PhaseStrip
+        normalPhases={normalPhases}
+        emergencyPhases={emergencyPhases}
+        activePhaseId={activePhaseId}
+        isPhaseComplete={isPhaseComplete}
+        onSelectPhase={handlePhaseSelect}
+        onEmergency={() => setShowEmergency(true)}
+        onReset={() => setShowResetConfirm(true)}
+        category={aircraft.category}
+      />
 
       {/* Reset modal */}
       {showResetConfirm && (
