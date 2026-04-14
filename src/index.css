@@ -1,0 +1,107 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body {
+    @apply bg-cockpit-bg text-cockpit-text-primary font-sans;
+    min-height: 100dvh;
+  }
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { @apply bg-cockpit-border rounded-full; }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-cockpit-text-dim; }
+}
+
+@layer components {
+
+  /* ─── Night / Day theme overrides ──────────────────────────────── */
+  .theme-night .text-cockpit-text-primary  { color: #f0a820; }
+  .theme-night .text-cockpit-text-secondary{ color: #c07818; }
+  .theme-night .text-cockpit-text-dim      { color: #6b4a10; }
+  .theme-night .bg-cockpit-bg              { background-color: #050300; }
+  .theme-night .bg-cockpit-panel           { background-color: #080500; }
+  .theme-night .bg-cockpit-card            { background-color: #0d0800; }
+  .theme-night .border-cockpit-border      { border-color: #3a2000; }
+  .theme-night .stroke-cockpit-card        { stroke: #1a1000; }
+
+  .theme-day body                          { @apply bg-slate-50; }
+  .theme-day .bg-cockpit-bg               { background-color: #f1f5f9; }
+  .theme-day .bg-cockpit-panel            { background-color: #ffffff; }
+  .theme-day .bg-cockpit-card             { background-color: #f8fafc; }
+  .theme-day .text-cockpit-text-primary   { color: #0f172a; }
+  .theme-day .text-cockpit-text-secondary { color: #334155; }
+  .theme-day .text-cockpit-text-dim       { color: #64748b; }
+  .theme-day .border-cockpit-border       { border-color: #e2e8f0; }
+  .theme-day .stroke-cockpit-card         { stroke: #e2e8f0; }
+
+  /* ─── Aircraft cards ──────────────────────────────────────────── */
+  .aircraft-card {
+    @apply relative flex flex-col p-4 rounded-2xl cursor-pointer
+           bg-cockpit-card border border-cockpit-border
+           transition-all duration-200;
+  }
+  .aircraft-card:hover {
+    @apply border-cockpit-amber/30 -translate-y-0.5;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(245,158,11,0.1);
+  }
+  .aircraft-card:active { @apply scale-[0.98]; }
+
+  /* ─── Phase navigation buttons ───────────────────────────────── */
+  .phase-nav-btn {
+    @apply relative flex items-center gap-2 w-full px-3 py-2.5 rounded-xl text-sm
+           transition-all duration-150 text-cockpit-text-secondary
+           hover:text-cockpit-text-primary hover:bg-white/5;
+  }
+  .phase-nav-btn.active {
+    @apply bg-cockpit-amber/10 text-cockpit-amber;
+    box-shadow: inset 0 0 0 1px rgba(245,158,11,0.2);
+  }
+  .phase-nav-btn.completed {
+    @apply text-cockpit-green;
+  }
+
+  /* ─── Emergency button ───────────────────────────────────────── */
+  .emergency-btn {
+    @apply flex items-center gap-1.5 px-3 py-2 rounded-xl
+           bg-red-500/10 border border-red-500/30
+           text-red-400 font-semibold text-xs
+           hover:bg-red-500/20 hover:border-red-500/40
+           active:scale-95 transition-all duration-150;
+  }
+
+  /* ─── Checklist items ────────────────────────────────────────── */
+  .check-item {
+    @apply relative flex items-start gap-3 px-3.5 py-3 rounded-xl cursor-pointer
+           border border-transparent
+           transition-all duration-150
+           hover:border-cockpit-border hover:bg-white/[0.03];
+  }
+  .check-item.checked {
+    @apply border-cockpit-green/15 bg-cockpit-green/[0.04];
+  }
+  .check-item.severity-warning {
+    @apply border-l-2 border-l-cockpit-amber;
+  }
+
+  /* ─── Glass panel ────────────────────────────────────────────── */
+  .glass-panel {
+    @apply bg-cockpit-panel/80 backdrop-blur-sm border border-cockpit-border/50;
+  }
+
+  /* ─── Scale utilities ────────────────────────────────────────── */
+  .active\:scale-98:active { transform: scale(0.98); }
+}
+
+@layer utilities {
+  .safe-top    { padding-top:    env(safe-area-inset-top,    0px); }
+  .safe-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
+  .safe-left   { padding-left:   env(safe-area-inset-left,   0px); }
+  .safe-right  { padding-right:  env(safe-area-inset-right,  0px); }
+  .touch-target { min-height: 44px; min-width: 44px; }
+}
