@@ -1,29 +1,7 @@
 // src/components/PhaseBanner.tsx
 import { CheckCircle2 } from 'lucide-react'
 import type { AircraftCategory, ChecklistPhase } from '../types'
-
-const PHASE_ICONS: Record<string, string> = {
-  preflight: '🔍',
-  startup: '🔑',
-  taxi: '🛞',
-  runup: '⚙️',
-  takeoff: '↑',
-  climb: '📈',
-  cruise: '✈',
-  descent: '📉',
-  approach: '🎯',
-  landing: '⬇',
-  shutdown: '🔒',
-  emergency: '🚨',
-}
-
-const ACCENT_HEX: Record<AircraftCategory, string> = {
-  SEP:        '#38bdf8',
-  MEP:        '#a78bfa',
-  Turboprop:  '#f59e0b',
-  Jet:        '#fb7185',
-  Helicopter: '#34d399',
-}
+import { PHASE_ICONS, ACCENT_HEX } from './phaseConstants'
 
 interface Props {
   phase: ChecklistPhase
@@ -32,7 +10,6 @@ interface Props {
   isComplete: boolean
   normalPhases: ChecklistPhase[]
   activePhaseId: string
-  getPhaseProgress: (id: string) => { checked: number; total: number }
   isPhaseComplete: (id: string) => boolean
   category: AircraftCategory
 }
@@ -44,7 +21,6 @@ export function PhaseBanner({
   isComplete,
   normalPhases,
   activePhaseId,
-  getPhaseProgress,
   isPhaseComplete,
   category,
 }: Props) {
