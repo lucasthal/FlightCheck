@@ -56,7 +56,7 @@ export function ChecklistView({ aircraft, onBack, onCycleTheme, theme }: Props) 
   const activePhase = aircraft.phases.find(p => p.id === activePhaseId)
 
   const { checked: phaseChecked, total: phaseTotal } = getPhaseProgress(activePhaseId)
-const phaseAllChecked = phaseTotal > 0 && phaseChecked === phaseTotal
+  const phaseAllChecked = phaseTotal > 0 && phaseChecked === phaseTotal
 
   const totalItems = normalPhases.reduce((sum, p) => sum + p.items.length, 0)
   const totalChecked = normalPhases.reduce((sum, p) => sum + getPhaseProgress(p.id).checked, 0)
