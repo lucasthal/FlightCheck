@@ -1,7 +1,7 @@
 // src/components/phaseConstants.ts
-import type { AircraftCategory } from '../types'
+import type { AircraftCategory, PhaseCategory } from '../types'
 
-export const PHASE_ICONS: Record<string, string> = {
+export const PHASE_ICONS: Record<PhaseCategory, string> = {
   preflight: '🔍',
   startup: '🔑',
   taxi: '🛞',

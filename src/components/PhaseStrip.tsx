@@ -51,13 +51,13 @@ export function PhaseStrip({
         {normalPhases.map(phase => {
           const complete = isPhaseComplete(phase.id)
           const active = phase.id === activePhaseId
-          const icon = PHASE_ICONS[phase.category] ?? '📋'
+          const icon = PHASE_ICONS[phase.category]
 
           return (
             <button
               key={phase.id}
               onClick={() => onSelectPhase(phase.id)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full flex-shrink-0 text-xs font-medium border transition-all duration-200 active:scale-95"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full flex-shrink-0 text-xs font-medium border transition-all duration-200 active:scale-95 touch-target"
               style={
                 active
                   ? { background: `${hex}1a`, borderColor: `${hex}59`, color: hex }

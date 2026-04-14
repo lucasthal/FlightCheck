@@ -26,7 +26,7 @@ export function PhaseBanner({
 }: Props) {
   const hex = ACCENT_HEX[category]
   const pct = total > 0 ? Math.round((checked / total) * 100) : 0
-  const icon = PHASE_ICONS[phase.category] ?? '📋'
+  const icon = PHASE_ICONS[phase.category]
 
   return (
     <div className="mb-5">
