@@ -86,9 +86,9 @@ export function PhaseBanner({
           return (
             <div
               key={p.id}
-              className="flex-1 h-0.5 rounded-full transition-all duration-500"
+              className="flex-1 h-[3px] rounded-full transition-all duration-500"
               style={{
-                background: complete ? '#22c55e' : active ? hex : '#1e293b',
+                background: complete ? '#22c55e' : active ? hex : '#1a2535',
               }}
             />
           )

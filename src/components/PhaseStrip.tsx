@@ -1,5 +1,6 @@
 // src/components/PhaseStrip.tsx
 import { AlertTriangle, RotateCcw } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
 import type { AircraftCategory, ChecklistPhase } from '../types'
 import { PHASE_ICONS, ACCENT_HEX } from './phaseConstants'
 
@@ -57,17 +58,28 @@ export function PhaseStrip({
             <button
               key={phase.id}
               onClick={() => onSelectPhase(phase.id)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full flex-shrink-0 text-xs font-medium border transition-all duration-200 active:scale-95 touch-target"
+              className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-full flex-shrink-0 text-xs font-medium border transition-colors duration-200 active:scale-95 touch-target"
               style={
                 active
-                  ? { background: `${hex}1a`, borderColor: `${hex}59`, color: hex }
+                  ? { borderColor: `${hex}59`, color: hex }
                   : complete
-                  ? { background: '#22c55e12', borderColor: '#22c55e33', color: '#22c55e' }
-                  : { background: 'transparent', borderColor: '#1e3a5f', color: '#475569' }
+                  ? { borderColor: '#22c55e33', color: '#22c55e' }
+                  : { borderColor: '#1e3a5f', color: '#475569' }
               }
             >
-              <span className="text-sm leading-none">{icon}</span>
-              <span>{complete ? `✓ ${phase.name}` : phase.name}</span>
+              {active && (
+                <motion.span
+                  layoutId="phase-pill-bg"
+                  className="absolute inset-0 rounded-full"
+                  style={{ background: `${hex}1a` }}
+                  transition={{ type: 'spring', bounce: 0.2, duration: 0.4 }}
+                />
+              )}
+              {complete && !active && (
+                <span className="absolute inset-0 rounded-full" style={{ background: '#22c55e12' }} />
+              )}
+              <span className="relative text-sm leading-none">{icon}</span>
+              <span className="relative">{complete ? `✓ ${phase.name}` : phase.name}</span>
             </button>
           )
         })}
