@@ -10,6 +10,8 @@ import {
 } from 'lucide-react'
 import { PhaseBanner } from './PhaseBanner'
 import { PhaseStrip } from './PhaseStrip'
+import { VSpeedCard } from './VSpeedCard'
+import { ReferenceTab } from './ReferenceTab'
 
 const CATEGORY_ACCENT: Record<AircraftCategory, string> = {
   SEP:        'text-sky-400',
@@ -49,6 +51,7 @@ export function ChecklistView({ aircraft, onBack, onCycleTheme, theme }: Props) 
   const [showEmergency, setShowEmergency] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [showResetConfirm, setShowResetConfirm] = useState(false)
+  const [activeTab, setActiveTab] = useState<'checklist' | 'reference'>('checklist')
   const contentRef = useRef<HTMLDivElement>(null)
 
   const normalPhases = aircraft.phases.filter(p => p.category !== 'emergency')
@@ -168,6 +171,23 @@ export function ChecklistView({ aircraft, onBack, onCycleTheme, theme }: Props) 
             }}
           />
         </div>
+
+        {/* Tab bar */}
+        <div className="flex border-t border-cockpit-border/40">
+          {(['checklist', 'reference'] as const).map(tab => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider transition-colors
+                ${activeTab === tab
+                  ? `${accentColor} border-b-2 border-current`
+                  : 'text-cockpit-text-dim hover:text-cockpit-text-secondary border-b-2 border-transparent'
+                }`}
+            >
+              {tab === 'checklist' ? 'Checklist' : 'Reference'}
+            </button>
+          ))}
+        </div>
       </header>
 
       <div className="flex flex-1 overflow-hidden">
@@ -226,8 +246,15 @@ export function ChecklistView({ aircraft, onBack, onCycleTheme, theme }: Props) 
 
         {/* Main content */}
         <main ref={contentRef} className="flex-1 overflow-y-auto">
-          {activePhase ? (
+          {activeTab === 'reference' ? (
+            <ReferenceTab sections={aircraft.referenceData} />
+          ) : activePhase ? (
             <div className="max-w-2xl mx-auto px-4 py-5 pb-40 lg:pb-10">
+              {/* V-speed card */}
+              {Object.keys(aircraft.vSpeeds).length > 0 && (
+                <VSpeedCard vSpeeds={aircraft.vSpeeds} category={aircraft.category} />
+              )}
+
               <PhaseBanner
                 phase={activePhase}
                 checked={phaseChecked}
@@ -239,14 +266,12 @@ export function ChecklistView({ aircraft, onBack, onCycleTheme, theme }: Props) 
                 category={aircraft.category}
               />
 
-              {/* Checklist items */}
               <ChecklistItems
                 phase={activePhase}
                 isItemChecked={isItemChecked}
                 onToggle={toggleItem}
               />
 
-              {/* Complete phase CTA */}
               <div className="mt-6">
                 <button
                   onClick={handleCompletePhase}
