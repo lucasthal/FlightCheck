@@ -15,6 +15,8 @@ export const cessna208: Aircraft = {
     ceiling: '25,000 ft',
     seats: 14,
   },
+  vSpeeds: {},
+  referenceData: [],
   phases: [
     {
       id: 'preflight', name: 'Preflight Inspection', category: 'preflight',

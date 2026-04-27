@@ -15,6 +15,8 @@ export const kingAirB200: Aircraft = {
     ceiling: '35,000 ft',
     seats: 9,
   },
+  vSpeeds: {},
+  referenceData: [],
   phases: [
     {
       id: 'preflight', name: 'Preflight Inspection', category: 'preflight',

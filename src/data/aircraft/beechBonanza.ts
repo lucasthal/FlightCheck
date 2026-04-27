@@ -15,6 +15,8 @@ export const beechBonanza: Aircraft = {
     ceiling: '18,500 ft',
     seats: 6,
   },
+  vSpeeds: {},
+  referenceData: [],
   phases: [
     {
       id: 'preflight',

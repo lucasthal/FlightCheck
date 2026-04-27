@@ -15,6 +15,8 @@ export const piperArcher: Aircraft = {
     ceiling: '14,100 ft',
     seats: 4,
   },
+  vSpeeds: {},
+  referenceData: [],
   phases: [
     {
       id: 'preflight',

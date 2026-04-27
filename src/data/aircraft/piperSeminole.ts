@@ -15,6 +15,8 @@ export const piperSeminole: Aircraft = {
     ceiling: '15,000 ft',
     seats: 4,
   },
+  vSpeeds: {},
+  referenceData: [],
   phases: [
     {
       id: 'preflight',
