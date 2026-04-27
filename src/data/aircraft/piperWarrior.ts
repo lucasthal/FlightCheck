@@ -15,6 +15,8 @@ export const piperWarrior: Aircraft = {
     ceiling: '11,000 ft',
     seats: 4,
   },
+  vSpeeds: {},
+  referenceData: [],
   phases: [
     {
       id: 'preflight', name: 'Preflight Inspection', category: 'preflight',

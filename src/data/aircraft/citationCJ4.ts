@@ -15,6 +15,8 @@ export const citationCJ4: Aircraft = {
     ceiling: '45,000 ft',
     seats: 10,
   },
+  vSpeeds: {},
+  referenceData: [],
   phases: [
     {
       id: 'preflight', name: 'Preflight Inspection', category: 'preflight',

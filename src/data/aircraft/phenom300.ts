@@ -15,6 +15,8 @@ export const phenom300: Aircraft = {
     ceiling: '45,000 ft',
     seats: 11,
   },
+  vSpeeds: {},
+  referenceData: [],
   phases: [
     {
       id: 'preflight', name: 'Preflight Inspection', category: 'preflight',

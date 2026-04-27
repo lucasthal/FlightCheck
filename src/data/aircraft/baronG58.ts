@@ -15,6 +15,8 @@ export const baronG58: Aircraft = {
     ceiling: '20,688 ft',
     seats: 6,
   },
+  vSpeeds: {},
+  referenceData: [],
   phases: [
     {
       id: 'preflight', name: 'Preflight Inspection', category: 'preflight',

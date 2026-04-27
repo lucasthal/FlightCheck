@@ -32,6 +32,12 @@ export interface ChecklistPhase {
 
 export type AircraftCategory = 'SEP' | 'MEP' | 'Turboprop' | 'Jet' | 'Helicopter'
 
+export type ReferenceSection =
+  | { kind: 'speeds';   title: string; items: Record<string, string> }
+  | { kind: 'maneuver'; title: string; steps: string[]; standards?: string[] }
+  | { kind: 'table';    title: string; columns: string[]; rows: (string | number)[][]; notes?: string[] }
+  | { kind: 'keyval';   title: string; items: Record<string, string> }
+
 export interface Aircraft {
   id: string
   name: string
@@ -47,6 +53,8 @@ export interface Aircraft {
     ceiling?: string
     seats: number
   }
+  vSpeeds: Record<string, string>
+  referenceData: ReferenceSection[]
   phases: ChecklistPhase[]
 }
 

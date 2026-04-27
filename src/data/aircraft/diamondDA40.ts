@@ -15,6 +15,8 @@ export const diamondDA40: Aircraft = {
     ceiling: '18,000 ft',
     seats: 4,
   },
+  vSpeeds: {},
+  referenceData: [],
   phases: [
     {
       id: 'preflight',

@@ -15,6 +15,8 @@ export const kingAirC90: Aircraft = {
     ceiling: '30,000 ft',
     seats: 9,
   },
+  vSpeeds: {},
+  referenceData: [],
   phases: [
     {
       id: 'preflight',

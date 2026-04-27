@@ -15,6 +15,8 @@ export const tbm960: Aircraft = {
     ceiling: '31,000 ft',
     seats: 6,
   },
+  vSpeeds: {},
+  referenceData: [],
   phases: [
     {
       id: 'preflight', name: 'Preflight Inspection', category: 'preflight',

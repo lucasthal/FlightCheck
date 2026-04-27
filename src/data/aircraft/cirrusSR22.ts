@@ -15,6 +15,8 @@ export const cirrusSR22: Aircraft = {
     ceiling: '17,500 ft',
     seats: 4,
   },
+  vSpeeds: {},
+  referenceData: [],
   phases: [
     {
       id: 'preflight',
