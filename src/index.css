@@ -2,6 +2,49 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─── Theme color variables ────────────────────────────────────── */
+:root {
+  --c-bg:             10 14 26;
+  --c-panel:          15 23 42;
+  --c-card:           30 41 59;
+  --c-border:         51 65 85;
+  --c-text-primary:   226 232 240;
+  --c-text-secondary: 148 163 184;
+  --c-text-dim:       71 85 105;
+  --c-amber:          245 158 11;
+  --c-amber-dim:      180 83 9;
+  --c-green:          34 197 94;
+  --c-red:            239 68 68;
+}
+
+.theme-night {
+  --c-bg:             4 1 0;
+  --c-panel:          8 2 0;
+  --c-card:           16 4 0;
+  --c-border:         45 12 0;
+  --c-text-primary:   204 58 0;
+  --c-text-secondary: 122 34 0;
+  --c-text-dim:       61 16 0;
+  --c-amber:          204 58 0;
+  --c-amber-dim:      122 34 0;
+  --c-green:          153 68 0;
+  --c-red:            187 0 0;
+}
+
+.theme-day {
+  --c-bg:             238 242 247;
+  --c-panel:          255 255 255;
+  --c-card:           244 247 251;
+  --c-border:         203 213 225;
+  --c-text-primary:   15 23 42;
+  --c-text-secondary: 55 65 81;
+  --c-text-dim:       107 114 128;
+  --c-amber:          217 119 6;
+  --c-amber-dim:      146 64 14;
+  --c-green:          21 128 61;
+  --c-red:            220 38 38;
+}
+
 @layer base {
   html {
     -webkit-tap-highlight-color: transparent;
@@ -19,26 +62,6 @@
 }
 
 @layer components {
-
-  /* ─── Night / Day theme overrides ──────────────────────────────── */
-  .theme-night .text-cockpit-text-primary  { color: #f0a820; }
-  .theme-night .text-cockpit-text-secondary{ color: #c07818; }
-  .theme-night .text-cockpit-text-dim      { color: #6b4a10; }
-  .theme-night .bg-cockpit-bg              { background-color: #050300; }
-  .theme-night .bg-cockpit-panel           { background-color: #080500; }
-  .theme-night .bg-cockpit-card            { background-color: #0d0800; }
-  .theme-night .border-cockpit-border      { border-color: #3a2000; }
-  .theme-night .stroke-cockpit-card        { stroke: #1a1000; }
-
-  .theme-day body                          { @apply bg-slate-50; }
-  .theme-day .bg-cockpit-bg               { background-color: #f1f5f9; }
-  .theme-day .bg-cockpit-panel            { background-color: #ffffff; }
-  .theme-day .bg-cockpit-card             { background-color: #f8fafc; }
-  .theme-day .text-cockpit-text-primary   { color: #0f172a; }
-  .theme-day .text-cockpit-text-secondary { color: #334155; }
-  .theme-day .text-cockpit-text-dim       { color: #64748b; }
-  .theme-day .border-cockpit-border       { border-color: #e2e8f0; }
-  .theme-day .stroke-cockpit-card         { stroke: #e2e8f0; }
 
   /* ─── Aircraft cards ──────────────────────────────────────────── */
   .aircraft-card {
