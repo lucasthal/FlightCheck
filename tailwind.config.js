@@ -6,18 +6,18 @@ export default {
     extend: {
       colors: {
         cockpit: {
-          bg: '#0a0e1a',
-          panel: '#0f172a',
-          card: '#1e293b',
-          border: '#2d3f5a',
-          amber: '#f59e0b',
-          'amber-dim': '#b45309',
-          green: '#22c55e',
-          red: '#ef4444',
-          blue: '#3b82f6',
-          'text-primary': '#e2e8f0',
-          'text-secondary': '#94a3b8',
-          'text-dim': '#475569',
+          bg:              'rgb(var(--c-bg)              / <alpha-value>)',
+          panel:           'rgb(var(--c-panel)           / <alpha-value>)',
+          card:            'rgb(var(--c-card)            / <alpha-value>)',
+          border:          'rgb(var(--c-border)          / <alpha-value>)',
+          amber:           'rgb(var(--c-amber)           / <alpha-value>)',
+          'amber-dim':     'rgb(var(--c-amber-dim)       / <alpha-value>)',
+          green:           'rgb(var(--c-green)           / <alpha-value>)',
+          red:             'rgb(var(--c-red)             / <alpha-value>)',
+          blue:            '#3b82f6',
+          'text-primary':  'rgb(var(--c-text-primary)    / <alpha-value>)',
+          'text-secondary':'rgb(var(--c-text-secondary)  / <alpha-value>)',
+          'text-dim':      'rgb(var(--c-text-dim)        / <alpha-value>)',
         }
       },
       fontFamily: {
