@@ -124,7 +124,7 @@ export const piperArcher: Aircraft = {
         'Pitch — Increase 18–22°, maximum 25°',
         'CALLOUTS: Stall Horn → Buffet → Control Degradation → Stall (Break)',
         'Recover on FIRST indication of stall',
-        'Recovery: Reduce AOA → accelerate to Vx (63 KIAS) → establish climb',
+        'Recovery: Reduce AOA → accelerate to Vy (76 KIAS) → establish climb',
       ],
       standards: [
         'Alt >1500 AGL ±100 ft, Heading ±10°, AS ±10 KIAS, Bank ±5°',

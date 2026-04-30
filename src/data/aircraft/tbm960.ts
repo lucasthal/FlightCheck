@@ -9,7 +9,7 @@ export const tbm960: Aircraft = {
   description: 'World\'s fastest single-engine turboprop. Pressurized, FIKI, full glass cockpit with Garmin Autothrottle. Owner-flown and charter.',
   specs: {
     engines: 1,
-    engineType: 'Pratt & Whitney Canada PT6E-66XT (1,825 SHP flat-rated)',
+    engineType: 'Pratt & Whitney Canada PT6E-66XT (flat-rated to 1,020 SHP; engine capacity 1,825 SHP)',
     maxSpeed: '330 KTAS',
     range: '1,730 NM',
     ceiling: '31,000 ft',
