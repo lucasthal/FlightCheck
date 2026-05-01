@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, type ReactNode } from 'react'
+import { useState, useRef, useEffect, memo, type ReactNode } from 'react'
 import { allAircraft, aircraftByCategory } from '../data'
 import type { Aircraft, AircraftCategory } from '../types'
 import { Search, Zap, Users, Gauge, ArrowUp, Star, LogOut, ChevronDown } from 'lucide-react'
@@ -169,6 +169,8 @@ export function AircraftSelector({ onSelect }: Props) {
             <div className="relative" ref={profileRef}>
               <button
                 onClick={() => setProfileOpen(o => !o)}
+                aria-haspopup="menu"
+                aria-expanded={profileOpen}
                 className="flex items-center gap-2 px-2 py-1.5 rounded-xl border border-cockpit-border/50
                            bg-cockpit-card/50 hover:border-cockpit-amber/30 transition-all duration-150"
               >
@@ -186,12 +188,13 @@ export function AircraftSelector({ onSelect }: Props) {
               </button>
 
               {profileOpen && (
-                <div className="absolute right-0 top-full mt-1 w-48 bg-cockpit-panel border border-cockpit-border rounded-xl shadow-cockpit z-50 overflow-hidden">
+                <div role="menu" aria-label="Profile menu" className="absolute right-0 top-full mt-1 w-48 bg-cockpit-panel border border-cockpit-border rounded-xl shadow-cockpit z-50 overflow-hidden">
                   <div className="px-3 py-2.5 border-b border-cockpit-border/50">
                     <p className="text-xs font-semibold text-cockpit-text-primary truncate">{displayName}</p>
                     <p className="text-xs text-cockpit-text-dim truncate">{user?.email}</p>
                   </div>
                   <button
+                    role="menuitem"
                     onClick={() => { setProfileOpen(false); signOut() }}
                     className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-cockpit-text-secondary
                                hover:bg-cockpit-card hover:text-cockpit-text-primary transition-colors"
@@ -304,7 +307,7 @@ interface CardProps {
   onToggleFavorite: () => void
 }
 
-function AircraftCard({ aircraft, onSelect, isFavorite, onToggleFavorite }: CardProps) {
+const AircraftCard = memo(function AircraftCard({ aircraft, onSelect, isFavorite, onToggleFavorite }: CardProps) {
   const normalPhases = aircraft.phases.filter(p => p.category !== 'emergency')
   const emergencyPhases = aircraft.phases.filter(p => p.category === 'emergency')
   const cat = aircraft.category
@@ -319,8 +322,10 @@ function AircraftCard({ aircraft, onSelect, isFavorite, onToggleFavorite }: Card
       {/* Star toggle */}
       <button
         onClick={e => { e.stopPropagation(); onToggleFavorite() }}
-        className="absolute top-2.5 right-2.5 z-10 p-1 rounded-lg transition-colors hover:bg-cockpit-bg/80"
+        aria-label={isFavorite ? `Remove ${aircraft.name} from fleet` : `Add ${aircraft.name} to fleet`}
+        aria-pressed={isFavorite}
         title={isFavorite ? 'Remove from fleet' : 'Add to fleet'}
+        className="absolute top-2.5 right-2.5 z-10 p-1 rounded-lg transition-colors hover:bg-cockpit-bg/80"
       >
         <Star
           className={`w-4 h-4 transition-colors ${
@@ -371,7 +376,7 @@ function AircraftCard({ aircraft, onSelect, isFavorite, onToggleFavorite }: Card
       </button>
     </div>
   )
-}
+})
 
 function MiniSpec({ icon, value }: { icon: ReactNode; value: string }) {
   return (
