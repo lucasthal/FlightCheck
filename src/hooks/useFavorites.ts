@@ -13,14 +13,17 @@ export function useFavorites() {
       return
     }
     setLoading(true)
-    supabase
-      .from('favorites')
-      .select('aircraft_id')
-      .eq('user_id', user.id)
+    Promise.resolve(
+      supabase
+        .from('favorites')
+        .select('aircraft_id')
+        .eq('user_id', user.id)
+    )
       .then(({ data }) => {
         setFavorites(data?.map((r: { aircraft_id: string }) => r.aircraft_id) ?? [])
-        setLoading(false)
       })
+      .catch(() => setFavorites([]))
+      .finally(() => setLoading(false))
   }, [user])
 
   const toggle = useCallback(async (aircraftId: string) => {
