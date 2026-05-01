@@ -1,7 +1,10 @@
-import { useState, type ReactNode } from 'react'
+import { useState, useRef, useEffect, type ReactNode } from 'react'
 import { allAircraft, aircraftByCategory } from '../data'
 import type { Aircraft, AircraftCategory } from '../types'
-import { Search, Zap, Users, Gauge, ArrowUp } from 'lucide-react'
+import { Search, Zap, Users, Gauge, ArrowUp, Star, LogOut, ChevronDown } from 'lucide-react'
+import { useAuth } from '../hooks/useAuth'
+import { useFavorites } from '../hooks/useFavorites'
+import { FleetStrip } from './FleetStrip'
 
 interface Props {
   onSelect: (aircraft: Aircraft) => void
@@ -43,7 +46,6 @@ const CATEGORY_BG: Record<AircraftCategory | 'All', string> = {
   Helicopter: 'bg-emerald-500/10 border-emerald-500/20',
 }
 
-// Simple SVG aircraft silhouettes per category
 const CATEGORY_SILHOUETTE: Record<AircraftCategory, ReactNode> = {
   SEP: (
     <svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20">
@@ -83,203 +85,44 @@ const CATEGORY_SILHOUETTE: Record<AircraftCategory, ReactNode> = {
 }
 
 const AIRCRAFT_SILHOUETTE: Record<string, ReactNode> = {
-
-  // ── SEP: High-wing Cessna family ────────────────────────────────
-  'cessna-152': (
-    <svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20">
-      <path d="M28,20 L26,6 L42,6 L42,20 L42,34 L26,34 Z"/>
-      <path d="M8,19.5 C12,17.5 22,16.5 50,17 C60,17 67,18.5 71,20 C67,21.5 60,23 50,23 C22,23.5 12,22.5 8,20.5 Z"/>
-      <path d="M66,20 L64,16 L72,16 L72,24 L64,24 Z"/>
-      <circle cx="8" cy="20" r="1.8"/>
-    </svg>
-  ),
-
-  'cessna-172': (
-    <svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20">
-      <path d="M28,20 L25,5 L43,5 L43,20 L43,35 L25,35 Z"/>
-      <path d="M8,19 C12,17 22,16 50,17 C60,17 67,18 72,20 C67,22 60,23 50,23 C22,24 12,23 8,21 Z"/>
-      <path d="M67,20 L65,15 L73,15 L73,25 L65,25 Z"/>
-      <circle cx="8" cy="20" r="2"/>
-    </svg>
-  ),
-
-  'cessna-182t': (
-    <svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20">
-      <path d="M26,20 L23,5 L44,5 L44,20 L44,35 L23,35 Z"/>
-      <path d="M8,19 C12,17 22,15.5 50,16.5 C60,16.5 67,18 72,20 C67,22 60,23.5 50,23.5 C22,24.5 12,23 8,21 Z"/>
-      <path d="M67,20 L65,14 L74,14 L74,26 L65,26 Z"/>
-      <circle cx="8" cy="20" r="2"/>
-    </svg>
-  ),
-
-  // ── SEP: Low-wing Piper (Hershey-bar straight wing) ─────────────
-  'piper-warrior-iii': (
-    <svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20">
-      <path d="M30,20 L28,7 L44,7 L44,20 L44,33 L28,33 Z"/>
-      <path d="M10,18.5 C15,17 24,16 52,17 C62,17 68,18.5 72,20 C68,21.5 62,23 52,23 C24,24 15,23 10,21.5 Z"/>
-      <path d="M67,20 L65,15 L73,15 L73,25 L65,25 Z"/>
-      <circle cx="10" cy="20" r="2"/>
-    </svg>
-  ),
-
-  'piper-pa28-archer': (
-    <svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20">
-      <path d="M29,20 L27,6 L45,6 L45,20 L45,34 L27,34 Z"/>
-      <path d="M10,18.5 C15,17 24,16 52,17 C62,17 68,18.5 72,20 C68,21.5 62,23 52,23 C24,24 15,23 10,21.5 Z"/>
-      <path d="M67,20 L65,14 L74,14 L74,26 L65,26 Z"/>
-      <circle cx="10" cy="20" r="2"/>
-    </svg>
-  ),
-
-  // ── SEP: Low-wing modern composite ──────────────────────────────
-  'cirrus-sr22': (
-    <svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20">
-      <path d="M46,20 L30,8 L52,11 L50,20 L52,29 L30,32 Z"/>
-      <path d="M10,19 C16,17 28,16 56,17 C64,17 70,18 73,20 C70,22 64,23 56,23 C28,24 16,23 10,21 Z"/>
-      <path d="M68,20 L66,15 L74,15 L74,25 L66,25 Z"/>
-      <ellipse cx="38" cy="20" rx="5" ry="2.5"/>
-    </svg>
-  ),
-
-  'diamond-da40': (
-    <svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20">
-      <path d="M36,20 L30,8 L48,10 L46,20 L48,30 L30,32 Z"/>
-      <path d="M8,19.5 C12,18 22,17 52,17.5 C62,17.5 68,18.5 72,20 C68,21.5 62,22.5 52,22.5 C22,23 12,22 8,20.5 Z"/>
-      <path d="M68,20 L65,13 L75,13 L75,27 L65,27 Z"/>
-    </svg>
-  ),
-
-  // ── SEP: Low-wing retractable ────────────────────────────────────
-  'beech-bonanza-g36': (
-    <svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20">
-      <path d="M34,20 L30,8 L48,10 L46,20 L48,30 L30,32 Z"/>
-      <path d="M10,19 C14,17 24,16 54,17 C63,17 69,18.5 72,20 C69,21.5 63,23 54,23 C24,24 14,23 10,21 Z"/>
-      <path d="M68,20 L64,14 L73,18 Z"/>
-      <path d="M68,20 L64,26 L73,22 Z"/>
-    </svg>
-  ),
-
-  'mooney-m20v': (
-    <svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20">
-      <path d="M36,20 L32,9 L46,10 L44,20 L46,30 L32,31 Z"/>
-      <path d="M8,19.5 C12,18.5 24,17.5 54,18 C63,18 69,19 72,20 C69,21 63,22 54,22 C24,22.5 12,21.5 8,20.5 Z"/>
-      <path d="M67,20 L65,16 L73,16 L73,24 L65,24 Z"/>
-    </svg>
-  ),
-
-  // ── MEP: Twin piston ─────────────────────────────────────────────
-  'piper-seminole': (
-    <svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20">
-      <path d="M32,20 L28,7 L46,9 L44,20 L46,31 L28,33 Z"/>
-      <ellipse cx="30" cy="12" rx="5" ry="2"/>
-      <ellipse cx="30" cy="28" rx="5" ry="2"/>
-      <path d="M10,18.5 C15,17 24,16 52,17 C61,17 67,18.5 71,20 C67,21.5 61,23 52,23 C24,24 15,23 10,21.5 Z"/>
-      <path d="M66,20 L64,13 L73,13 L73,27 L64,27 Z"/>
-    </svg>
-  ),
-
-  'beech-baron-g58': (
-    <svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20">
-      <path d="M30,20 L26,6 L48,8 L46,20 L48,32 L26,34 Z"/>
-      <ellipse cx="27" cy="11" rx="6" ry="2.5"/>
-      <ellipse cx="27" cy="29" rx="6" ry="2.5"/>
-      <path d="M10,18 C15,16 25,15 52,16 C62,16 68,18 72,20 C68,22 62,24 52,24 C25,25 15,24 10,22 Z"/>
-      <path d="M67,20 L65,14 L74,14 L74,26 L65,26 Z"/>
-    </svg>
-  ),
-
-  // ── Turboprop: High-wing single ──────────────────────────────────
-  'cessna-208b-caravan': (
-    <svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20">
-      <path d="M26,20 L22,5 L46,5 L46,20 L46,35 L22,35 Z"/>
-      <path d="M8,18 C12,15.5 22,14.5 50,15.5 C60,15.5 67,17.5 72,20 C67,22.5 60,24.5 50,24.5 C22,25.5 12,24.5 8,22 Z"/>
-      <path d="M67,20 L65,14 L74,14 L74,26 L65,26 Z"/>
-      <path d="M4,19 L8,17 L8,23 L4,21 Z"/>
-    </svg>
-  ),
-
-  // ── Turboprop: Low-wing single ───────────────────────────────────
-  'daher-tbm-960': (
-    <svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20">
-      <path d="M40,20 L26,8 L50,11 L48,20 L50,29 L26,32 Z"/>
-      <path d="M8,19 C12,17 24,16 58,17 C65,17 70,18 74,20 C70,22 65,23 58,23 C24,24 12,23 8,21 Z"/>
-      <path d="M69,20 L67,13 L76,13 L76,27 L67,27 Z"/>
-      <path d="M4,19.5 L8,18 L8,22 L4,20.5 Z"/>
-    </svg>
-  ),
-
-  'pilatus-pc12-ngx': (
-    <svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20">
-      <path d="M34,20 L28,7 L50,9 L48,20 L50,31 L28,33 Z"/>
-      <path d="M8,18 C12,15.5 22,14.5 54,15.5 C63,15.5 69,17.5 73,20 C69,22.5 63,24.5 54,24.5 C22,25.5 12,24.5 8,22 Z"/>
-      <path d="M68,20 L66,13 L75,13 L75,27 L66,27 Z"/>
-      <path d="M4,19.5 L8,17.5 L8,22.5 L4,20.5 Z"/>
-    </svg>
-  ),
-
-  // ── Turboprop: Twin ──────────────────────────────────────────────
-  'king-air-c90': (
-    <svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20">
-      <path d="M30,20 L25,6 L47,8 L45,20 L47,32 L25,34 Z"/>
-      <path d="M17,9 L30,10.5 L30,13.5 L17,13 Z"/>
-      <path d="M17,27 L30,26.5 L30,29.5 L17,31 Z"/>
-      <circle cx="16" cy="11" r="2.5"/>
-      <circle cx="16" cy="29" r="2.5"/>
-      <path d="M10,18 C15,16 26,15 54,16 C63,16 69,18 72,20 C69,22 63,24 54,24 C26,25 15,24 10,22 Z"/>
-      <path d="M67,20 L65,14 L74,14 L74,26 L65,26 Z"/>
-    </svg>
-  ),
-
-  'king-air-b200gt': (
-    <svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20">
-      <path d="M28,20 L23,6 L49,8 L47,20 L49,32 L23,34 Z"/>
-      <path d="M23,10 L21,8 L23,6 Z"/>
-      <path d="M23,30 L21,32 L23,34 Z"/>
-      <path d="M15,9 L28,10.5 L28,13.5 L15,13 Z"/>
-      <path d="M15,27 L28,26.5 L28,29.5 L15,31 Z"/>
-      <circle cx="14" cy="11" r="2.5"/>
-      <circle cx="14" cy="29" r="2.5"/>
-      <path d="M10,18 C15,16 26,15 54,16 C64,16 70,18 73,20 C70,22 64,24 54,24 C26,25 15,24 10,22 Z"/>
-      <path d="M68,20 L66,12 L75,12 L75,28 L66,28 Z"/>
-    </svg>
-  ),
-
-  // ── Jet: Business jets with rear-mounted engines ─────────────────
-  'cessna-citation-cj4': (
-    <svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20">
-      <path d="M44,20 L32,7 L50,10 L48,20 L50,30 L32,33 Z"/>
-      <ellipse cx="60" cy="14" rx="8" ry="2.5" transform="rotate(-8,60,14)"/>
-      <ellipse cx="60" cy="26" rx="8" ry="2.5" transform="rotate(8,60,26)"/>
-      <path d="M8,19 C14,17 30,16 62,17 C67,17 71,18 74,20 C71,22 67,23 62,23 C30,24 14,23 8,21 Z"/>
-      <path d="M70,20 L68,13 L76,13 L76,27 L68,27 Z"/>
-    </svg>
-  ),
-
-  'embraer-phenom-300e': (
-    <svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20">
-      <path d="M42,20 L28,6 L52,10 L49,20 L52,30 L28,34 Z"/>
-      <ellipse cx="58" cy="13" rx="9" ry="3"/>
-      <ellipse cx="58" cy="27" rx="9" ry="3"/>
-      <path d="M8,18 C14,16 30,15 60,16 C67,16 71,18 74,20 C71,22 67,24 60,24 C30,25 14,24 8,22 Z"/>
-      <path d="M70,20 L67,12 L76,12 L76,28 L67,28 Z"/>
-    </svg>
-  ),
-
-  // ── Helicopter ───────────────────────────────────────────────────
-  'robinson-r44-raven-ii': (
-    <svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20">
-      <rect x="18" y="18.5" width="36" height="3" rx="1.5"/>
-      <rect x="33.5" y="2" width="3" height="36" rx="1.5"/>
-      <ellipse cx="35" cy="20" rx="10" ry="7"/>
-      <rect x="44" y="18.5" width="28" height="3" rx="1"/>
-      <ellipse cx="72" cy="20" rx="2" ry="7"/>
-    </svg>
-  ),
+  'cessna-152': (<svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20"><path d="M28,20 L26,6 L42,6 L42,20 L42,34 L26,34 Z"/><path d="M8,19.5 C12,17.5 22,16.5 50,17 C60,17 67,18.5 71,20 C67,21.5 60,23 50,23 C22,23.5 12,22.5 8,20.5 Z"/><path d="M66,20 L64,16 L72,16 L72,24 L64,24 Z"/><circle cx="8" cy="20" r="1.8"/></svg>),
+  'cessna-172': (<svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20"><path d="M28,20 L25,5 L43,5 L43,20 L43,35 L25,35 Z"/><path d="M8,19 C12,17 22,16 50,17 C60,17 67,18 72,20 C67,22 60,23 50,23 C22,24 12,23 8,21 Z"/><path d="M67,20 L65,15 L73,15 L73,25 L65,25 Z"/><circle cx="8" cy="20" r="2"/></svg>),
+  'cessna-182t': (<svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20"><path d="M26,20 L23,5 L44,5 L44,20 L44,35 L23,35 Z"/><path d="M8,19 C12,17 22,15.5 50,16.5 C60,16.5 67,18 72,20 C67,22 60,23.5 50,23.5 C22,24.5 12,23 8,21 Z"/><path d="M67,20 L65,14 L74,14 L74,26 L65,26 Z"/><circle cx="8" cy="20" r="2"/></svg>),
+  'piper-warrior-iii': (<svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20"><path d="M30,20 L28,7 L44,7 L44,20 L44,33 L28,33 Z"/><path d="M10,18.5 C15,17 24,16 52,17 C62,17 68,18.5 72,20 C68,21.5 62,23 52,23 C24,24 15,23 10,21.5 Z"/><path d="M67,20 L65,15 L73,15 L73,25 L65,25 Z"/><circle cx="10" cy="20" r="2"/></svg>),
+  'piper-pa28-archer': (<svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20"><path d="M29,20 L27,6 L45,6 L45,20 L45,34 L27,34 Z"/><path d="M10,18.5 C15,17 24,16 52,17 C62,17 68,18.5 72,20 C68,21.5 62,23 52,23 C24,24 15,23 10,21.5 Z"/><path d="M67,20 L65,14 L74,14 L74,26 L65,26 Z"/><circle cx="10" cy="20" r="2"/></svg>),
+  'cirrus-sr22': (<svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20"><path d="M46,20 L30,8 L52,11 L50,20 L52,29 L30,32 Z"/><path d="M10,19 C16,17 28,16 56,17 C64,17 70,18 73,20 C70,22 64,23 56,23 C28,24 16,23 10,21 Z"/><path d="M68,20 L66,15 L74,15 L74,25 L66,25 Z"/><ellipse cx="38" cy="20" rx="5" ry="2.5"/></svg>),
+  'diamond-da40': (<svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20"><path d="M36,20 L30,8 L48,10 L46,20 L48,30 L30,32 Z"/><path d="M8,19.5 C12,18 22,17 52,17.5 C62,17.5 68,18.5 72,20 C68,21.5 62,22.5 52,22.5 C22,23 12,22 8,20.5 Z"/><path d="M68,20 L65,13 L75,13 L75,27 L65,27 Z"/></svg>),
+  'beech-bonanza-g36': (<svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20"><path d="M34,20 L30,8 L48,10 L46,20 L48,30 L30,32 Z"/><path d="M10,19 C14,17 24,16 54,17 C63,17 69,18.5 72,20 C69,21.5 63,23 54,23 C24,24 14,23 10,21 Z"/><path d="M68,20 L64,14 L73,18 Z"/><path d="M68,20 L64,26 L73,22 Z"/></svg>),
+  'mooney-m20v': (<svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20"><path d="M36,20 L32,9 L46,10 L44,20 L46,30 L32,31 Z"/><path d="M8,19.5 C12,18.5 24,17.5 54,18 C63,18 69,19 72,20 C69,21 63,22 54,22 C24,22.5 12,21.5 8,20.5 Z"/><path d="M67,20 L65,16 L73,16 L73,24 L65,24 Z"/></svg>),
+  'piper-seminole': (<svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20"><path d="M32,20 L28,7 L46,9 L44,20 L46,31 L28,33 Z"/><ellipse cx="30" cy="12" rx="5" ry="2"/><ellipse cx="30" cy="28" rx="5" ry="2"/><path d="M10,18.5 C15,17 24,16 52,17 C61,17 67,18.5 71,20 C67,21.5 61,23 52,23 C24,24 15,23 10,21.5 Z"/><path d="M66,20 L64,13 L73,13 L73,27 L64,27 Z"/></svg>),
+  'beech-baron-g58': (<svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20"><path d="M30,20 L26,6 L48,8 L46,20 L48,32 L26,34 Z"/><ellipse cx="27" cy="11" rx="6" ry="2.5"/><ellipse cx="27" cy="29" rx="6" ry="2.5"/><path d="M10,18 C15,16 25,15 52,16 C62,16 68,18 72,20 C68,22 62,24 52,24 C25,25 15,24 10,22 Z"/><path d="M67,20 L65,14 L74,14 L74,26 L65,26 Z"/></svg>),
+  'cessna-208b-caravan': (<svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20"><path d="M26,20 L22,5 L46,5 L46,20 L46,35 L22,35 Z"/><path d="M8,18 C12,15.5 22,14.5 50,15.5 C60,15.5 67,17.5 72,20 C67,22.5 60,24.5 50,24.5 C22,25.5 12,24.5 8,22 Z"/><path d="M67,20 L65,14 L74,14 L74,26 L65,26 Z"/><path d="M4,19 L8,17 L8,23 L4,21 Z"/></svg>),
+  'daher-tbm-960': (<svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20"><path d="M40,20 L26,8 L50,11 L48,20 L50,29 L26,32 Z"/><path d="M8,19 C12,17 24,16 58,17 C65,17 70,18 74,20 C70,22 65,23 58,23 C24,24 12,23 8,21 Z"/><path d="M69,20 L67,13 L76,13 L76,27 L67,27 Z"/><path d="M4,19.5 L8,18 L8,22 L4,20.5 Z"/></svg>),
+  'pilatus-pc12-ngx': (<svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20"><path d="M34,20 L28,7 L50,9 L48,20 L50,31 L28,33 Z"/><path d="M8,18 C12,15.5 22,14.5 54,15.5 C63,15.5 69,17.5 73,20 C69,22.5 63,24.5 54,24.5 C22,25.5 12,24.5 8,22 Z"/><path d="M68,20 L66,13 L75,13 L75,27 L66,27 Z"/><path d="M4,19.5 L8,17.5 L8,22.5 L4,20.5 Z"/></svg>),
+  'king-air-c90': (<svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20"><path d="M30,20 L25,6 L47,8 L45,20 L47,32 L25,34 Z"/><path d="M17,9 L30,10.5 L30,13.5 L17,13 Z"/><path d="M17,27 L30,26.5 L30,29.5 L17,31 Z"/><circle cx="16" cy="11" r="2.5"/><circle cx="16" cy="29" r="2.5"/><path d="M10,18 C15,16 26,15 54,16 C63,16 69,18 72,20 C69,22 63,24 54,24 C26,25 15,24 10,22 Z"/><path d="M67,20 L65,14 L74,14 L74,26 L65,26 Z"/></svg>),
+  'king-air-b200gt': (<svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20"><path d="M28,20 L23,6 L49,8 L47,20 L49,32 L23,34 Z"/><path d="M23,10 L21,8 L23,6 Z"/><path d="M23,30 L21,32 L23,34 Z"/><path d="M15,9 L28,10.5 L28,13.5 L15,13 Z"/><path d="M15,27 L28,26.5 L28,29.5 L15,31 Z"/><circle cx="14" cy="11" r="2.5"/><circle cx="14" cy="29" r="2.5"/><path d="M10,18 C15,16 26,15 54,16 C64,16 70,18 73,20 C70,22 64,24 54,24 C26,25 15,24 10,22 Z"/><path d="M68,20 L66,12 L75,12 L75,28 L66,28 Z"/></svg>),
+  'cessna-citation-cj4': (<svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20"><path d="M44,20 L32,7 L50,10 L48,20 L50,30 L32,33 Z"/><ellipse cx="60" cy="14" rx="8" ry="2.5" transform="rotate(-8,60,14)"/><ellipse cx="60" cy="26" rx="8" ry="2.5" transform="rotate(8,60,26)"/><path d="M8,19 C14,17 30,16 62,17 C67,17 71,18 74,20 C71,22 67,23 62,23 C30,24 14,23 8,21 Z"/><path d="M70,20 L68,13 L76,13 L76,27 L68,27 Z"/></svg>),
+  'embraer-phenom-300e': (<svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20"><path d="M42,20 L28,6 L52,10 L49,20 L52,30 L28,34 Z"/><ellipse cx="58" cy="13" rx="9" ry="3"/><ellipse cx="58" cy="27" rx="9" ry="3"/><path d="M8,18 C14,16 30,15 60,16 C67,16 71,18 74,20 C71,22 67,24 60,24 C30,25 14,24 8,22 Z"/><path d="M70,20 L67,12 L76,12 L76,28 L67,28 Z"/></svg>),
+  'robinson-r44-raven-ii': (<svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20"><rect x="18" y="18.5" width="36" height="3" rx="1.5"/><rect x="33.5" y="2" width="3" height="36" rx="1.5"/><ellipse cx="35" cy="20" rx="10" ry="7"/><rect x="44" y="18.5" width="28" height="3" rx="1"/><ellipse cx="72" cy="20" rx="2" ry="7"/></svg>),
 }
 
 export function AircraftSelector({ onSelect }: Props) {
+  const { user, signOut } = useAuth()
+  const { favorites, toggle, isFavorite } = useFavorites()
   const [filter, setFilter] = useState<AircraftCategory | 'All'>('All')
   const [search, setSearch] = useState('')
+  const [profileOpen, setProfileOpen] = useState(false)
+  const profileRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+        setProfileOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [])
 
   const filtered = allAircraft.filter(a => {
     const matchesCategory = filter === 'All' || a.category === filter
@@ -292,29 +135,72 @@ export function AircraftSelector({ onSelect }: Props) {
   const categoryCount = (cat: AircraftCategory | 'All') =>
     cat === 'All' ? allAircraft.length : (aircraftByCategory[cat as AircraftCategory]?.length ?? 0)
 
+  const displayName = (user?.user_metadata?.full_name as string | undefined)
+    ?? user?.email?.split('@')[0]
+    ?? 'Pilot'
+
+  const initials = displayName.slice(0, 2).toUpperCase()
+  const avatarUrl = user?.user_metadata?.avatar_url as string | undefined
+
   return (
     <div className="min-h-screen flex flex-col bg-cockpit-bg">
-      {/* Hero header */}
       <header className="relative overflow-hidden border-b border-cockpit-border/40">
-        {/* Background gradient */}
         <div className="absolute inset-0 bg-gradient-to-b from-cockpit-amber/5 via-cockpit-panel to-cockpit-bg" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(245,158,11,0.08),transparent_70%)]" />
 
         <div className="relative max-w-5xl mx-auto px-4 pt-8 pb-6 safe-top">
-          {/* Logo + title */}
-          <div className="flex items-center gap-3 mb-1">
-            <div className="relative">
+          {/* Logo row + profile */}
+          <div className="flex items-center justify-between gap-3 mb-1">
+            <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-cockpit-amber to-orange-500 flex items-center justify-center shadow-amber-glow">
                 <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M3,15 C5,15 7,12 10,9 L14,15 L22,5"/>
                 </svg>
               </div>
+              <div>
+                <h1 className="text-2xl font-bold text-cockpit-text-primary tracking-tight">
+                  Flight<span className="text-cockpit-amber">Check</span>
+                </h1>
+                <p className="text-xs text-cockpit-text-dim">Best in class Pilot's checklist</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-2xl font-bold text-cockpit-text-primary tracking-tight">
-                Flight<span className="text-cockpit-amber">Check</span>
-              </h1>
-              <p className="text-xs text-cockpit-text-dim">Best in class Pilot's checklist</p>
+
+            {/* Profile */}
+            <div className="relative" ref={profileRef}>
+              <button
+                onClick={() => setProfileOpen(o => !o)}
+                className="flex items-center gap-2 px-2 py-1.5 rounded-xl border border-cockpit-border/50
+                           bg-cockpit-card/50 hover:border-cockpit-amber/30 transition-all duration-150"
+              >
+                {avatarUrl ? (
+                  <img src={avatarUrl} alt={displayName} className="w-6 h-6 rounded-full object-cover" />
+                ) : (
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-cockpit-amber to-orange-500 flex items-center justify-center text-black text-xs font-bold">
+                    {initials}
+                  </div>
+                )}
+                <span className="text-xs text-cockpit-text-secondary hidden sm:block max-w-[100px] truncate">
+                  {displayName}
+                </span>
+                <ChevronDown className="w-3 h-3 text-cockpit-text-dim" />
+              </button>
+
+              {profileOpen && (
+                <div className="absolute right-0 top-full mt-1 w-48 bg-cockpit-panel border border-cockpit-border rounded-xl shadow-cockpit z-50 overflow-hidden">
+                  <div className="px-3 py-2.5 border-b border-cockpit-border/50">
+                    <p className="text-xs font-semibold text-cockpit-text-primary truncate">{displayName}</p>
+                    <p className="text-xs text-cockpit-text-dim truncate">{user?.email}</p>
+                  </div>
+                  <button
+                    onClick={() => { setProfileOpen(false); signOut() }}
+                    className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-cockpit-text-secondary
+                               hover:bg-cockpit-card hover:text-cockpit-text-primary transition-colors"
+                  >
+                    <LogOut className="w-3.5 h-3.5" />
+                    Sign Out
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
@@ -332,6 +218,9 @@ export function AircraftSelector({ onSelect }: Props) {
               )
             })}
           </div>
+
+          {/* My Fleet strip */}
+          <FleetStrip favorites={favorites} onSelect={onSelect} />
 
           {/* Search */}
           <div className="relative mb-4">
@@ -374,7 +263,6 @@ export function AircraftSelector({ onSelect }: Props) {
         </div>
       </header>
 
-      {/* Aircraft grid */}
       <main className="flex-1 max-w-5xl mx-auto w-full px-4 py-5">
         {filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-cockpit-text-dim">
@@ -389,7 +277,13 @@ export function AircraftSelector({ onSelect }: Props) {
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {filtered.map(aircraft => (
-                <AircraftCard key={aircraft.id} aircraft={aircraft} onSelect={onSelect} />
+                <AircraftCard
+                  key={aircraft.id}
+                  aircraft={aircraft}
+                  onSelect={onSelect}
+                  isFavorite={isFavorite(aircraft.id)}
+                  onToggleFavorite={() => toggle(aircraft.id)}
+                />
               ))}
             </div>
           </>
@@ -403,68 +297,79 @@ export function AircraftSelector({ onSelect }: Props) {
   )
 }
 
-function AircraftCard({ aircraft, onSelect }: { aircraft: Aircraft; onSelect: (a: Aircraft) => void }) {
+interface CardProps {
+  aircraft: Aircraft
+  onSelect: (a: Aircraft) => void
+  isFavorite: boolean
+  onToggleFavorite: () => void
+}
+
+function AircraftCard({ aircraft, onSelect, isFavorite, onToggleFavorite }: CardProps) {
   const normalPhases = aircraft.phases.filter(p => p.category !== 'emergency')
   const emergencyPhases = aircraft.phases.filter(p => p.category === 'emergency')
   const cat = aircraft.category
 
   return (
-    <button
-      onClick={() => onSelect(aircraft)}
-      className="aircraft-card group text-left relative overflow-hidden"
-    >
-      {/* Background silhouette art */}
+    <div className="aircraft-card group relative overflow-hidden">
+      {/* Background silhouette */}
       <div className={`absolute right-2 top-2 w-32 h-16 ${CATEGORY_TEXT[cat]}`}>
         {AIRCRAFT_SILHOUETTE[aircraft.id] ?? CATEGORY_SILHOUETTE[cat]}
       </div>
 
-      {/* Top: badge */}
-      <div className="mb-2 relative">
-        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-bold border ${CATEGORY_BG[cat]} ${CATEGORY_TEXT[cat]}`}>
-          {cat}
-        </span>
-      </div>
+      {/* Star toggle */}
+      <button
+        onClick={e => { e.stopPropagation(); onToggleFavorite() }}
+        className="absolute top-2.5 right-2.5 z-10 p-1 rounded-lg transition-colors hover:bg-cockpit-bg/80"
+        title={isFavorite ? 'Remove from fleet' : 'Add to fleet'}
+      >
+        <Star
+          className={`w-4 h-4 transition-colors ${
+            isFavorite ? 'text-cockpit-amber fill-cockpit-amber' : 'text-cockpit-text-dim'
+          }`}
+        />
+      </button>
 
-      {/* Aircraft name */}
-      <h2 className={`font-bold text-base leading-tight text-cockpit-text-primary group-hover:${CATEGORY_TEXT[cat]} transition-colors mb-0.5`}>
-        {aircraft.name}
-      </h2>
-      <p className="text-xs text-cockpit-text-dim font-mono mb-2">{aircraft.manufacturer} · {aircraft.model}</p>
-
-      {/* Description */}
-      <p className="text-xs text-cockpit-text-secondary leading-relaxed mb-3 line-clamp-2 relative">
-        {aircraft.description}
-      </p>
-
-      {/* Specs row */}
-      <div className="flex flex-wrap gap-2 mb-3 relative">
-        <MiniSpec icon={<Zap className="w-3 h-3" />} value={aircraft.specs.engineType.split('(')[0].trim()} />
-        <MiniSpec icon={<Users className="w-3 h-3" />} value={`${aircraft.specs.seats} seats`} />
-        {aircraft.specs.maxSpeed && (
-          <MiniSpec icon={<Gauge className="w-3 h-3" />} value={aircraft.specs.maxSpeed} />
-        )}
-        {aircraft.specs.ceiling && (
-          <MiniSpec icon={<ArrowUp className="w-3 h-3" />} value={aircraft.specs.ceiling} />
-        )}
-      </div>
-
-      {/* Footer */}
-      <div className="flex items-center gap-3 pt-2.5 border-t border-cockpit-border/40 text-xs text-cockpit-text-dim relative">
-        <span className="flex items-center gap-1.5">
-          <span className={`w-1.5 h-1.5 rounded-full ${CATEGORY_TEXT[cat].replace('text-', 'bg-')}`} />
-          {normalPhases.length} checklists
-        </span>
-        {emergencyPhases.length > 0 && (
-          <span className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
-            {emergencyPhases.length} emergency
+      {/* Card content */}
+      <button onClick={() => onSelect(aircraft)} className="w-full text-left block">
+        <div className="mb-2 relative">
+          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-bold border ${CATEGORY_BG[cat]} ${CATEGORY_TEXT[cat]}`}>
+            {cat}
           </span>
-        )}
-        <span className="ml-auto text-cockpit-text-dim">
-          {aircraft.phases.reduce((s, p) => s + p.items.length, 0)} items
-        </span>
-      </div>
-    </button>
+        </div>
+        <h2 className={`font-bold text-base leading-tight text-cockpit-text-primary group-hover:${CATEGORY_TEXT[cat]} transition-colors mb-0.5`}>
+          {aircraft.name}
+        </h2>
+        <p className="text-xs text-cockpit-text-dim font-mono mb-2">{aircraft.manufacturer} · {aircraft.model}</p>
+        <p className="text-xs text-cockpit-text-secondary leading-relaxed mb-3 line-clamp-2 relative">
+          {aircraft.description}
+        </p>
+        <div className="flex flex-wrap gap-2 mb-3 relative">
+          <MiniSpec icon={<Zap className="w-3 h-3" />} value={aircraft.specs.engineType.split('(')[0].trim()} />
+          <MiniSpec icon={<Users className="w-3 h-3" />} value={`${aircraft.specs.seats} seats`} />
+          {aircraft.specs.maxSpeed && (
+            <MiniSpec icon={<Gauge className="w-3 h-3" />} value={aircraft.specs.maxSpeed} />
+          )}
+          {aircraft.specs.ceiling && (
+            <MiniSpec icon={<ArrowUp className="w-3 h-3" />} value={aircraft.specs.ceiling} />
+          )}
+        </div>
+        <div className="flex items-center gap-3 pt-2.5 border-t border-cockpit-border/40 text-xs text-cockpit-text-dim relative">
+          <span className="flex items-center gap-1.5">
+            <span className={`w-1.5 h-1.5 rounded-full ${CATEGORY_TEXT[cat].replace('text-', 'bg-')}`} />
+            {normalPhases.length} checklists
+          </span>
+          {emergencyPhases.length > 0 && (
+            <span className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
+              {emergencyPhases.length} emergency
+            </span>
+          )}
+          <span className="ml-auto text-cockpit-text-dim">
+            {aircraft.phases.reduce((s, p) => s + p.items.length, 0)} items
+          </span>
+        </div>
+      </button>
+    </div>
   )
 }
 
