@@ -16,7 +16,7 @@ export function SaveAsDialog({ sourceProfileName, existingNames, onSave, onCance
   useEffect(() => { inputRef.current?.focus() }, [])
 
   const trimmed = name.trim()
-  const duplicate = existingNames.includes(trimmed)
+  const duplicate = trimmed.length > 0 && existingNames.includes(trimmed)
   const empty = trimmed.length === 0
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -57,10 +57,9 @@ export function SaveAsDialog({ sourceProfileName, existingNames, onSave, onCance
                        focus:outline-none focus:border-cockpit-amber/50 focus:ring-2 focus:ring-cockpit-amber/10
                        transition-all duration-150 mb-1"
           />
-          {duplicate && (
-            <p className="text-xs text-red-400 mb-3">A profile with this name already exists.</p>
-          )}
-          {!duplicate && <div className="mb-3" />}
+          <p className="text-xs text-red-400 mb-3 min-h-[1rem]">
+            {duplicate ? 'A profile with this name already exists.' : ''}
+          </p>
 
           <div className="flex gap-3">
             <button
