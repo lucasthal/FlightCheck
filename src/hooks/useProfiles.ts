@@ -98,27 +98,30 @@ export function useProfiles(aircraftId: string) {
       return aEmerg - bEmerg
     })
 
-    for (let i = 0; i < phases.length; i++) {
-      const phase = phases[i]
-      const { data: phaseData, error: phaseError } = await supabase
-        .from('profile_phases')
-        .insert({ profile_id: profileData.id, position: i, title: phase.name, category: phase.category })
-        .select('id')
-        .single()
-      if (phaseError) throw phaseError
+    // Pre-assign UUIDs so phases + items can be batch-inserted (2 round trips instead of 2N)
+    const phaseRows = phases.map((phase, i) => ({
+      id: crypto.randomUUID(),
+      profile_id: profileData.id,
+      position: i,
+      title: phase.name,
+      category: phase.category,
+    }))
+    const { error: phaseError } = await supabase.from('profile_phases').insert(phaseRows)
+    if (phaseError) throw phaseError
 
-      if (phase.items.length > 0) {
-        const { error: itemError } = await supabase.from('profile_items').insert(
-          phase.items.map((item, j) => ({
-            phase_id: phaseData.id, position: j,
-            action: item.action,
-            response: item.response ?? null,
-            note: item.note ?? null,
-            severity: item.severity ?? null,
-          }))
-        )
-        if (itemError) throw itemError
-      }
+    const itemRows = phases.flatMap((phase, i) =>
+      phase.items.map((item, j) => ({
+        phase_id: phaseRows[i].id,
+        position: j,
+        action: item.action,
+        response: item.response ?? null,
+        note: item.note ?? null,
+        severity: item.severity ?? null,
+      }))
+    )
+    if (itemRows.length > 0) {
+      const { error: itemError } = await supabase.from('profile_items').insert(itemRows)
+      if (itemError) throw itemError
     }
 
     const { error: rpcError } = await supabase.rpc('activate_profile', { p_profile_id: profileData.id })
@@ -136,26 +139,29 @@ export function useProfiles(aircraftId: string) {
       .single()
     if (profileError) throw profileError
 
-    for (const phase of source.phases) {
-      const { data: phaseData, error: phaseError } = await supabase
-        .from('profile_phases')
-        .insert({ profile_id: profileData.id, position: phase.position, title: phase.title, category: phase.category })
-        .select('id')
-        .single()
-      if (phaseError) throw phaseError
+    const phaseRows = source.phases.map(phase => ({
+      id: crypto.randomUUID(),
+      profile_id: profileData.id,
+      position: phase.position,
+      title: phase.title,
+      category: phase.category,
+    }))
+    const { error: phaseError } = await supabase.from('profile_phases').insert(phaseRows)
+    if (phaseError) throw phaseError
 
-      if (phase.items.length > 0) {
-        const { error: itemError } = await supabase.from('profile_items').insert(
-          phase.items.map(item => ({
-            phase_id: phaseData.id, position: item.position,
-            action: item.action,
-            response: item.response ?? null,
-            note: item.note ?? null,
-            severity: item.severity ?? null,
-          }))
-        )
-        if (itemError) throw itemError
-      }
+    const itemRows = source.phases.flatMap((phase, i) =>
+      phase.items.map(item => ({
+        phase_id: phaseRows[i].id,
+        position: item.position,
+        action: item.action,
+        response: item.response ?? null,
+        note: item.note ?? null,
+        severity: item.severity ?? null,
+      }))
+    )
+    if (itemRows.length > 0) {
+      const { error: itemError } = await supabase.from('profile_items').insert(itemRows)
+      if (itemError) throw itemError
     }
 
     const { error: rpcError } = await supabase.rpc('activate_profile', { p_profile_id: profileData.id })
