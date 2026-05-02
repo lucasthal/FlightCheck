@@ -63,6 +63,7 @@ export function ChecklistView({ aircraft, onBack, onCycleTheme, theme }: Props) 
 
   const [editMode, setEditMode] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
   const [showSaveAs, setShowSaveAs] = useState(false)
   const [saveAsSource, setSaveAsSource] = useState<'original' | 'profile'>('original')
   const [showNewFlightConfirm, setShowNewFlightConfirm] = useState(false)
@@ -104,6 +105,12 @@ export function ChecklistView({ aircraft, onBack, onCycleTheme, theme }: Props) 
     contentRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
   }, [activePhaseId])
 
+  // Reset phase selection when active profile changes (phase IDs differ between profile and original)
+  useEffect(() => {
+    const first = normalPhases[0]
+    if (first) selectPhase(first.id)
+  }, [profiles.activeProfile?.id]) // eslint-disable-line react-hooks/exhaustive-deps
+
   // ── Edit mode helpers ──────────────────────────────────────────────────────
 
   const enterEditMode = useCallback(() => {
@@ -120,11 +127,14 @@ export function ChecklistView({ aircraft, onBack, onCycleTheme, theme }: Props) 
   const handleSave = useCallback(async () => {
     if (!profiles.activeProfile) return
     setSaving(true)
+    setSaveError(null)
     try {
       await editor.save(profiles.activeProfile.id)
       const freshProfiles = await profiles.fetchProfiles()
       const freshProfile = freshProfiles.find(p => p.id === profiles.activeProfile!.id)
       if (freshProfile) editor.load(freshProfile.phases)
+    } catch (err) {
+      setSaveError(err instanceof Error ? err.message : 'Save failed. Please try again.')
     } finally {
       setSaving(false)
     }
@@ -146,18 +156,18 @@ export function ChecklistView({ aircraft, onBack, onCycleTheme, theme }: Props) 
   const handleSaveAsConfirm = useCallback(async (name: string) => {
     setShowSaveAs(false)
     if (saveAsSource === 'original') {
-      // Copying from original aircraft data — returns fresh Profile[] so we don't read stale state
+      // Copying from original aircraft data — new profile was just activated, find by is_active
       const freshProfiles = await profiles.createFromAircraft(aircraft, name)
-      const newProfile = freshProfiles.find(p => p.name === name)
+      const newProfile = freshProfiles.find(p => p.is_active)
       if (newProfile) {
         editor.load(newProfile.phases)
         setEditMode(true)
       }
     } else {
-      // Copying from current profile
+      // Copying from current profile — new profile was just activated, find by is_active
       if (!profiles.activeProfile) return
       const freshProfiles = await profiles.createFromProfile(profiles.activeProfile, name)
-      const newProfile = freshProfiles.find(p => p.name === name)
+      const newProfile = freshProfiles.find(p => p.is_active)
       if (newProfile) {
         editor.load(newProfile.phases)
         setEditMode(true)
@@ -498,6 +508,18 @@ export function ChecklistView({ aircraft, onBack, onCycleTheme, theme }: Props) 
           confirmClass="text-red-400 border-red-500/30 bg-red-500/10 hover:bg-red-500/20"
           onConfirm={handleDiscardConfirm}
           onCancel={() => { setShowDiscardConfirm(false); setPendingBack(false); setPendingProfileId(undefined) }}
+        />
+      )}
+
+      {/* Save error */}
+      {saveError && (
+        <ConfirmModal
+          title="Save Failed"
+          body={saveError}
+          confirmLabel="OK"
+          confirmClass="text-cockpit-amber border-cockpit-amber/40 bg-cockpit-amber/15 hover:bg-cockpit-amber/25"
+          onConfirm={() => setSaveError(null)}
+          onCancel={() => setSaveError(null)}
         />
       )}
 
