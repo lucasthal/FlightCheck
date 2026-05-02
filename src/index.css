@@ -51,6 +51,10 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+  /* Prevent iOS Safari auto-zoom on input focus (triggers when font-size < 16px) */
+  @supports (-webkit-touch-callout: none) {
+    input, select, textarea { font-size: 16px !important; }
+  }
   body {
     @apply bg-cockpit-bg text-cockpit-text-primary font-sans;
     min-height: 100dvh;

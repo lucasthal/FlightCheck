@@ -7,7 +7,7 @@ import {
   SortableContext, useSortable, verticalListSortingStrategy, arrayMove,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { GripVertical, Pencil, Trash2, Plus, Check, X } from 'lucide-react'
+import { GripVertical, Pencil, Trash2, Plus, Check, X, ChevronDown, ChevronRight } from 'lucide-react'
 import type { ProfilePhase, ProfileItem, PhaseCategory } from '../types'
 import type { useProfileEditor } from '../hooks/useProfileEditor'
 
@@ -171,6 +171,7 @@ function SortablePhaseSection({ phase, editor }: { phase: ProfilePhase; editor: 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: phase.id })
   const [editingTitle, setEditingTitle] = useState(false)
   const [titleDraft, setTitleDraft] = useState(phase.title)
+  const [collapsed, setCollapsed] = useState(false)
   const itemIds = phase.items.map(i => i.id)
 
   const commitTitle = () => {
@@ -197,6 +198,17 @@ function SortablePhaseSection({ phase, editor }: { phase: ProfilePhase; editor: 
           <GripVertical className="w-4 h-4" />
         </button>
 
+        <button
+          onClick={() => setCollapsed(c => !c)}
+          aria-label={collapsed ? 'Expand phase' : 'Collapse phase'}
+          className="p-0.5 text-cockpit-text-dim hover:text-cockpit-text-secondary transition-colors"
+        >
+          {collapsed
+            ? <ChevronRight className="w-4 h-4" />
+            : <ChevronDown className="w-4 h-4" />
+          }
+        </button>
+
         {editingTitle ? (
           <input
             value={titleDraft}
@@ -208,7 +220,14 @@ function SortablePhaseSection({ phase, editor }: { phase: ProfilePhase; editor: 
                        text-cockpit-text-primary text-sm font-semibold focus:outline-none"
           />
         ) : (
-          <span className="flex-1 text-sm font-semibold text-cockpit-text-primary">{phase.title}</span>
+          <span className="flex-1 text-sm font-semibold text-cockpit-text-primary">
+            {phase.title}
+            {collapsed && (
+              <span className="ml-2 text-xs font-normal text-cockpit-text-dim">
+                {phase.items.length} items
+              </span>
+            )}
+          </span>
         )}
 
         <button
@@ -228,24 +247,26 @@ function SortablePhaseSection({ phase, editor }: { phase: ProfilePhase; editor: 
       </div>
 
       {/* Items */}
-      <div className="bg-cockpit-card/40 border border-cockpit-border/40 rounded-xl overflow-hidden">
-        <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
-          {phase.items.map((item, idx) => (
-            <SortableItemRow key={item.id} item={item} index={idx} phaseId={phase.id} editor={editor} />
-          ))}
-        </SortableContext>
+      {!collapsed && (
+        <div className="bg-cockpit-card/40 border border-cockpit-border/40 rounded-xl overflow-hidden">
+          <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
+            {phase.items.map((item, idx) => (
+              <SortableItemRow key={item.id} item={item} index={idx} phaseId={phase.id} editor={editor} />
+            ))}
+          </SortableContext>
 
-        {/* Add item */}
-        <button
-          onClick={() => editor.addItem(phase.id, { action: 'New item' })}
-          className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-cockpit-text-dim
-                     hover:bg-cockpit-card hover:text-cockpit-text-secondary border-t border-cockpit-border/30
-                     transition-colors"
-        >
-          <Plus className="w-3.5 h-3.5" />
-          Add item
-        </button>
-      </div>
+          {/* Add item */}
+          <button
+            onClick={() => editor.addItem(phase.id, { action: 'New item' })}
+            className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-cockpit-text-dim
+                       hover:bg-cockpit-card hover:text-cockpit-text-secondary border-t border-cockpit-border/30
+                       transition-colors"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            Add item
+          </button>
+        </div>
+      )}
     </div>
   )
 }
