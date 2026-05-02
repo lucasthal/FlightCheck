@@ -1,0 +1,186 @@
+import { useEffect, useState, useCallback } from 'react'
+import { supabase } from '../lib/supabase'
+import { useAuth } from './useAuth'
+import type { Aircraft, PhaseCategory, ItemSeverity, Profile, ProfilePhase, ProfileItem } from '../types'
+
+type RawItem = {
+  id: string; action: string; response: string | null; note: string | null
+  severity: string | null; position: number
+}
+type RawPhase = {
+  id: string; title: string; category: string; position: number
+  profile_items: RawItem[]
+}
+type RawProfile = {
+  id: string; name: string; aircraft_id: string; is_active: boolean
+  profile_phases: RawPhase[]
+}
+
+function mapProfile(raw: RawProfile): Profile {
+  return {
+    id: raw.id,
+    name: raw.name,
+    aircraft_id: raw.aircraft_id,
+    is_active: raw.is_active,
+    phases: (raw.profile_phases ?? [])
+      .sort((a, b) => a.position - b.position)
+      .map((ph): ProfilePhase => ({
+        id: ph.id,
+        title: ph.title,
+        category: ph.category as PhaseCategory,
+        position: ph.position,
+        items: (ph.profile_items ?? [])
+          .sort((a, b) => a.position - b.position)
+          .map((i): ProfileItem => ({
+            id: i.id,
+            action: i.action,
+            response: i.response ?? undefined,
+            note: i.note ?? undefined,
+            severity: (i.severity as ItemSeverity) ?? undefined,
+            position: i.position,
+          })),
+      })),
+  }
+}
+
+const PROFILE_SELECT = `
+  id, name, aircraft_id, is_active,
+  profile_phases (
+    id, title, category, position,
+    profile_items ( id, action, response, note, severity, position )
+  )
+`
+
+export function useProfiles(aircraftId: string) {
+  const { user } = useAuth()
+  const [profiles, setProfiles] = useState<Profile[]>([])
+  const [loading, setLoading] = useState(false)
+
+  const fetchProfiles = useCallback(async (): Promise<Profile[]> => {
+    if (!user) { setProfiles([]); return [] }
+    setLoading(true)
+    try {
+      const { data, error } = await supabase
+        .from('checklist_profiles')
+        .select(PROFILE_SELECT)
+        .eq('user_id', user.id)
+        .eq('aircraft_id', aircraftId)
+        .order('created_at')
+      if (error) throw error
+      const mapped = (data as RawProfile[] ?? []).map(mapProfile)
+      setProfiles(mapped)
+      return mapped
+    } finally {
+      setLoading(false)
+    }
+  }, [user, aircraftId])
+
+  useEffect(() => { fetchProfiles() }, [fetchProfiles])
+
+  const createFromAircraft = useCallback(async (aircraft: Aircraft, name: string): Promise<Profile[]> => {
+    if (!user) throw new Error('Not authenticated')
+
+    const { data: profileData, error: profileError } = await supabase
+      .from('checklist_profiles')
+      .insert({ user_id: user.id, aircraft_id: aircraftId, name, is_active: false })
+      .select('id')
+      .single()
+    if (profileError) throw profileError
+
+    const phases = [...aircraft.phases].sort((a, b) => {
+      const aEmerg = a.category === 'emergency' ? 1 : 0
+      const bEmerg = b.category === 'emergency' ? 1 : 0
+      return aEmerg - bEmerg
+    })
+
+    for (let i = 0; i < phases.length; i++) {
+      const phase = phases[i]
+      const { data: phaseData, error: phaseError } = await supabase
+        .from('profile_phases')
+        .insert({ profile_id: profileData.id, position: i, title: phase.name, category: phase.category })
+        .select('id')
+        .single()
+      if (phaseError) throw phaseError
+
+      if (phase.items.length > 0) {
+        const { error: itemError } = await supabase.from('profile_items').insert(
+          phase.items.map((item, j) => ({
+            phase_id: phaseData.id, position: j,
+            action: item.action,
+            response: item.response ?? null,
+            note: item.note ?? null,
+            severity: item.severity ?? null,
+          }))
+        )
+        if (itemError) throw itemError
+      }
+    }
+
+    await supabase.rpc('activate_profile', { p_profile_id: profileData.id })
+    return fetchProfiles()
+  }, [user, aircraftId, fetchProfiles])
+
+  const createFromProfile = useCallback(async (source: Profile, name: string): Promise<Profile[]> => {
+    if (!user) throw new Error('Not authenticated')
+
+    const { data: profileData, error: profileError } = await supabase
+      .from('checklist_profiles')
+      .insert({ user_id: user.id, aircraft_id: aircraftId, name, is_active: false })
+      .select('id')
+      .single()
+    if (profileError) throw profileError
+
+    for (const phase of source.phases) {
+      const { data: phaseData, error: phaseError } = await supabase
+        .from('profile_phases')
+        .insert({ profile_id: profileData.id, position: phase.position, title: phase.title, category: phase.category })
+        .select('id')
+        .single()
+      if (phaseError) throw phaseError
+
+      if (phase.items.length > 0) {
+        const { error: itemError } = await supabase.from('profile_items').insert(
+          phase.items.map(item => ({
+            phase_id: phaseData.id, position: item.position,
+            action: item.action,
+            response: item.response ?? null,
+            note: item.note ?? null,
+            severity: item.severity ?? null,
+          }))
+        )
+        if (itemError) throw itemError
+      }
+    }
+
+    await supabase.rpc('activate_profile', { p_profile_id: profileData.id })
+    return fetchProfiles()
+  }, [user, aircraftId, fetchProfiles])
+
+  const deleteProfile = useCallback(async (profileId: string): Promise<void> => {
+    await supabase.from('checklist_profiles').delete().eq('id', profileId)
+    await fetchProfiles()
+  }, [fetchProfiles])
+
+  const renameProfile = useCallback(async (profileId: string, name: string): Promise<void> => {
+    await supabase.from('checklist_profiles').update({ name }).eq('id', profileId)
+    await fetchProfiles()
+  }, [fetchProfiles])
+
+  const setActive = useCallback(async (profileId: string | null): Promise<void> => {
+    if (!user) return
+    if (profileId === null) {
+      await supabase
+        .from('checklist_profiles')
+        .update({ is_active: false })
+        .eq('user_id', user.id)
+        .eq('aircraft_id', aircraftId)
+    } else {
+      await supabase.rpc('activate_profile', { p_profile_id: profileId })
+    }
+    await fetchProfiles()
+  }, [user, aircraftId, fetchProfiles])
+
+  const activeProfile = profiles.find(p => p.is_active) ?? null
+
+  return { profiles, activeProfile, loading, fetchProfiles, createFromAircraft, createFromProfile, deleteProfile, renameProfile, setActive }
+}
