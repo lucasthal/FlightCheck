@@ -66,4 +66,29 @@ export interface ChecklistState {
   completedPhases: string[]
 }
 
+export interface ProfileItem {
+  id: string
+  action: string
+  response?: string
+  note?: string
+  severity?: ItemSeverity
+  position: number
+}
+
+export interface ProfilePhase {
+  id: string
+  title: string
+  category: PhaseCategory
+  position: number
+  items: ProfileItem[]
+}
+
+export interface Profile {
+  id: string
+  name: string
+  aircraft_id: string
+  is_active: boolean
+  phases: ProfilePhase[]
+}
+
 export type ViewMode = 'home' | 'checklist' | 'emergency'
