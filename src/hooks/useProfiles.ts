@@ -55,10 +55,12 @@ export function useProfiles(aircraftId: string) {
   const { user } = useAuth()
   const [profiles, setProfiles] = useState<Profile[]>([])
   const [loading, setLoading] = useState(false)
+  const [fetchError, setFetchError] = useState<Error | null>(null)
 
   const fetchProfiles = useCallback(async (): Promise<Profile[]> => {
     if (!user) { setProfiles([]); return [] }
     setLoading(true)
+    setFetchError(null)
     try {
       const { data, error } = await supabase
         .from('checklist_profiles')
@@ -67,9 +69,12 @@ export function useProfiles(aircraftId: string) {
         .eq('aircraft_id', aircraftId)
         .order('created_at')
       if (error) throw error
-      const mapped = (data as RawProfile[] ?? []).map(mapProfile)
+      const mapped = ((data ?? []) as RawProfile[]).map(mapProfile)
       setProfiles(mapped)
       return mapped
+    } catch (err) {
+      setFetchError(err instanceof Error ? err : new Error(String(err)))
+      throw err
     } finally {
       setLoading(false)
     }
@@ -116,7 +121,8 @@ export function useProfiles(aircraftId: string) {
       }
     }
 
-    await supabase.rpc('activate_profile', { p_profile_id: profileData.id })
+    const { error: rpcError } = await supabase.rpc('activate_profile', { p_profile_id: profileData.id })
+    if (rpcError) throw rpcError
     return fetchProfiles()
   }, [user, aircraftId, fetchProfiles])
 
@@ -152,17 +158,20 @@ export function useProfiles(aircraftId: string) {
       }
     }
 
-    await supabase.rpc('activate_profile', { p_profile_id: profileData.id })
+    const { error: rpcError } = await supabase.rpc('activate_profile', { p_profile_id: profileData.id })
+    if (rpcError) throw rpcError
     return fetchProfiles()
   }, [user, aircraftId, fetchProfiles])
 
   const deleteProfile = useCallback(async (profileId: string): Promise<void> => {
-    await supabase.from('checklist_profiles').delete().eq('id', profileId)
+    const { error } = await supabase.from('checklist_profiles').delete().eq('id', profileId)
+    if (error) throw error
     await fetchProfiles()
   }, [fetchProfiles])
 
   const renameProfile = useCallback(async (profileId: string, name: string): Promise<void> => {
-    await supabase.from('checklist_profiles').update({ name }).eq('id', profileId)
+    const { error } = await supabase.from('checklist_profiles').update({ name }).eq('id', profileId)
+    if (error) throw error
     await fetchProfiles()
   }, [fetchProfiles])
 
@@ -175,12 +184,13 @@ export function useProfiles(aircraftId: string) {
         .eq('user_id', user.id)
         .eq('aircraft_id', aircraftId)
     } else {
-      await supabase.rpc('activate_profile', { p_profile_id: profileId })
+      const { error: rpcError } = await supabase.rpc('activate_profile', { p_profile_id: profileId })
+      if (rpcError) throw rpcError
     }
     await fetchProfiles()
   }, [user, aircraftId, fetchProfiles])
 
   const activeProfile = profiles.find(p => p.is_active) ?? null
 
-  return { profiles, activeProfile, loading, fetchProfiles, createFromAircraft, createFromProfile, deleteProfile, renameProfile, setActive }
+  return { profiles, activeProfile, loading, fetchError, fetchProfiles, createFromAircraft, createFromProfile, deleteProfile, renameProfile, setActive }
 }
