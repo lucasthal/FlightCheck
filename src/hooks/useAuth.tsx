@@ -2,11 +2,16 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from '
 import type { User, AuthError } from '@supabase/supabase-js'
 import { supabase } from '../lib/supabase'
 
+interface SignUpResult {
+  error: AuthError | null
+  needsConfirmation: boolean  // true = email sent, user must confirm before signing in
+}
+
 interface AuthContextValue {
   user: User | null
   loading: boolean
   signIn: (email: string, password: string) => Promise<AuthError | null>
-  signUp: (email: string, password: string, displayName: string) => Promise<AuthError | null>
+  signUp: (email: string, password: string, displayName: string) => Promise<SignUpResult>
   signOut: () => Promise<void>
   signInWithGoogle: () => Promise<void>
   resetPassword: (email: string) => Promise<AuthError | null>
@@ -32,8 +37,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return error
   }
 
-  const signUp = async (email: string, password: string, displayName: string): Promise<AuthError | null> => {
-    const { error } = await supabase.auth.signUp({
+  const signUp = async (email: string, password: string, displayName: string): Promise<SignUpResult> => {
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -41,7 +46,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         emailRedirectTo: window.location.origin,
       },
     })
-    return error
+    // session is null when email confirmation is required; non-null means auto-confirm is on
+    return { error, needsConfirmation: !error && !data.session }
   }
 
   const signOut = async () => {

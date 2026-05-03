@@ -35,10 +35,11 @@ export function LoginScreen() {
     }
 
     if (mode === 'signup') {
-      const err = await signUp(email, password, displayName)
+      const { error: err, needsConfirmation } = await signUp(email, password, displayName)
       setSubmitting(false)
       if (err) setError(err.message)
-      else setSignUpEmail(email)
+      else if (needsConfirmation) setSignUpEmail(email)
+      // if !needsConfirmation, auto-confirm is on — onAuthStateChange will sign the user in automatically
       return
     }
 
