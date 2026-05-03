@@ -136,7 +136,9 @@ function ChecklistItemRow({ item, index, checked, onToggle }: RowProps) {
             <button
               onClick={e => { e.stopPropagation(); setNoteOpen(v => !v) }}
               className={`mt-2 flex items-center gap-1 text-xs font-medium transition-colors
-                ${noteOpen ? 'text-cockpit-blue' : 'text-cockpit-text-dim hover:text-cockpit-text-secondary'}`}
+                ${noteOpen
+                  ? isCaution ? 'text-yellow-500' : 'text-cockpit-blue'
+                  : 'text-cockpit-text-dim hover:text-cockpit-text-secondary'}`}
             >
               <Info className="w-3.5 h-3.5" />
               {noteOpen ? 'Hide note' : 'Show note'}
@@ -146,7 +148,10 @@ function ChecklistItemRow({ item, index, checked, onToggle }: RowProps) {
 
           {/* Note content */}
           {hasNote && noteOpen && (
-            <div className="mt-2 px-3 py-2 rounded-lg bg-cockpit-blue/10 border border-cockpit-blue/20 text-xs text-cockpit-text-secondary leading-relaxed animate-fade-in">
+            <div className={`mt-2 px-3 py-2 rounded-lg text-xs leading-relaxed animate-fade-in
+              ${isCaution
+                ? 'bg-yellow-500/10 border border-yellow-500/20 text-yellow-200'
+                : 'bg-cockpit-blue/10 border border-cockpit-blue/20 text-cockpit-text-secondary'}`}>
               {item.note}
             </div>
           )}
