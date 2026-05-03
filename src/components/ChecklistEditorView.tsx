@@ -364,7 +364,8 @@ function SortableItemRow({ item, index, phaseId, editor }: { item: ProfileItem; 
               <button
                 onClick={openNote}
                 className="text-xs whitespace-nowrap flex-shrink-0 px-2 py-0.5 rounded-md transition-colors
-                  text-cockpit-text-dim hover:text-yellow-400 hover:bg-yellow-500/10"
+                  text-cockpit-text-secondary border border-cockpit-border/50
+                  hover:text-yellow-400 hover:border-yellow-500/30 hover:bg-yellow-500/10"
               >
                 Add note
               </button>
