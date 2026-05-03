@@ -13,6 +13,7 @@ export function LoginScreen() {
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [resetSent, setResetSent] = useState(false)
+  const [signUpEmail, setSignUpEmail] = useState<string | null>(null)
 
   const switchMode = (next: Mode) => {
     setMode(next)
@@ -33,10 +34,15 @@ export function LoginScreen() {
       return
     }
 
-    const err = mode === 'signin'
-      ? await signIn(email, password)
-      : await signUp(email, password, displayName)
+    if (mode === 'signup') {
+      const err = await signUp(email, password, displayName)
+      setSubmitting(false)
+      if (err) setError(err.message)
+      else setSignUpEmail(email)
+      return
+    }
 
+    const err = await signIn(email, password)
     setSubmitting(false)
     if (err) setError(err.message)
   }
@@ -45,6 +51,48 @@ export function LoginScreen() {
     text-cockpit-text-primary text-sm placeholder-cockpit-text-dim
     focus:outline-none focus:border-cockpit-amber/50 focus:ring-2 focus:ring-cockpit-amber/10
     transition-all duration-150`
+
+  if (signUpEmail) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-cockpit-bg px-4">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(245,158,11,0.06),transparent_60%)]" />
+        <div className="relative w-full max-w-sm">
+          <div className="flex items-center gap-3 mb-8 justify-center">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-cockpit-amber to-orange-500 flex items-center justify-center shadow-amber-glow">
+              <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3,15 C5,15 7,12 10,9 L14,15 L22,5" />
+              </svg>
+            </div>
+            <h1 className="text-2xl font-bold text-cockpit-text-primary tracking-tight">
+              Flight<span className="text-cockpit-amber">Check</span>
+            </h1>
+          </div>
+          <div className="bg-cockpit-panel border border-cockpit-border rounded-2xl p-6 shadow-cockpit text-center">
+            <div className="w-12 h-12 rounded-full bg-cockpit-amber/10 border border-cockpit-amber/30 flex items-center justify-center mx-auto mb-4">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-6 h-6 text-cockpit-amber">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <h2 className="text-lg font-semibold text-cockpit-text-primary mb-2">Check your email</h2>
+            <p className="text-sm text-cockpit-text-secondary mb-1">
+              We sent a confirmation link to
+            </p>
+            <p className="text-sm font-medium text-cockpit-amber mb-4">{signUpEmail}</p>
+            <p className="text-xs text-cockpit-text-dim mb-5">
+              Click the link in the email to activate your account, then return here to sign in.
+            </p>
+            <button
+              onClick={() => { setSignUpEmail(null); switchMode('signin') }}
+              className="w-full py-2.5 rounded-xl bg-cockpit-amber text-black font-semibold text-sm
+                hover:bg-amber-400 transition-colors"
+            >
+              Back to Sign In
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-cockpit-bg px-4">
