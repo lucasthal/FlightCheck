@@ -1,4 +1,4 @@
-export type ItemSeverity = 'normal' | 'warning' | 'caution' | 'note'
+export type ItemSeverity = 'normal' | 'warning' | 'caution' | 'note' | 'setup'
 
 export interface ChecklistItem {
   id: string

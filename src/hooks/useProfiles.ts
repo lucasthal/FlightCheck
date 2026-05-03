@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from './useAuth'
 import type { Aircraft, PhaseCategory, ItemSeverity, Profile, ProfilePhase, ProfileItem } from '../types'
+import { PROFILE_QUESTIONS } from '../data/profileQuestions'
 
 type RawItem = {
   id: string; action: string; response: string | null; note: string | null
@@ -82,7 +83,11 @@ export function useProfiles(aircraftId: string) {
 
   useEffect(() => { fetchProfiles() }, [fetchProfiles])
 
-  const createFromAircraft = useCallback(async (aircraft: Aircraft, name: string): Promise<Profile[]> => {
+  const createFromAircraft = useCallback(async (
+    aircraft: Aircraft,
+    name: string,
+    enabledQuestions: Record<string, boolean> = {},
+  ): Promise<Profile[]> => {
     if (!user) throw new Error('Not authenticated')
 
     const { data: profileData, error: profileError } = await supabase
@@ -98,7 +103,6 @@ export function useProfiles(aircraftId: string) {
       return aEmerg - bEmerg
     })
 
-    // Pre-assign UUIDs for both phases and items so we can batch-insert and build state locally
     const phaseRows = orderedPhases.map((phase, i) => ({
       id: crypto.randomUUID(),
       profile_id: profileData.id,
@@ -109,8 +113,22 @@ export function useProfiles(aircraftId: string) {
     const { error: phaseError } = await supabase.from('profile_phases').insert(phaseRows)
     if (phaseError) throw phaseError
 
-    const itemRows = orderedPhases.flatMap((phase, i) =>
-      phase.items.map((item, j) => ({
+    // Compute setup extras keyed by phase index
+    const phaseExtras: Record<number, Array<{ action: string; response: string }>> = {}
+    for (const question of PROFILE_QUESTIONS) {
+      if (!enabledQuestions[question.id]) continue
+      for (const inj of question.injections) {
+        let idx = orderedPhases.findIndex(p => p.category === inj.targetCategory)
+        if (idx === -1 && inj.fallbackCategory) idx = orderedPhases.findIndex(p => p.category === inj.fallbackCategory)
+        if (idx === -1) continue
+        if (!phaseExtras[idx]) phaseExtras[idx] = []
+        phaseExtras[idx].push({ action: inj.action, response: inj.response })
+      }
+    }
+
+    // Build per-phase item arrays with setup extras appended at end
+    const phaseItemArrays = orderedPhases.map((phase, i) => {
+      const base = phase.items.map((item, j) => ({
         id: crypto.randomUUID(),
         phase_id: phaseRows[i].id,
         position: j,
@@ -119,7 +137,19 @@ export function useProfiles(aircraftId: string) {
         note: item.note ?? null,
         severity: item.severity ?? null,
       }))
-    )
+      const extras = (phaseExtras[i] ?? []).map((extra, k) => ({
+        id: crypto.randomUUID(),
+        phase_id: phaseRows[i].id,
+        position: base.length + k,
+        action: extra.action,
+        response: extra.response,
+        note: null,
+        severity: 'setup' as const,
+      }))
+      return [...base, ...extras]
+    })
+
+    const itemRows = phaseItemArrays.flat()
     if (itemRows.length > 0) {
       const { error: itemError } = await supabase.from('profile_items').insert(itemRows)
       if (itemError) throw itemError
@@ -129,21 +159,22 @@ export function useProfiles(aircraftId: string) {
     if (rpcError) throw rpcError
 
     // Build Profile from local data — no extra fetch round trip needed
-    let itemOffset = 0
     const newProfile: Profile = {
       id: profileData.id, name, aircraft_id: aircraftId, is_active: true,
-      phases: phaseRows.map((phaseRow, i) => {
-        const phaseItems = orderedPhases[i].items.map((item, j) => ({
-          id: itemRows[itemOffset + j].id,
-          action: item.action,
-          response: item.response ?? undefined,
-          note: item.note ?? undefined,
-          severity: (item.severity as ItemSeverity) ?? undefined,
+      phases: phaseRows.map((phaseRow, i) => ({
+        id: phaseRow.id,
+        title: phaseRow.title,
+        category: phaseRow.category as PhaseCategory,
+        position: phaseRow.position,
+        items: phaseItemArrays[i].map((row, j) => ({
+          id: row.id,
+          action: row.action,
+          response: row.response ?? undefined,
+          note: row.note ?? undefined,
+          severity: (row.severity as ItemSeverity) ?? undefined,
           position: j,
-        }))
-        itemOffset += orderedPhases[i].items.length
-        return { id: phaseRow.id, title: phaseRow.title, category: phaseRow.category as PhaseCategory, position: phaseRow.position, items: phaseItems }
-      }),
+        })),
+      })),
     }
     const updated = [...profiles.map(p => ({ ...p, is_active: false })), newProfile]
     setProfiles(updated)

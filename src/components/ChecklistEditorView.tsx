@@ -7,7 +7,7 @@ import {
   SortableContext, useSortable, verticalListSortingStrategy, arrayMove,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { GripVertical, Pencil, Trash2, Plus, Check, X, ChevronDown, ChevronRight } from 'lucide-react'
+import { GripVertical, Pencil, Trash2, Plus, Check, X, ChevronDown, ChevronRight, Sparkles } from 'lucide-react'
 import type { ProfilePhase, ProfileItem, PhaseCategory } from '../types'
 import type { useProfileEditor } from '../hooks/useProfileEditor'
 
@@ -326,6 +326,9 @@ function SortableItemRow({ item, index, phaseId, editor }: { item: ProfileItem; 
           <span className="flex-1 text-sm text-cockpit-text-primary leading-snug min-w-0 truncate">
             {item.action}
           </span>
+          {item.severity === 'setup' && (
+            <span title="Added by setup wizard"><Sparkles className="w-3.5 h-3.5 text-cockpit-blue flex-shrink-0" /></span>
+          )}
           <button
             onClick={() => { setDraft(item.action); setEditing(true) }}
             aria-label={`Edit item ${item.action}`}

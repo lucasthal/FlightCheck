@@ -8,6 +8,7 @@ import { ChecklistItems } from './ChecklistItems'
 import { EmergencyPanel } from './EmergencyPanel'
 import { ProfilePicker } from './ProfilePicker'
 import { SaveAsDialog } from './SaveAsDialog'
+import { ProfileQuestionsDialog } from './ProfileQuestionsDialog'
 import { ChecklistEditorView } from './ChecklistEditorView'
 import {
   ArrowLeft, AlertTriangle, RotateCcw, Menu, X, CheckCircle2,
@@ -67,6 +68,8 @@ export function ChecklistView({ aircraft, onBack, onCycleTheme, theme }: Props) 
   const [saveError, setSaveError] = useState<string | null>(null)
   const [showSaveAs, setShowSaveAs] = useState(false)
   const [saveAsSource, setSaveAsSource] = useState<'original' | 'profile'>('original')
+  const [showQuestions, setShowQuestions] = useState(false)
+  const [pendingProfileName, setPendingProfileName] = useState<string | null>(null)
   const [showNewFlightConfirm, setShowNewFlightConfirm] = useState(false)
   const [showResetProfileConfirm, setShowResetProfileConfirm] = useState(false)
   const [showDiscardConfirm, setShowDiscardConfirm] = useState(false)
@@ -156,22 +159,43 @@ export function ChecklistView({ aircraft, onBack, onCycleTheme, theme }: Props) 
 
   const handleSaveAsConfirm = useCallback(async (name: string) => {
     setShowSaveAs(false)
+    if (saveAsSource === 'original') {
+      // Show questions dialog before creating from aircraft template
+      setPendingProfileName(name)
+      setShowQuestions(true)
+      return
+    }
+    // Copy existing profile — skip questions
     setCreating(true)
     try {
-      if (saveAsSource === 'original') {
-        const freshProfiles = await profiles.createFromAircraft(aircraft, name)
-        const newProfile = freshProfiles.find(p => p.is_active)
-        if (newProfile) { editor.load(newProfile.phases); setEditMode(true) }
-      } else {
-        if (!profiles.activeProfile) return
-        const freshProfiles = await profiles.createFromProfile(profiles.activeProfile, name)
-        const newProfile = freshProfiles.find(p => p.is_active)
-        if (newProfile) { editor.load(newProfile.phases); setEditMode(true) }
-      }
+      if (!profiles.activeProfile) return
+      const freshProfiles = await profiles.createFromProfile(profiles.activeProfile, name)
+      const newProfile = freshProfiles.find(p => p.is_active)
+      if (newProfile) { editor.load(newProfile.phases); setEditMode(true) }
     } finally {
       setCreating(false)
     }
-  }, [saveAsSource, profiles, aircraft, editor])
+  }, [saveAsSource, profiles, editor])
+
+  const handleQuestionsConfirm = useCallback(async (enabledQuestions: Record<string, boolean>) => {
+    setShowQuestions(false)
+    const name = pendingProfileName
+    setPendingProfileName(null)
+    if (!name) return
+    setCreating(true)
+    try {
+      const freshProfiles = await profiles.createFromAircraft(aircraft, name, enabledQuestions)
+      const newProfile = freshProfiles.find(p => p.is_active)
+      if (newProfile) { editor.load(newProfile.phases); setEditMode(true) }
+    } finally {
+      setCreating(false)
+    }
+  }, [pendingProfileName, profiles, aircraft, editor])
+
+  const handleQuestionsCancel = useCallback(() => {
+    setShowQuestions(false)
+    setPendingProfileName(null)
+  }, [])
 
   // Guard: back button while editing
   const handleBack = useCallback(() => {
@@ -528,6 +552,14 @@ export function ChecklistView({ aircraft, onBack, onCycleTheme, theme }: Props) 
           existingNames={profiles.profiles.map(p => p.name)}
           onSave={handleSaveAsConfirm}
           onCancel={() => setShowSaveAs(false)}
+        />
+      )}
+
+      {/* Profile setup questions (from-aircraft only) */}
+      {showQuestions && (
+        <ProfileQuestionsDialog
+          onConfirm={handleQuestionsConfirm}
+          onCancel={handleQuestionsCancel}
         />
       )}
 

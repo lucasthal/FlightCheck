@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { ChecklistPhase, ChecklistItem } from '../types'
-import { AlertTriangle, Info, ChevronDown } from 'lucide-react'
+import { AlertTriangle, Info, ChevronDown, Sparkles } from 'lucide-react'
 
 interface Props {
   phase: ChecklistPhase
@@ -37,6 +37,7 @@ function ChecklistItemRow({ item, index, checked, onToggle }: RowProps) {
   const hasNote = !!item.note
   const isWarning = item.severity === 'warning'
   const isCaution = item.severity === 'caution'
+  const isSetup = item.severity === 'setup'
 
   return (
     <div
@@ -48,13 +49,15 @@ function ChecklistItemRow({ item, index, checked, onToggle }: RowProps) {
           ? 'border-cockpit-amber/30 bg-cockpit-amber/5'
           : isCaution
           ? 'border-yellow-500/20 bg-yellow-500/5'
+          : isSetup
+          ? 'border-cockpit-blue/25 bg-cockpit-blue/5'
           : 'border-cockpit-border bg-cockpit-card/50 hover:border-cockpit-border hover:bg-cockpit-card'
         }
       `}
     >
       {/* Left severity stripe */}
-      {(isWarning || isCaution) && !checked && (
-        <div className={`absolute left-0 top-0 bottom-0 w-0.5 ${isWarning ? 'bg-cockpit-amber' : 'bg-yellow-500'}`} />
+      {(isWarning || isCaution || isSetup) && !checked && (
+        <div className={`absolute left-0 top-0 bottom-0 w-0.5 ${isWarning ? 'bg-cockpit-amber' : isCaution ? 'bg-yellow-500' : 'bg-cockpit-blue'}`} />
       )}
 
       <button
@@ -91,6 +94,9 @@ function ChecklistItemRow({ item, index, checked, onToggle }: RowProps) {
               }`}>
                 {item.action}
               </span>
+              {isSetup && !checked && (
+                <span title="Added by setup wizard"><Sparkles className="w-3 h-3 text-cockpit-blue flex-shrink-0 self-center" /></span>
+              )}
             </div>
 
             {/* Severity icon */}
