@@ -1,4 +1,7 @@
 import { cessna172 } from './aircraft/cessna172'
+import { cessna172m } from './aircraft/cessna172m'
+import { cessna172n } from './aircraft/cessna172n'
+import { cessna172p } from './aircraft/cessna172p'
 import { cessna152 } from './aircraft/cessna152'
 import { cessna182 } from './aircraft/cessna182'
 import { cessna208 } from './aircraft/cessna208'
@@ -24,6 +27,9 @@ export const allAircraft: Aircraft[] = [
   cessna152,
   piperWarrior,
   cessna172,
+  cessna172m,
+  cessna172n,
+  cessna172p,
   // Single Engine Piston — touring
   cessna182,
   piperArcher,
