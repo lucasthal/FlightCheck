@@ -29,7 +29,7 @@ export const PROFILE_QUESTIONS: ProfileQuestion[] = [
     label: 'GPS integrity check',
     description: 'Verifies GPS/RAIM availability before departure',
     injections: [{
-      targetCategory: 'runup',
+      targetCategory: 'startup',
       fallbackCategory: 'taxi',
       action: 'GPS integrity / RAIM',
       response: 'CHECKED',
@@ -40,7 +40,7 @@ export const PROFILE_QUESTIONS: ProfileQuestion[] = [
     label: 'Avionics configuration verification',
     description: 'Confirms FMS and avionics fields are configured for the flight',
     injections: [{
-      targetCategory: 'runup',
+      targetCategory: 'startup',
       fallbackCategory: 'taxi',
       action: 'Avionics / FMS configuration',
       response: 'VERIFIED',
