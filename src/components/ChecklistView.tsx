@@ -63,6 +63,7 @@ export function ChecklistView({ aircraft, onBack, onCycleTheme, theme }: Props) 
 
   const [editMode, setEditMode] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [creating, setCreating] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
   const [showSaveAs, setShowSaveAs] = useState(false)
   const [saveAsSource, setSaveAsSource] = useState<'original' | 'profile'>('original')
@@ -155,23 +156,20 @@ export function ChecklistView({ aircraft, onBack, onCycleTheme, theme }: Props) 
 
   const handleSaveAsConfirm = useCallback(async (name: string) => {
     setShowSaveAs(false)
-    if (saveAsSource === 'original') {
-      // Copying from original aircraft data — new profile was just activated, find by is_active
-      const freshProfiles = await profiles.createFromAircraft(aircraft, name)
-      const newProfile = freshProfiles.find(p => p.is_active)
-      if (newProfile) {
-        editor.load(newProfile.phases)
-        setEditMode(true)
+    setCreating(true)
+    try {
+      if (saveAsSource === 'original') {
+        const freshProfiles = await profiles.createFromAircraft(aircraft, name)
+        const newProfile = freshProfiles.find(p => p.is_active)
+        if (newProfile) { editor.load(newProfile.phases); setEditMode(true) }
+      } else {
+        if (!profiles.activeProfile) return
+        const freshProfiles = await profiles.createFromProfile(profiles.activeProfile, name)
+        const newProfile = freshProfiles.find(p => p.is_active)
+        if (newProfile) { editor.load(newProfile.phases); setEditMode(true) }
       }
-    } else {
-      // Copying from current profile — new profile was just activated, find by is_active
-      if (!profiles.activeProfile) return
-      const freshProfiles = await profiles.createFromProfile(profiles.activeProfile, name)
-      const newProfile = freshProfiles.find(p => p.is_active)
-      if (newProfile) {
-        editor.load(newProfile.phases)
-        setEditMode(true)
-      }
+    } finally {
+      setCreating(false)
     }
   }, [saveAsSource, profiles, aircraft, editor])
 
@@ -531,6 +529,15 @@ export function ChecklistView({ aircraft, onBack, onCycleTheme, theme }: Props) 
           onSave={handleSaveAsConfirm}
           onCancel={() => setShowSaveAs(false)}
         />
+      )}
+
+      {creating && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="flex flex-col items-center gap-3 bg-cockpit-panel border border-cockpit-border rounded-2xl px-8 py-6 shadow-cockpit">
+            <div className="w-8 h-8 border-2 border-cockpit-amber/30 border-t-cockpit-amber rounded-full animate-spin" />
+            <p className="text-sm text-cockpit-text-secondary">Creating profile…</p>
+          </div>
+        </div>
       )}
     </div>
   )

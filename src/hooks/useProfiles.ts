@@ -92,14 +92,14 @@ export function useProfiles(aircraftId: string) {
       .single()
     if (profileError) throw profileError
 
-    const phases = [...aircraft.phases].sort((a, b) => {
+    const orderedPhases = [...aircraft.phases].sort((a, b) => {
       const aEmerg = a.category === 'emergency' ? 1 : 0
       const bEmerg = b.category === 'emergency' ? 1 : 0
       return aEmerg - bEmerg
     })
 
-    // Pre-assign UUIDs so phases + items can be batch-inserted (2 round trips instead of 2N)
-    const phaseRows = phases.map((phase, i) => ({
+    // Pre-assign UUIDs for both phases and items so we can batch-insert and build state locally
+    const phaseRows = orderedPhases.map((phase, i) => ({
       id: crypto.randomUUID(),
       profile_id: profileData.id,
       position: i,
@@ -109,8 +109,9 @@ export function useProfiles(aircraftId: string) {
     const { error: phaseError } = await supabase.from('profile_phases').insert(phaseRows)
     if (phaseError) throw phaseError
 
-    const itemRows = phases.flatMap((phase, i) =>
+    const itemRows = orderedPhases.flatMap((phase, i) =>
       phase.items.map((item, j) => ({
+        id: crypto.randomUUID(),
         phase_id: phaseRows[i].id,
         position: j,
         action: item.action,
@@ -126,8 +127,28 @@ export function useProfiles(aircraftId: string) {
 
     const { error: rpcError } = await supabase.rpc('activate_profile', { p_profile_id: profileData.id })
     if (rpcError) throw rpcError
-    return fetchProfiles()
-  }, [user, aircraftId, fetchProfiles])
+
+    // Build Profile from local data — no extra fetch round trip needed
+    let itemOffset = 0
+    const newProfile: Profile = {
+      id: profileData.id, name, aircraft_id: aircraftId, is_active: true,
+      phases: phaseRows.map((phaseRow, i) => {
+        const phaseItems = orderedPhases[i].items.map((item, j) => ({
+          id: itemRows[itemOffset + j].id,
+          action: item.action,
+          response: item.response ?? undefined,
+          note: item.note ?? undefined,
+          severity: (item.severity as ItemSeverity) ?? undefined,
+          position: j,
+        }))
+        itemOffset += orderedPhases[i].items.length
+        return { id: phaseRow.id, title: phaseRow.title, category: phaseRow.category as PhaseCategory, position: phaseRow.position, items: phaseItems }
+      }),
+    }
+    const updated = [...profiles.map(p => ({ ...p, is_active: false })), newProfile]
+    setProfiles(updated)
+    return updated
+  }, [user, aircraftId, profiles])
 
   const createFromProfile = useCallback(async (source: Profile, name: string): Promise<Profile[]> => {
     if (!user) throw new Error('Not authenticated')
@@ -151,6 +172,7 @@ export function useProfiles(aircraftId: string) {
 
     const itemRows = source.phases.flatMap((phase, i) =>
       phase.items.map(item => ({
+        id: crypto.randomUUID(),
         phase_id: phaseRows[i].id,
         position: item.position,
         action: item.action,
@@ -166,8 +188,27 @@ export function useProfiles(aircraftId: string) {
 
     const { error: rpcError } = await supabase.rpc('activate_profile', { p_profile_id: profileData.id })
     if (rpcError) throw rpcError
-    return fetchProfiles()
-  }, [user, aircraftId, fetchProfiles])
+
+    let itemOffset = 0
+    const newProfile: Profile = {
+      id: profileData.id, name, aircraft_id: aircraftId, is_active: true,
+      phases: phaseRows.map((phaseRow, i) => {
+        const phaseItems = source.phases[i].items.map((item, j) => ({
+          id: itemRows[itemOffset + j].id,
+          action: item.action,
+          response: item.response,
+          note: item.note,
+          severity: item.severity,
+          position: item.position,
+        }))
+        itemOffset += source.phases[i].items.length
+        return { id: phaseRow.id, title: phaseRow.title, category: phaseRow.category as PhaseCategory, position: phaseRow.position, items: phaseItems }
+      }),
+    }
+    const updated = [...profiles.map(p => ({ ...p, is_active: false })), newProfile]
+    setProfiles(updated)
+    return updated
+  }, [user, aircraftId, profiles])
 
   const deleteProfile = useCallback(async (profileId: string): Promise<void> => {
     const { error } = await supabase.from('checklist_profiles').delete().eq('id', profileId)
