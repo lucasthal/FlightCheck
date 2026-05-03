@@ -7,7 +7,7 @@ import {
   SortableContext, useSortable, verticalListSortingStrategy, arrayMove,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { GripVertical, Pencil, Trash2, Plus, Check, X, ChevronDown, ChevronRight, Sparkles } from 'lucide-react'
+import { GripVertical, Pencil, Trash2, Plus, Check, X, ChevronDown, ChevronRight, Sparkles, AlertTriangle } from 'lucide-react'
 import type { ProfilePhase, ProfileItem, PhaseCategory } from '../types'
 import type { useProfileEditor } from '../hooks/useProfileEditor'
 
@@ -275,6 +275,26 @@ function SortableItemRow({ item, index, phaseId, editor }: { item: ProfileItem; 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id })
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(item.action)
+  const [noteOpen, setNoteOpen] = useState(false)
+  const [noteDraft, setNoteDraft] = useState('')
+
+  const openNote = () => {
+    setNoteDraft(item.note ?? '')
+    setNoteOpen(true)
+  }
+
+  const saveNote = () => {
+    const text = noteDraft.trim()
+    const patch: { note?: string; severity?: 'caution' } = { note: text || undefined }
+    if (text && !item.severity) patch.severity = 'caution'
+    if (!text && item.severity === 'caution') patch.severity = undefined
+    editor.updateItem(phaseId, item.id, patch)
+    setNoteOpen(false)
+  }
+
+  const cancelNote = () => {
+    setNoteOpen(false)
+  }
 
   const commitEdit = () => {
     const t = draft.trim()
@@ -284,67 +304,142 @@ function SortableItemRow({ item, index, phaseId, editor }: { item: ProfileItem; 
   }
 
   return (
-    <div
-      ref={setNodeRef}
-      style={{ transform: CSS.Transform.toString(transform), transition }}
-      className={`flex items-center gap-2 px-3 py-2.5 border-b border-cockpit-border/20 last:border-b-0
-                  bg-cockpit-card/30 ${isDragging ? 'opacity-50 z-50' : ''}`}
-    >
-      <button
-        {...attributes}
-        {...listeners}
-        aria-label="Drag to reorder item"
-        className="text-cockpit-text-dim hover:text-cockpit-text-secondary cursor-grab active:cursor-grabbing flex-shrink-0"
+    <>
+      <div
+        ref={setNodeRef}
+        style={{ transform: CSS.Transform.toString(transform), transition }}
+        className={`flex items-center gap-2 px-3 py-2.5 border-b border-cockpit-border/20 last:border-b-0
+                    bg-cockpit-card/30 ${isDragging ? 'opacity-50 z-50' : ''}
+                    ${item.note && !noteOpen ? 'border-l-2 border-l-yellow-500' : 'border-l-2 border-l-transparent'}`}
       >
-        <GripVertical className="w-4 h-4" />
-      </button>
+        <button
+          {...attributes}
+          {...listeners}
+          aria-label="Drag to reorder item"
+          className="text-cockpit-text-dim hover:text-cockpit-text-secondary cursor-grab active:cursor-grabbing flex-shrink-0"
+        >
+          <GripVertical className="w-4 h-4" />
+        </button>
 
-      <span className="text-xs font-mono text-cockpit-text-dim flex-shrink-0 w-5 text-right">
-        {String(index + 1).padStart(2, '0')}
-      </span>
+        <span className="text-xs font-mono text-cockpit-text-dim flex-shrink-0 w-5 text-right">
+          {String(index + 1).padStart(2, '0')}
+        </span>
 
-      {editing ? (
-        <>
-          <input
-            value={draft}
-            onChange={e => setDraft(e.target.value)}
-            onBlur={commitEdit}
-            onKeyDown={e => { if (e.key === 'Enter') commitEdit(); if (e.key === 'Escape') { setDraft(item.action); setEditing(false) } }}
+        {editing ? (
+          <>
+            <input
+              value={draft}
+              onChange={e => setDraft(e.target.value)}
+              onBlur={commitEdit}
+              onKeyDown={e => { if (e.key === 'Enter') commitEdit(); if (e.key === 'Escape') { setDraft(item.action); setEditing(false) } }}
+              autoFocus
+              className="flex-1 px-2 py-0.5 rounded-lg bg-cockpit-bg border border-cockpit-amber/50
+                         text-cockpit-text-primary text-sm focus:outline-none"
+            />
+            <button onClick={commitEdit} aria-label="Confirm edit" className="p-1 text-cockpit-amber">
+              <Check className="w-3.5 h-3.5" />
+            </button>
+            <button onClick={() => { setDraft(item.action); setEditing(false) }} aria-label="Cancel edit" className="p-1 text-cockpit-text-dim">
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </>
+        ) : (
+          <>
+            <span className="flex-1 text-sm text-cockpit-text-primary leading-snug min-w-0 truncate">
+              {item.action}
+            </span>
+            {item.severity === 'setup' && (
+              <span title="Added by setup wizard"><Sparkles className="w-3.5 h-3.5 text-cockpit-blue flex-shrink-0" /></span>
+            )}
+            {!noteOpen && (item.note ? (
+              <button
+                onClick={openNote}
+                className="text-xs whitespace-nowrap flex-shrink-0 px-2 py-0.5 rounded-md
+                           text-yellow-500 bg-yellow-500/10 border border-yellow-500/30
+                           hover:bg-yellow-500/20 transition-colors"
+              >
+                Edit note
+              </button>
+            ) : (
+              <button
+                onClick={openNote}
+                className="text-xs whitespace-nowrap flex-shrink-0 px-2 py-0.5 rounded-md transition-colors
+                  text-cockpit-text-dim hover:text-yellow-400 hover:bg-yellow-500/10"
+              >
+                Add note
+              </button>
+            ))}
+            <button
+              onClick={() => { setDraft(item.action); setEditing(true) }}
+              aria-label={`Edit item ${item.action}`}
+              className="p-1 rounded-lg text-cockpit-text-dim hover:text-cockpit-amber hover:bg-cockpit-bg transition-colors flex-shrink-0"
+            >
+              <Pencil className="w-3.5 h-3.5" />
+            </button>
+            <button
+              onClick={() => editor.deleteItem(phaseId, item.id)}
+              aria-label={`Delete item ${item.action}`}
+              className="p-1 rounded-lg text-cockpit-text-dim hover:text-red-400 hover:bg-cockpit-bg transition-colors flex-shrink-0"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
+          </>
+        )}
+      </div>
+
+      {/* Inline note textarea (open state) */}
+      {noteOpen && (
+        <div className="px-3 pb-2.5 pt-1">
+          <textarea
+            value={noteDraft}
+            onChange={e => setNoteDraft(e.target.value)}
+            placeholder="Add a note…"
             autoFocus
-            className="flex-1 px-2 py-0.5 rounded-lg bg-cockpit-bg border border-cockpit-amber/50
-                       text-cockpit-text-primary text-sm focus:outline-none"
+            rows={3}
+            className="w-full bg-cockpit-bg border border-yellow-500/30 rounded-lg px-3 py-2
+                       text-xs text-cockpit-text-primary placeholder-cockpit-text-dim
+                       focus:outline-none focus:border-yellow-500/60 resize-none"
           />
-          <button onClick={commitEdit} aria-label="Confirm edit" className="p-1 text-cockpit-amber">
-            <Check className="w-3.5 h-3.5" />
-          </button>
-          <button onClick={() => { setDraft(item.action); setEditing(false) }} aria-label="Cancel edit" className="p-1 text-cockpit-text-dim">
-            <X className="w-3.5 h-3.5" />
-          </button>
-        </>
-      ) : (
-        <>
-          <span className="flex-1 text-sm text-cockpit-text-primary leading-snug min-w-0 truncate">
-            {item.action}
-          </span>
-          {item.severity === 'setup' && (
-            <span title="Added by setup wizard"><Sparkles className="w-3.5 h-3.5 text-cockpit-blue flex-shrink-0" /></span>
-          )}
-          <button
-            onClick={() => { setDraft(item.action); setEditing(true) }}
-            aria-label={`Edit item ${item.action}`}
-            className="p-1 rounded-lg text-cockpit-text-dim hover:text-cockpit-amber hover:bg-cockpit-bg transition-colors flex-shrink-0"
-          >
-            <Pencil className="w-3.5 h-3.5" />
-          </button>
-          <button
-            onClick={() => editor.deleteItem(phaseId, item.id)}
-            aria-label={`Delete item ${item.action}`}
-            className="p-1 rounded-lg text-cockpit-text-dim hover:text-red-400 hover:bg-cockpit-bg transition-colors flex-shrink-0"
-          >
-            <Trash2 className="w-3.5 h-3.5" />
-          </button>
-        </>
+          <div className="flex gap-2 mt-1.5">
+            <button
+              onClick={saveNote}
+              className="text-xs px-3 py-1 rounded-md bg-yellow-500/15 border border-yellow-500/40
+                         text-yellow-500 font-semibold hover:bg-yellow-500/25 transition-colors"
+            >
+              Save
+            </button>
+            <button
+              onClick={cancelNote}
+              className="text-xs px-3 py-1 rounded-md border border-cockpit-border
+                         text-cockpit-text-dim hover:bg-white/5 transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
       )}
-    </div>
+
+      {/* Saved note display (closed state) */}
+      {item.note && !noteOpen && (
+        <div className="px-3 pb-2.5 pt-0.5">
+          <div className="bg-yellow-500/8 border border-yellow-500/20 rounded-lg px-3 py-2">
+            <div className="flex items-center gap-1 mb-1">
+              <AlertTriangle className="w-3 h-3 text-yellow-500" />
+              <span className="text-[9px] font-bold text-yellow-500 uppercase tracking-wider">Note</span>
+            </div>
+            <p className="text-[11px] text-yellow-200 leading-relaxed">{item.note}</p>
+            <button
+              onClick={() => editor.updateItem(phaseId, item.id, {
+                note: undefined,
+                ...(item.severity === 'caution' ? { severity: undefined } : {}),
+              })}
+              className="mt-1.5 text-[11px] text-cockpit-text-dim hover:text-red-400 transition-colors"
+            >
+              ✕ Remove note
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   )
 }
