@@ -67,7 +67,6 @@ export function ChecklistView({ aircraft, onBack, onCycleTheme, theme }: Props) 
   const [creating, setCreating] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
   const [showSaveAs, setShowSaveAs] = useState(false)
-  const [saveAsSource, setSaveAsSource] = useState<'original' | 'profile'>('original')
   const [showQuestions, setShowQuestions] = useState(false)
   const [pendingProfileName, setPendingProfileName] = useState<string | null>(null)
   const [showNewFlightConfirm, setShowNewFlightConfirm] = useState(false)
@@ -120,7 +119,6 @@ export function ChecklistView({ aircraft, onBack, onCycleTheme, theme }: Props) 
   const enterEditMode = useCallback(() => {
     if (!profiles.activeProfile) {
       // On original — must Save As first
-      setSaveAsSource('original')
       setShowSaveAs(true)
     } else {
       editor.load(profiles.activeProfile.phases)
@@ -146,7 +144,6 @@ export function ChecklistView({ aircraft, onBack, onCycleTheme, theme }: Props) 
   }, [profiles, editor])
 
   const handleSaveAsFromEditMode = useCallback(() => {
-    setSaveAsSource('profile')
     setShowSaveAs(true)
   }, [])
 
@@ -160,23 +157,22 @@ export function ChecklistView({ aircraft, onBack, onCycleTheme, theme }: Props) 
 
   const handleSaveAsConfirm = useCallback(async (name: string) => {
     setShowSaveAs(false)
-    if (saveAsSource === 'original') {
-      // Show questions dialog before creating from aircraft template
+    if (!profiles.activeProfile) {
+      // No active profile — creating from original aircraft template, show questions first
       setPendingProfileName(name)
       setShowQuestions(true)
       return
     }
-    // Copy existing profile — skip questions
+    // Has active profile — copying it, skip questions
     setCreating(true)
     try {
-      if (!profiles.activeProfile) return
       const freshProfiles = await profiles.createFromProfile(profiles.activeProfile, name)
       const newProfile = freshProfiles.find(p => p.is_active)
       if (newProfile) { editor.load(newProfile.phases); setEditMode(true) }
     } finally {
       setCreating(false)
     }
-  }, [saveAsSource, profiles, editor])
+  }, [profiles, editor])
 
   const handleQuestionsConfirm = useCallback(async (enabledQuestions: Record<string, boolean>) => {
     setShowQuestions(false)
@@ -276,7 +272,7 @@ export function ChecklistView({ aircraft, onBack, onCycleTheme, theme }: Props) 
                 profiles={profiles.profiles}
                 activeProfile={profiles.activeProfile}
                 onSelect={handleProfileSelect}
-                onSaveAs={() => { setSaveAsSource(profiles.activeProfile ? 'profile' : 'original'); setShowSaveAs(true) }}
+                onSaveAs={() => setShowSaveAs(true)}
                 onResetToOriginal={() => setShowResetProfileConfirm(true)}
                 disabled={editMode}
               />
@@ -549,7 +545,7 @@ export function ChecklistView({ aircraft, onBack, onCycleTheme, theme }: Props) 
       {/* Save As dialog */}
       {showSaveAs && (
         <SaveAsDialog
-          sourceProfileName={saveAsSource === 'profile' ? (profiles.activeProfile?.name ?? null) : null}
+          sourceProfileName={profiles.activeProfile?.name ?? null}
           existingNames={profiles.profiles.map(p => p.name)}
           onSave={handleSaveAsConfirm}
           onCancel={() => setShowSaveAs(false)}
