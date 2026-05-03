@@ -137,6 +137,7 @@ export function ChecklistView({ aircraft, onBack, onCycleTheme, theme }: Props) 
       const freshProfiles = await profiles.fetchProfiles()
       const freshProfile = freshProfiles.find(p => p.id === profiles.activeProfile!.id)
       if (freshProfile) editor.load(freshProfile.phases)
+      setEditMode(false)
     } catch (err) {
       setSaveError(err instanceof Error ? err.message : 'Save failed. Please try again.')
     } finally {
