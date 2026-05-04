@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from './useAuth'
 import type { Aircraft, PhaseCategory, ItemSeverity, Profile, ProfilePhase, ProfileItem } from '../types'
 import { PROFILE_QUESTIONS } from '../data/profileQuestions'
+import { setCache, getCache } from '../lib/offlineCache'
 
 type RawItem = {
   id: string; action: string; response: string | null; note: string | null
@@ -57,6 +58,7 @@ export function useProfiles(aircraftId: string) {
   const [profiles, setProfiles] = useState<Profile[]>([])
   const [loading, setLoading] = useState(false)
   const [fetchError, setFetchError] = useState<Error | null>(null)
+  const [isOffline, setIsOffline] = useState(false)
 
   const fetchProfiles = useCallback(async (): Promise<Profile[]> => {
     if (!user) { setProfiles([]); return [] }
@@ -72,10 +74,21 @@ export function useProfiles(aircraftId: string) {
       if (error) throw error
       const mapped = ((data ?? []) as RawProfile[]).map(mapProfile)
       setProfiles(mapped)
+      setIsOffline(false)
+      setCache(`flightcheck-profiles-${user.id}-${aircraftId}`, mapped)
       return mapped
     } catch (err) {
-      setFetchError(err instanceof Error ? err : new Error(String(err)))
-      throw err
+      const cached = getCache<Profile[]>(`flightcheck-profiles-${user.id}-${aircraftId}`)
+      if (cached) {
+        setProfiles(cached)
+        setIsOffline(true)
+        setLoading(false)
+        return cached
+      }
+      const error = err instanceof Error ? err : new Error(String(err))
+      setFetchError(new Error('No connection and no cached data available'))
+      setLoading(false)
+      throw error
     } finally {
       setLoading(false)
     }
@@ -89,6 +102,7 @@ export function useProfiles(aircraftId: string) {
     enabledQuestions: Record<string, boolean> = {},
   ): Promise<Profile[]> => {
     if (!user) throw new Error('Not authenticated')
+    if (!navigator.onLine) throw new Error('No connection — creating profiles requires internet')
 
     const { data: profileData, error: profileError } = await supabase
       .from('checklist_profiles')
@@ -178,11 +192,13 @@ export function useProfiles(aircraftId: string) {
     }
     const updated = [...profiles.map(p => ({ ...p, is_active: false })), newProfile]
     setProfiles(updated)
+    setCache(`flightcheck-profiles-${user.id}-${aircraftId}`, updated)
     return updated
   }, [user, aircraftId, profiles])
 
   const createFromProfile = useCallback(async (source: Profile, name: string): Promise<Profile[]> => {
     if (!user) throw new Error('Not authenticated')
+    if (!navigator.onLine) throw new Error('No connection — creating profiles requires internet')
 
     const { data: profileData, error: profileError } = await supabase
       .from('checklist_profiles')
@@ -238,16 +254,19 @@ export function useProfiles(aircraftId: string) {
     }
     const updated = [...profiles.map(p => ({ ...p, is_active: false })), newProfile]
     setProfiles(updated)
+    setCache(`flightcheck-profiles-${user.id}-${aircraftId}`, updated)
     return updated
   }, [user, aircraftId, profiles])
 
   const deleteProfile = useCallback(async (profileId: string): Promise<void> => {
+    if (!navigator.onLine) throw new Error('No connection — deleting profiles requires internet')
     const { error } = await supabase.from('checklist_profiles').delete().eq('id', profileId)
     if (error) throw error
     await fetchProfiles()
   }, [fetchProfiles])
 
   const renameProfile = useCallback(async (profileId: string, name: string): Promise<void> => {
+    if (!navigator.onLine) throw new Error('No connection — renaming profiles requires internet')
     const { error } = await supabase.from('checklist_profiles').update({ name }).eq('id', profileId)
     if (error) throw error
     await fetchProfiles()
@@ -255,6 +274,7 @@ export function useProfiles(aircraftId: string) {
 
   const setActive = useCallback(async (profileId: string | null): Promise<void> => {
     if (!user) return
+    if (!navigator.onLine) throw new Error('No connection — switching profiles requires internet')
     if (profileId === null) {
       await supabase
         .from('checklist_profiles')
@@ -270,5 +290,5 @@ export function useProfiles(aircraftId: string) {
 
   const activeProfile = profiles.find(p => p.is_active) ?? null
 
-  return { profiles, activeProfile, loading, fetchError, fetchProfiles, createFromAircraft, createFromProfile, deleteProfile, renameProfile, setActive }
+  return { profiles, activeProfile, loading, fetchError, isOffline, fetchProfiles, createFromAircraft, createFromProfile, deleteProfile, renameProfile, setActive }
 }
