@@ -92,3 +92,21 @@ export interface Profile {
 }
 
 export type ViewMode = 'home' | 'checklist' | 'emergency'
+
+// ── User Preferences ─────────────────────────────────────────────
+export type Theme    = 'dark' | 'night' | 'day'
+export type TextSize = 'sm' | 'md' | 'lg' | 'xl'
+
+export interface UserPreferences {
+  theme:               Theme
+  text_size:           TextSize
+  keep_screen_awake:   boolean
+  default_aircraft_id: string | null
+}
+
+export const DEFAULT_PREFERENCES: UserPreferences = {
+  theme:               'dark',
+  text_size:           'md',
+  keep_screen_awake:   false,
+  default_aircraft_id: null,
+}
