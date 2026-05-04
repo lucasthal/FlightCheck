@@ -89,9 +89,12 @@ function ChecklistItemRow({ item, index, checked, onToggle }: RowProps) {
               <span className={`text-xs font-mono flex-shrink-0 tabular-nums ${checked ? 'text-cockpit-text-dim' : 'text-cockpit-text-dim'}`}>
                 {String(index).padStart(2, '0')}
               </span>
-              <span className={`text-sm font-medium leading-snug transition-colors ${
-                checked ? 'text-cockpit-text-dim line-through decoration-cockpit-text-dim/50' : 'text-cockpit-text-primary'
-              }`}>
+              <span
+                className={`text-sm font-medium leading-snug transition-colors ${
+                  checked ? 'text-cockpit-text-dim line-through decoration-cockpit-text-dim/50' : 'text-cockpit-text-primary'
+                }`}
+                style={{ fontSize: 'calc(0.875rem * var(--text-scale))' }}
+              >
                 {item.action}
               </span>
               {isSetup && !checked && (
@@ -109,9 +112,12 @@ function ChecklistItemRow({ item, index, checked, onToggle }: RowProps) {
           {item.response && (
             <div className={`mt-1.5 flex items-start gap-1.5`}>
               <span className="text-xs text-cockpit-text-dim flex-shrink-0 font-mono mt-0.5">→</span>
-              <span className={`text-sm font-mono font-semibold tracking-tight ${
-                checked ? 'text-cockpit-green/70' : 'text-cockpit-amber'
-              }`}>
+              <span
+                className={`text-sm font-mono font-semibold tracking-tight ${
+                  checked ? 'text-cockpit-green/70' : 'text-cockpit-amber'
+                }`}
+                style={{ fontSize: 'calc(0.75rem * var(--text-scale))' }}
+              >
                 {item.response}
               </span>
             </div>

@@ -52,7 +52,10 @@ export function PhaseBanner({
 
         {/* Name + item count */}
         <div className="flex-1 min-w-0">
-          <div className="font-extrabold text-base text-cockpit-text-primary leading-tight truncate">
+          <div
+            className="font-extrabold text-base text-cockpit-text-primary leading-tight truncate"
+            style={{ fontSize: 'calc(1rem * var(--text-scale))' }}
+          >
             {phase.name}
           </div>
           <div className="font-mono text-xs mt-0.5 uppercase tracking-wide">
