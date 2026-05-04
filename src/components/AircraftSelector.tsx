@@ -218,7 +218,7 @@ export function AircraftSelector({ onSelect, onOpenSettings }: Props) {
           </div>
 
           {/* Stats bar */}
-          <div className="flex items-center gap-4 mt-4 mb-5">
+          <div className="flex items-center gap-4 mt-4 mb-5 overflow-x-auto scrollbar-none">
             {CATEGORIES.filter(c => c.key !== 'All').map(cat => {
               const count = categoryCount(cat.key)
               if (count === 0) return null

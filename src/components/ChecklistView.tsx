@@ -325,7 +325,7 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings }: Props) {
 
           {/* Progress badge */}
           {!editMode && (
-            <div className="flex-shrink-0 flex items-center gap-2">
+            <div className="flex-shrink-0 hidden sm:flex items-center gap-2">
               <div className={`text-xs font-mono font-semibold px-2.5 py-1 rounded-lg border ${
                 overallProgress === 100
                   ? 'bg-cockpit-green/10 border-cockpit-green/30 text-cockpit-green'
