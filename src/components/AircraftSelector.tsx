@@ -1,13 +1,14 @@
 import { useState, useRef, useEffect, memo, type ReactNode } from 'react'
 import { allAircraft, aircraftByCategory } from '../data'
 import type { Aircraft, AircraftCategory } from '../types'
-import { Search, Zap, Users, Gauge, ArrowUp, Star, LogOut, ChevronDown } from 'lucide-react'
+import { Search, Zap, Users, Gauge, ArrowUp, Star, LogOut, ChevronDown, Settings } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useFavorites } from '../hooks/useFavorites'
 import { FleetStrip } from './FleetStrip'
 
 interface Props {
   onSelect: (aircraft: Aircraft) => void
+  onOpenSettings: () => void
 }
 
 const CATEGORIES: { key: AircraftCategory | 'All'; label: string; emoji: string }[] = [
@@ -106,7 +107,7 @@ const AIRCRAFT_SILHOUETTE: Record<string, ReactNode> = {
   'robinson-r44-raven-ii': (<svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20"><rect x="18" y="18.5" width="36" height="3" rx="1.5"/><rect x="33.5" y="2" width="3" height="36" rx="1.5"/><ellipse cx="35" cy="20" rx="10" ry="7"/><rect x="44" y="18.5" width="28" height="3" rx="1"/><ellipse cx="72" cy="20" rx="2" ry="7"/></svg>),
 }
 
-export function AircraftSelector({ onSelect }: Props) {
+export function AircraftSelector({ onSelect, onOpenSettings }: Props) {
   const { user, signOut } = useAuth()
   const { favorites, toggle, isFavorite } = useFavorites()
   const [filter, setFilter] = useState<AircraftCategory | 'All'>('All')
@@ -205,6 +206,15 @@ export function AircraftSelector({ onSelect }: Props) {
                 </div>
               )}
             </div>
+
+            {/* Settings */}
+            <button
+              onClick={onOpenSettings}
+              aria-label="Open settings"
+              className="p-2 rounded-xl text-cockpit-text-secondary hover:text-cockpit-text-primary hover:bg-cockpit-card/50 transition-colors"
+            >
+              <Settings className="w-5 h-5" />
+            </button>
           </div>
 
           {/* Stats bar */}

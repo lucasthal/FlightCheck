@@ -12,7 +12,7 @@ import { ProfileQuestionsDialog } from './ProfileQuestionsDialog'
 import { ChecklistEditorView } from './ChecklistEditorView'
 import {
   ArrowLeft, AlertTriangle, RotateCcw, Menu, X, CheckCircle2,
-  Moon, Sun, Lightbulb, Pencil,
+  Pencil, Settings,
 } from 'lucide-react'
 import { PhaseBanner } from './PhaseBanner'
 import { PhaseStrip } from './PhaseStrip'
@@ -38,8 +38,7 @@ const CATEGORY_BORDER: Record<AircraftCategory, string> = {
 interface Props {
   aircraft: Aircraft
   onBack: () => void
-  onCycleTheme: () => void
-  theme: string
+  onOpenSettings: () => void
 }
 
 /** Convert ProfilePhase[] → ChecklistPhase[] so existing components work unchanged */
@@ -58,7 +57,7 @@ function profileToChecklistPhases(phases: import('../types').ProfilePhase[]): Ch
   }))
 }
 
-export function ChecklistView({ aircraft, onBack, onCycleTheme, theme }: Props) {
+export function ChecklistView({ aircraft, onBack, onOpenSettings }: Props) {
   const profiles = useProfiles(aircraft.id)
   const editor = useProfileEditor()
 
@@ -311,11 +310,13 @@ export function ChecklistView({ aircraft, onBack, onCycleTheme, theme }: Props) 
             </button>
           )}
 
-          {/* Theme toggle */}
-          <button onClick={onCycleTheme} className="p-2 rounded-xl hover:bg-white/5 text-cockpit-text-dim">
-            {theme === 'dark' && <Moon className="w-4 h-4" />}
-            {theme === 'night' && <Lightbulb className="w-4 h-4 text-amber-400" />}
-            {theme === 'day' && <Sun className="w-4 h-4 text-yellow-400" />}
+          {/* Settings */}
+          <button
+            onClick={onOpenSettings}
+            aria-label="Open settings"
+            className="p-2 rounded-xl text-cockpit-text-secondary hover:text-cockpit-text-primary hover:bg-cockpit-card/50 transition-colors"
+          >
+            <Settings className="w-5 h-5" />
           </button>
 
           {/* Mobile menu */}

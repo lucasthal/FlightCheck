@@ -68,11 +68,10 @@ function AppInner() {
         <ChecklistView
           aircraft={selectedAircraft}
           onBack={() => setSelectedAircraft(null)}
-          onCycleTheme={cycleTheme}
-          theme={theme}
+          onOpenSettings={() => {}}
         />
       ) : (
-        <AircraftSelector onSelect={setSelectedAircraft} />
+        <AircraftSelector onSelect={setSelectedAircraft} onOpenSettings={() => {}} />
       )}
     </>
   )
