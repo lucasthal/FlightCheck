@@ -35,8 +35,8 @@ export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
       .select('id, name')
       .eq('user_id', user.id)
       .order('created_at')
-      .then(({ data }) => {
-        if (data) setProfileList(data as { id: string; name: string }[])
+      .then(({ data, error }) => {
+        if (!error && data) setProfileList(data as { id: string; name: string }[])
       })
   }, [user?.id])
 

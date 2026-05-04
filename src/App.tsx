@@ -19,7 +19,7 @@ function AppInner() {
   const [selectedAircraft, setSelectedAircraft] = useState<Aircraft | null>(null)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const { user, loading } = useAuth()
-  const { preferences } = usePreferences(user)
+  usePreferences(user)
 
   if (loading) {
     return (
