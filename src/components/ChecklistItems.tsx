@@ -41,6 +41,7 @@ function ChecklistItemRow({ item, index, checked, onToggle }: RowProps) {
 
   return (
     <div
+      data-item-id={item.id}
       className={`
         relative rounded-lg border transition-all duration-150 overflow-hidden
         ${checked

@@ -95,6 +95,7 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings }: Props) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [activeTab, setActiveTab] = useState<'checklist' | 'reference'>('checklist')
   const contentRef = useRef<HTMLDivElement>(null)
+  const userScrolledRef = useRef(false)
 
   const normalPhases = activeAircraft.phases.filter(p => p.category !== 'emergency')
   const emergencyPhases = activeAircraft.phases.filter(p => p.category === 'emergency')
@@ -113,6 +114,23 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings }: Props) {
   useEffect(() => {
     contentRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
   }, [activePhaseId])
+
+  useEffect(() => {
+    userScrolledRef.current = false
+  }, [activePhaseId])
+
+  useEffect(() => {
+    if (editMode) return
+    const el = contentRef.current
+    if (!el) return
+    const onUserScroll = () => { userScrolledRef.current = true }
+    el.addEventListener('wheel', onUserScroll, { passive: true })
+    el.addEventListener('touchmove', onUserScroll, { passive: true })
+    return () => {
+      el.removeEventListener('wheel', onUserScroll)
+      el.removeEventListener('touchmove', onUserScroll)
+    }
+  }, [editMode])
 
   // Reset phase selection when active profile changes (phase IDs differ between profile and original)
   useEffect(() => {
@@ -238,6 +256,26 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings }: Props) {
     selectPhase(phaseId)
     setSidebarOpen(false)
   }
+
+  const handleToggleItem = useCallback((id: string) => {
+    if (!isItemChecked(id) && activePhase) {
+      if (!userScrolledRef.current) {
+        const items = activePhase.items
+        const idx = items.findIndex(i => i.id === id)
+        const nextItem = items.slice(idx + 1).find(i => !isItemChecked(i.id))
+        if (nextItem) {
+          requestAnimationFrame(() => {
+            const el = contentRef.current?.querySelector<HTMLElement>(
+              `[data-item-id="${nextItem.id}"]`
+            )
+            el?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          })
+        }
+      }
+      userScrolledRef.current = false
+    }
+    toggleItem(id)
+  }, [toggleItem, isItemChecked, activePhase])
 
   const handleCompletePhase = () => {
     completePhase(activePhaseId)
@@ -455,7 +493,7 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings }: Props) {
                   isPhaseComplete={isPhaseComplete}
                   category={aircraft.category}
                 />
-                <ChecklistItems phase={activePhase} isItemChecked={isItemChecked} onToggle={toggleItem} />
+                <ChecklistItems phase={activePhase} isItemChecked={isItemChecked} onToggle={handleToggleItem} />
                 <div className="mt-6">
                   <button
                     onClick={handleCompletePhase}
