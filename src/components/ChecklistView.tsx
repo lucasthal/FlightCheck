@@ -6,6 +6,7 @@ import { useProfileEditor } from '../hooks/useProfileEditor'
 import { useAuth } from '../hooks/useAuth'
 import { useWakeLock } from '../hooks/useWakeLock'
 import { usePreferences } from '../hooks/usePreferences'
+import { useNetworkStatus } from '../hooks/useNetworkStatus'
 import { PhaseNav } from './PhaseNav'
 import { ChecklistItems } from './ChecklistItems'
 import { EmergencyPanel } from './EmergencyPanel'
@@ -13,6 +14,7 @@ import { ProfilePicker } from './ProfilePicker'
 import { SaveAsDialog } from './SaveAsDialog'
 import { ProfileQuestionsDialog } from './ProfileQuestionsDialog'
 import { ChecklistEditorView } from './ChecklistEditorView'
+import { OfflineBanner } from './OfflineBanner'
 import {
   ArrowLeft, AlertTriangle, RotateCcw, Menu, X, CheckCircle2,
   Pencil, Settings,
@@ -62,6 +64,7 @@ function profileToChecklistPhases(phases: import('../types').ProfilePhase[]): Ch
 
 export function ChecklistView({ aircraft, onBack, onOpenSettings }: Props) {
   const profiles = useProfiles(aircraft.id)
+  const { isOnline } = useNetworkStatus()
   const editor = useProfileEditor()
   const { user } = useAuth()
   const { preferences } = usePreferences(user)
@@ -89,7 +92,7 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings }: Props) {
   const {
     activePhaseId, selectPhase, toggleItem, completePhase, resetFlight,
     getPhaseProgress, isItemChecked, isPhaseComplete,
-  } = useChecklist(activeAircraft)
+  } = useChecklist(activeAircraft, profiles.activeProfile?.id ?? null)
 
   const [showEmergency, setShowEmergency] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -289,6 +292,7 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings }: Props) {
 
   return (
     <div className="flex flex-col h-screen bg-cockpit-bg overflow-hidden">
+      <OfflineBanner visible={!isOnline || profiles.isOffline} />
       {/* Top bar */}
       <header className={`safe-top flex-shrink-0 bg-cockpit-panel border-b ${accentBorder} shadow-cockpit z-20`}>
         <div className="flex items-center gap-2 px-3 py-3">
@@ -420,6 +424,7 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings }: Props) {
             onSaveAs={handleSaveAsFromEditMode}
             onDiscard={handleDiscard}
             saving={saving}
+            isOnline={isOnline}
           />
         </div>
       ) : (

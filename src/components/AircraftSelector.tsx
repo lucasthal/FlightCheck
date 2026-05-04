@@ -5,6 +5,8 @@ import { Search, Zap, Users, Gauge, ArrowUp, Star, LogOut, ChevronDown, Settings
 import { useAuth } from '../hooks/useAuth'
 import { useFavorites } from '../hooks/useFavorites'
 import { FleetStrip } from './FleetStrip'
+import { useNetworkStatus } from '../hooks/useNetworkStatus'
+import { OfflineBanner } from './OfflineBanner'
 
 interface Props {
   onSelect: (aircraft: Aircraft) => void
@@ -110,6 +112,7 @@ const AIRCRAFT_SILHOUETTE: Record<string, ReactNode> = {
 export function AircraftSelector({ onSelect, onOpenSettings }: Props) {
   const { user, signOut } = useAuth()
   const { favorites, toggle, isFavorite } = useFavorites()
+  const { isOnline } = useNetworkStatus()
   const [filter, setFilter] = useState<AircraftCategory | 'All'>('All')
   const [search, setSearch] = useState('')
   const [profileOpen, setProfileOpen] = useState(false)
@@ -145,6 +148,7 @@ export function AircraftSelector({ onSelect, onOpenSettings }: Props) {
 
   return (
     <div className="min-h-screen flex flex-col bg-cockpit-bg">
+      <OfflineBanner visible={!isOnline} />
       <header className="relative overflow-hidden border-b border-cockpit-border/40">
         <div className="absolute inset-0 bg-gradient-to-b from-cockpit-amber/5 via-cockpit-panel to-cockpit-bg" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(245,158,11,0.08),transparent_70%)]" />
