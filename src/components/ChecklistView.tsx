@@ -266,13 +266,13 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings }: Props) {
         const items = activePhase.items
         const idx = items.findIndex(i => i.id === id)
         const nextItem = items.slice(idx + 1).find(i => !isItemChecked(i.id))
-        if (nextItem) {
-          requestAnimationFrame(() => {
-            const el = contentRef.current?.querySelector<HTMLElement>(
-              `[data-item-id="${nextItem.id}"]`
-            )
-            el?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-          })
+        if (nextItem && contentRef.current) {
+          const container = contentRef.current
+          const el = container.querySelector<HTMLElement>(`[data-item-id="${nextItem.id}"]`)
+          if (el) {
+            const top = el.offsetTop - container.clientHeight / 2 + el.clientHeight / 2
+            container.scrollTo({ top, behavior: 'smooth' })
+          }
         }
       }
       userScrolledRef.current = false
