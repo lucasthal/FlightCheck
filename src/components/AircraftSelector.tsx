@@ -170,6 +170,7 @@ export function AircraftSelector({ onSelect, onOpenSettings }: Props) {
               </div>
             </div>
 
+            <div className="flex items-center gap-2">
             {/* Profile */}
             <div className="relative" ref={profileRef}>
               <button
@@ -219,6 +220,7 @@ export function AircraftSelector({ onSelect, onOpenSettings }: Props) {
             >
               <Settings className="w-5 h-5" />
             </button>
+            </div>
           </div>
 
           {/* Stats bar */}
