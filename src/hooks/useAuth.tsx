@@ -13,7 +13,7 @@ interface AuthContextValue {
   signIn: (email: string, password: string) => Promise<AuthError | null>
   signUp: (email: string, password: string, displayName: string) => Promise<SignUpResult>
   signOut: () => Promise<void>
-  signInWithGoogle: () => Promise<void>
+  signInWithGoogle: () => Promise<AuthError | null>
   resetPassword: (email: string) => Promise<AuthError | null>
 }
 
@@ -54,11 +54,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await supabase.auth.signOut()
   }
 
-  const signInWithGoogle = async () => {
-    await supabase.auth.signInWithOAuth({
+  const signInWithGoogle = async (): Promise<AuthError | null> => {
+    const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo: window.location.origin },
     })
+    return error
   }
 
   const resetPassword = async (email: string): Promise<AuthError | null> => {
