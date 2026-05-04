@@ -363,7 +363,7 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings }: Props) {
           <button
             onClick={onOpenSettings}
             aria-label="Open settings"
-            className="p-2 rounded-xl text-cockpit-text-secondary hover:text-cockpit-text-primary hover:bg-cockpit-card/50 transition-colors"
+            className="p-2 rounded-xl text-cockpit-text-primary bg-cockpit-card/60 hover:bg-cockpit-card border border-cockpit-border/50 transition-colors"
           >
             <Settings className="w-5 h-5" />
           </button>

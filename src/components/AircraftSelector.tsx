@@ -201,6 +201,15 @@ export function AircraftSelector({ onSelect, onOpenSettings }: Props) {
                   </div>
                   <button
                     role="menuitem"
+                    onClick={() => { setProfileOpen(false); onOpenSettings() }}
+                    className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-cockpit-text-secondary
+                               hover:bg-cockpit-card hover:text-cockpit-text-primary transition-colors"
+                  >
+                    <Settings className="w-3.5 h-3.5" />
+                    Settings
+                  </button>
+                  <button
+                    role="menuitem"
                     onClick={() => { setProfileOpen(false); signOut() }}
                     className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-cockpit-text-secondary
                                hover:bg-cockpit-card hover:text-cockpit-text-primary transition-colors"
@@ -216,7 +225,7 @@ export function AircraftSelector({ onSelect, onOpenSettings }: Props) {
             <button
               onClick={onOpenSettings}
               aria-label="Open settings"
-              className="p-2 rounded-xl text-cockpit-text-secondary hover:text-cockpit-text-primary hover:bg-cockpit-card/50 transition-colors"
+              className="p-2 rounded-xl text-cockpit-text-primary bg-cockpit-card/60 hover:bg-cockpit-card border border-cockpit-border/50 transition-colors"
             >
               <Settings className="w-5 h-5" />
             </button>
