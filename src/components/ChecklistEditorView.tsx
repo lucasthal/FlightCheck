@@ -90,7 +90,7 @@ export function ChecklistEditorView({ editor, profileName, onSave, onSaveAs, onD
           <button
             onClick={onSaveAs}
             disabled={saving || !isOnline}
-            title={!isOnline ? 'No connection — editing requires internet' : undefined}
+            title={!isOnline ? 'No connection — changes cannot be saved' : undefined}
             className="px-3 py-1.5 rounded-lg border border-cockpit-border text-xs text-cockpit-text-secondary
                        hover:bg-white/5 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
@@ -99,7 +99,7 @@ export function ChecklistEditorView({ editor, profileName, onSave, onSaveAs, onD
           <button
             onClick={onSave}
             disabled={saving || !isOnline}
-            title={!isOnline ? 'No connection — editing requires internet' : undefined}
+            title={!isOnline ? 'No connection — changes cannot be saved' : undefined}
             className="px-3 py-1.5 rounded-lg bg-cockpit-amber/15 border border-cockpit-amber/40
                        text-cockpit-amber text-xs font-semibold hover:bg-cockpit-amber/25
                        disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
