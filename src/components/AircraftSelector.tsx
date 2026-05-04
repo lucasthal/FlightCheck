@@ -366,11 +366,11 @@ const AircraftCard = memo(function AircraftCard({ aircraft, onSelect, isFavorite
             {cat}
           </span>
         </div>
-        <h2 className={`font-bold text-base leading-tight text-cockpit-text-primary group-hover:${CATEGORY_TEXT[cat]} transition-colors mb-0.5`}>
+        <h2 className={`font-bold text-base leading-tight text-cockpit-text-primary group-hover:${CATEGORY_TEXT[cat]} transition-colors mb-0.5`} style={{ fontSize: 'calc(1rem * var(--text-scale))' }}>
           {aircraft.name}
         </h2>
-        <p className="text-xs text-cockpit-text-dim font-mono mb-2">{aircraft.manufacturer} · {aircraft.model}</p>
-        <p className="text-xs text-cockpit-text-secondary leading-relaxed mb-3 line-clamp-2 relative">
+        <p className="text-xs text-cockpit-text-dim font-mono mb-2" style={{ fontSize: 'calc(0.75rem * var(--text-scale))' }}>{aircraft.manufacturer} · {aircraft.model}</p>
+        <p className="text-xs text-cockpit-text-secondary leading-relaxed mb-3 line-clamp-2 relative" style={{ fontSize: 'calc(0.75rem * var(--text-scale))' }}>
           {aircraft.description}
         </p>
         <div className="flex flex-wrap gap-2 mb-3 relative">
