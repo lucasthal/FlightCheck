@@ -48,7 +48,6 @@ function AppInner() {
       <SettingsSheet
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
-        profiles={[]}
       />
     </>
   )

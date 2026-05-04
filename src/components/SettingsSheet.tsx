@@ -1,12 +1,13 @@
+import { useState, useEffect } from 'react'
 import { X } from 'lucide-react'
 import { usePreferences } from '../hooks/usePreferences'
-import type { Theme, TextSize, Profile } from '../types'
+import type { Theme, TextSize } from '../types'
 import { useAuth } from '../hooks/useAuth'
+import { supabase } from '../lib/supabase'
 
 interface SettingsSheetProps {
   isOpen: boolean
   onClose: () => void
-  profiles: Profile[]
 }
 
 const THEMES: { value: Theme; label: string }[] = [
@@ -22,9 +23,22 @@ const TEXT_SIZES: { value: TextSize; label: string }[] = [
   { value: 'xl', label: 'Xl' },
 ]
 
-export function SettingsSheet({ isOpen, onClose, profiles }: SettingsSheetProps) {
+export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
   const { user } = useAuth()
   const { preferences, updatePreference } = usePreferences(user)
+  const [profileList, setProfileList] = useState<{ id: string; name: string }[]>([])
+
+  useEffect(() => {
+    if (!user) return
+    supabase
+      .from('checklist_profiles')
+      .select('id, name')
+      .eq('user_id', user.id)
+      .order('created_at')
+      .then(({ data }) => {
+        if (data) setProfileList(data as { id: string; name: string }[])
+      })
+  }, [user?.id])
 
   return (
     <>
@@ -127,7 +141,7 @@ export function SettingsSheet({ isOpen, onClose, profiles }: SettingsSheetProps)
               className="w-full bg-cockpit-card border border-cockpit-border rounded-lg px-3 py-2 text-cockpit-text-primary text-sm"
             >
               <option value="">None</option>
-              {profiles.map(p => (
+              {profileList.map(p => (
                 <option key={p.id} value={p.id}>{p.name}</option>
               ))}
             </select>
