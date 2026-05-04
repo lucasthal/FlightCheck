@@ -3,6 +3,9 @@ import type { Aircraft, ChecklistPhase, AircraftCategory, PhaseCategory } from '
 import { useChecklist } from '../hooks/useChecklist'
 import { useProfiles } from '../hooks/useProfiles'
 import { useProfileEditor } from '../hooks/useProfileEditor'
+import { useAuth } from '../hooks/useAuth'
+import { useWakeLock } from '../hooks/useWakeLock'
+import { usePreferences } from '../hooks/usePreferences'
 import { PhaseNav } from './PhaseNav'
 import { ChecklistItems } from './ChecklistItems'
 import { EmergencyPanel } from './EmergencyPanel'
@@ -60,6 +63,10 @@ function profileToChecklistPhases(phases: import('../types').ProfilePhase[]): Ch
 export function ChecklistView({ aircraft, onBack, onOpenSettings }: Props) {
   const profiles = useProfiles(aircraft.id)
   const editor = useProfileEditor()
+  const { user } = useAuth()
+  const { preferences } = usePreferences(user)
+
+  useWakeLock({ enabled: preferences.keep_screen_awake })
 
   const [editMode, setEditMode] = useState(false)
   const [saving, setSaving] = useState(false)
