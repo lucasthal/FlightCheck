@@ -2,9 +2,9 @@ import type { Aircraft } from '../../types'
 
 export const cessna172p: Aircraft = {
   id: 'cessna-172p',
-  name: 'Cessna 172P Skyhawk',
+  name: 'C172P Skyhawk',
   manufacturer: 'Cessna',
-  model: '172P',
+  model: 'C172P',
   category: 'SEP',
   description: '1981–1986 model. 160 HP carbureted O-320-D2J. 2400 lb MGTOW. Maximum flaps reduced to 30°. Last carbureted Skyhawk before the fuel-injected R/S models.',
   specs: {

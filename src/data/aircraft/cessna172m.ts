@@ -2,9 +2,9 @@ import type { Aircraft } from '../../types'
 
 export const cessna172m: Aircraft = {
   id: 'cessna-172m',
-  name: 'Cessna 172M Skyhawk',
+  name: 'C172M Skyhawk',
   manufacturer: 'Cessna',
-  model: '172M',
+  model: 'C172M',
   category: 'SEP',
   description: '1973–1976 model. 150 HP carbureted O-320-E2D. 2300 lb MGTOW. Introduced the conical camber wingtips.',
   specs: {
