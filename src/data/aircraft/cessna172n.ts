@@ -2,7 +2,7 @@ import type { Aircraft } from '../../types'
 
 export const cessna172n: Aircraft = {
   id: 'cessna-172n',
-  name: 'C172N Skyhawk',
+  name: 'Cessna C172N Skyhawk',
   manufacturer: 'Cessna',
   model: 'C172N',
   category: 'SEP',
