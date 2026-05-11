@@ -411,15 +411,14 @@ export const cessna172: Aircraft = {
       category: 'startup',
       items: [
         { id: 'bs-01', action: 'Preflight inspection', response: 'COMPLETE' },
-        { id: 'bs-02', action: 'Passenger briefing', response: 'COMPLETE — seatbelts, exits, fire ext, no smoking' },
+        { id: 'bs-02', action: 'Passenger briefing', response: 'COMPLETE', note: 'S — Seat belt policy: belts for taxi/takeoff/landing; shoulder harnesses for takeoff/landing; seats adjusted and locked\nA — Air vents: all environmental controls; actions for any passenger discomfort\nF — Fire extinguisher: location and operation\nE — Exit doors: emergency evacuation plan\nT — Traffic: see something, say something; sterile cockpit — quiet during critical phases of flight\nY — Your questions?' },
         { id: 'bs-03', action: 'Seats / seatbelts', response: 'ADJUST & LOCKED' },
         { id: 'bs-04', action: 'Fuel selector', response: 'BOTH' },
         { id: 'bs-05', action: 'Avionics master', response: 'OFF' },
         { id: 'bs-06', action: 'Circuit breakers', response: 'CHECK IN' },
         { id: 'bs-07', action: 'Brakes', response: 'TEST & SET' },
-        { id: 'bs-08', action: 'Mixture', response: 'RICH (or as field elevation requires)' },
-        { id: 'bs-09', action: 'Primer', response: 'AS REQUIRED (2–3 strokes cold / 0 warm), LOCKED' },
-        { id: 'bs-10', action: 'Throttle', response: 'OPEN 1/4 INCH' },
+        { id: 'bs-11', action: 'Autopilot', response: 'OFF (if equipped)' },
+        { id: 'bs-12', action: 'Alternate static', response: 'CHECK — normal position' },
       ],
     },
     {
