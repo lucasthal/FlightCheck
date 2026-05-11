@@ -460,6 +460,17 @@ export const cessna172: Aircraft = {
       ],
     },
     {
+      id: 'taxi',
+      name: 'Taxi',
+      category: 'taxi',
+      items: [
+        { id: 'tx-01', action: 'Taxi clearance', response: 'COPIED — write down route' },
+        { id: 'tx-02', action: 'Taxi route', response: 'REVIEW — confirm planned route before rolling' },
+        { id: 'tx-03', action: 'Brake test', response: 'CHECK — test both sides on initial roll', severity: 'caution' },
+        { id: 'tx-04', action: 'Instruments on the roll', response: 'CHECK', note: 'Turn Coordinator: wing dips direction of turn, ball goes opposite\nVSI: neutral\nAirspeed: near zero\nHSI & Compass: indicating correct direction during turns\nAttitude Indicator: blue over brown, within 5° of horizon\nAltimeter: set to field elevation, within 75 ft' },
+      ],
+    },
+    {
       id: 'runup',
       name: 'Engine Run-Up',
       category: 'runup',
