@@ -17,6 +17,7 @@ export function FeedbackModal({ isOpen, onClose, aircraft, phaseName }: Props) {
   const [name, setName] = useState('')
   const [message, setMessage] = useState('')
   const nameRef = useRef<HTMLInputElement>(null)
+  const dialogRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (isOpen) {
@@ -45,18 +46,21 @@ export function FeedbackModal({ isOpen, onClose, aircraft, phaseName }: Props) {
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [isOpen, submitting, onClose])
 
-  // Focus trap
+  // Focus trap — re-queries on each keydown so disabled buttons are excluded during submit
   useEffect(() => {
     if (!isOpen) return
-    const modal = document.querySelector('[role="dialog"]') as HTMLElement
-    if (!modal) return
-    const focusable = modal.querySelectorAll<HTMLElement>(
-      'button, input, textarea, [tabindex]:not([tabindex="-1"])'
-    )
-    const first = focusable[0]
-    const last = focusable[focusable.length - 1]
     const handleTab = (e: KeyboardEvent) => {
       if (e.key !== 'Tab') return
+      const modal = dialogRef.current
+      if (!modal) return
+      const focusable = Array.from(
+        modal.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), input:not([disabled]):not([tabindex="-1"]), textarea:not([disabled])'
+        )
+      )
+      if (focusable.length === 0) return
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
       if (e.shiftKey) {
         if (document.activeElement === first) { e.preventDefault(); last.focus() }
       } else {
@@ -86,6 +90,7 @@ export function FeedbackModal({ isOpen, onClose, aircraft, phaseName }: Props) {
 
   return (
     <div
+      ref={dialogRef}
       className="fixed inset-0 z-50 flex items-center justify-center"
       role="dialog"
       aria-modal="true"
