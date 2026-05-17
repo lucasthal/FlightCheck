@@ -16,7 +16,7 @@ export function FeedbackButton({ aircraft, phaseName }: Props) {
       <button
         onClick={() => setIsOpen(true)}
         aria-label="Send feedback"
-        className="fixed bottom-6 right-6 z-40 w-11 h-11 flex items-center justify-center rounded-full
+        className="fixed bottom-24 right-6 lg:bottom-6 z-40 w-11 h-11 flex items-center justify-center rounded-full
                    bg-[var(--cockpit-card)] border border-[var(--cockpit-border)]
                    text-cockpit-text-secondary hover:text-cockpit-text-primary
                    hover:border-cockpit-amber/60 hover:shadow-[0_0_12px_rgba(245,158,11,0.25)]
