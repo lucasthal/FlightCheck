@@ -63,7 +63,9 @@ function AppInner() {
         onClose={() => setIsSettingsOpen(false)}
       />
 
-      <FeedbackButton aircraft={selectedAircraft} phaseName={activePhaseName} />
+      {selectedAircraft && (
+        <FeedbackButton aircraft={selectedAircraft} phaseName={activePhaseName} />
+      )}
     </>
   )
 }

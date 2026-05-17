@@ -21,7 +21,12 @@ export function FeedbackModal({ isOpen, onClose, aircraft, phaseName }: Props) {
 
   useEffect(() => {
     if (isOpen) {
-      setName(user?.user_metadata?.full_name ?? '')
+      setName(
+        (user?.user_metadata?.full_name as string | undefined)
+        ?? (user?.user_metadata?.name as string | undefined)
+        ?? user?.email?.split('@')[0]
+        ?? ''
+      )
       setMessage('')
       reset()
       // allow modal to finish mounting before stealing focus
