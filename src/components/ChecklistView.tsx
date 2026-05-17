@@ -44,6 +44,7 @@ interface Props {
   aircraft: Aircraft
   onBack: () => void
   onOpenSettings: () => void
+  onPhaseChange?: (phaseName: string) => void
 }
 
 /** Convert ProfilePhase[] → ChecklistPhase[] so existing components work unchanged */
@@ -62,7 +63,7 @@ function profileToChecklistPhases(phases: import('../types').ProfilePhase[]): Ch
   }))
 }
 
-export function ChecklistView({ aircraft, onBack, onOpenSettings }: Props) {
+export function ChecklistView({ aircraft, onBack, onOpenSettings, onPhaseChange }: Props) {
   const profiles = useProfiles(aircraft.id)
   const { isOnline } = useNetworkStatus()
   const editor = useProfileEditor()
@@ -258,6 +259,8 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings }: Props) {
   const handlePhaseSelect = (phaseId: string) => {
     selectPhase(phaseId)
     setSidebarOpen(false)
+    const phase = activeAircraft.phases.find(p => p.id === phaseId)
+    if (phase) onPhaseChange?.(phase.name)
   }
 
   const handleToggleItem = useCallback((id: string) => {

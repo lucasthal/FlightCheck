@@ -4,6 +4,7 @@ import { AircraftSelector } from './components/AircraftSelector'
 import { ChecklistView } from './components/ChecklistView'
 import { LoginScreen } from './components/LoginScreen'
 import { SettingsSheet } from './components/SettingsSheet'
+import { FeedbackButton } from './components/FeedbackButton'
 import { AuthProvider, useAuth } from './hooks/useAuth'
 import { usePreferences } from './hooks/usePreferences'
 
@@ -17,6 +18,7 @@ export default function App() {
 
 function AppInner() {
   const [selectedAircraft, setSelectedAircraft] = useState<Aircraft | null>(null)
+  const [activePhaseName, setActivePhaseName] = useState<string | null>(null)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const { user, loading } = useAuth()
   usePreferences(user)
@@ -33,22 +35,35 @@ function AppInner() {
     return <LoginScreen />
   }
 
+  const handleSelectAircraft = (aircraft: Aircraft) => {
+    setSelectedAircraft(aircraft)
+    setActivePhaseName(null)
+  }
+
+  const handleBack = () => {
+    setSelectedAircraft(null)
+    setActivePhaseName(null)
+  }
+
   return (
     <>
       {selectedAircraft ? (
         <ChecklistView
           aircraft={selectedAircraft}
-          onBack={() => setSelectedAircraft(null)}
+          onBack={handleBack}
           onOpenSettings={() => setIsSettingsOpen(true)}
+          onPhaseChange={setActivePhaseName}
         />
       ) : (
-        <AircraftSelector onSelect={setSelectedAircraft} onOpenSettings={() => setIsSettingsOpen(true)} />
+        <AircraftSelector onSelect={handleSelectAircraft} onOpenSettings={() => setIsSettingsOpen(true)} />
       )}
 
       <SettingsSheet
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
       />
+
+      <FeedbackButton aircraft={selectedAircraft} phaseName={activePhaseName} />
     </>
   )
 }
