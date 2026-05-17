@@ -13,13 +13,13 @@ interface Props {
   onOpenSettings: () => void
 }
 
-const CATEGORIES: { key: AircraftCategory | 'All'; label: string; emoji: string }[] = [
-  { key: 'All',        label: 'All',       emoji: '✈' },
-  { key: 'SEP',        label: 'Single',    emoji: '🛩' },
-  { key: 'MEP',        label: 'Multi',     emoji: '🛫' },
-  { key: 'Turboprop',  label: 'Turboprop', emoji: '⚡' },
-  { key: 'Jet',        label: 'Jet',       emoji: '🚀' },
-  { key: 'Helicopter', label: 'Helo',      emoji: '🚁' },
+const CATEGORIES: { key: AircraftCategory | 'All'; label: string }[] = [
+  { key: 'All',        label: 'All'       },
+  { key: 'SEP',        label: 'Single'    },
+  { key: 'MEP',        label: 'Multi'     },
+  { key: 'Turboprop',  label: 'Turboprop' },
+  { key: 'Jet',        label: 'Jet'       },
+  { key: 'Helicopter', label: 'Helo'      },
 ]
 
 const CATEGORY_COLORS: Record<AircraftCategory | 'All', string> = {
@@ -239,7 +239,6 @@ export function AircraftSelector({ onSelect, onOpenSettings }: Props) {
               if (count === 0) return null
               return (
                 <div key={cat.key} className="flex items-center gap-1.5 text-xs">
-                  <span>{cat.emoji}</span>
                   <span className={`font-semibold ${CATEGORY_TEXT[cat.key]}`}>{count}</span>
                   <span className="text-cockpit-text-dim">{cat.label}</span>
                 </div>
@@ -279,7 +278,6 @@ export function AircraftSelector({ onSelect, onOpenSettings }: Props) {
                       : 'bg-cockpit-card border-cockpit-border text-cockpit-text-secondary hover:border-cockpit-border hover:text-cockpit-text-primary'
                     }`}
                 >
-                  <span>{cat.emoji}</span>
                   <span>{cat.label}</span>
                   <span className={`text-xs ${isActive ? 'text-white/70' : 'text-cockpit-text-dim'}`}>
                     {categoryCount(cat.key)}
@@ -294,7 +292,6 @@ export function AircraftSelector({ onSelect, onOpenSettings }: Props) {
       <main className="flex-1 max-w-5xl mx-auto w-full px-4 py-5">
         {filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-cockpit-text-dim">
-            <div className="text-5xl mb-4">✈</div>
             <p className="font-semibold text-cockpit-text-secondary">No aircraft found</p>
             <p className="text-sm mt-1">Try a different search or category filter</p>
           </div>
