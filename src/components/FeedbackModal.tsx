@@ -23,8 +23,10 @@ export function FeedbackModal({ isOpen, onClose, aircraft, phaseName }: Props) {
       setName(user?.user_metadata?.full_name ?? '')
       setMessage('')
       reset()
+      // allow modal to finish mounting before stealing focus
       setTimeout(() => nameRef.current?.focus(), 50)
     }
+  // intentionally omit reset and user — re-running on auth refresh would clear a message being composed
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen])
 
@@ -42,6 +44,28 @@ export function FeedbackModal({ isOpen, onClose, aircraft, phaseName }: Props) {
     if (isOpen) document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [isOpen, submitting, onClose])
+
+  // Focus trap
+  useEffect(() => {
+    if (!isOpen) return
+    const modal = document.querySelector('[role="dialog"]') as HTMLElement
+    if (!modal) return
+    const focusable = modal.querySelectorAll<HTMLElement>(
+      'button, input, textarea, [tabindex]:not([tabindex="-1"])'
+    )
+    const first = focusable[0]
+    const last = focusable[focusable.length - 1]
+    const handleTab = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab') return
+      if (e.shiftKey) {
+        if (document.activeElement === first) { e.preventDefault(); last.focus() }
+      } else {
+        if (document.activeElement === last) { e.preventDefault(); first.focus() }
+      }
+    }
+    document.addEventListener('keydown', handleTab)
+    return () => document.removeEventListener('keydown', handleTab)
+  }, [isOpen])
 
   if (!isOpen) return null
 
@@ -121,6 +145,8 @@ export function FeedbackModal({ isOpen, onClose, aircraft, phaseName }: Props) {
               type="email"
               value={user?.email ?? ''}
               readOnly
+              aria-readonly="true"
+              tabIndex={-1}
               className="w-full px-3 py-2.5 rounded-xl bg-cockpit-bg border border-cockpit-border
                          text-cockpit-text-dim text-sm opacity-50 cursor-not-allowed"
             />
@@ -155,10 +181,10 @@ export function FeedbackModal({ isOpen, onClose, aircraft, phaseName }: Props) {
             </div>
           )}
 
-          {/* Error */}
-          {error && (
-            <p className="text-xs text-red-400">{error}</p>
-          )}
+          {/* Error — always rendered so aria-live announces changes */}
+          <div aria-live="polite" aria-atomic="true">
+            {error && <p className="text-xs text-red-400">{error}</p>}
+          </div>
 
           {/* Footer */}
           <div className="flex gap-3 pt-1">
