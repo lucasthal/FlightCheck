@@ -2,18 +2,18 @@ import type { ChecklistPhase, PhaseCategory } from '../types'
 import { CheckCircle2, Circle } from 'lucide-react'
 
 const PHASE_ICONS: Record<PhaseCategory, string> = {
-  preflight: '🔍',
-  startup: '🔑',
-  taxi: '🛞',
-  runup: '⚙️',
-  takeoff: '↑',
-  climb: '📈',
-  cruise: '✈',
-  descent: '📉',
-  approach: '🎯',
-  landing: '⬇',
-  shutdown: '🔒',
-  emergency: '🚨',
+  preflight: '',
+  startup: '',
+  taxi: '',
+  runup: '',
+  takeoff: '',
+  climb: '',
+  cruise: '',
+  descent: '',
+  approach: '',
+  landing: '',
+  shutdown: '',
+  emergency: '',
 }
 
 interface Props {
