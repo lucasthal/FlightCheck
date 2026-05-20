@@ -1,0 +1,1045 @@
+# Piper Archer II Complete Overhaul — Implementation Plan
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** Replace `src/data/aircraft/piperArcher.ts` with a fully correct implementation sourced from the two authoritative PDF checklists (N8060U and N3001T), fixing all safety-critical data errors and adding the missing phases and emergencies.
+
+**Architecture:** Full file replacement. The current file has compounded errors (wrong engine type, wrong V-speeds, wrong magneto limits, missing carb heat, 12 phases instead of 27). Three tasks: (1) foundation + 19 operational phases, (2) 8 emergency phases appended to the same file, (3) Piper Warrior magneto fix.
+
+**Tech Stack:** TypeScript, `src/types/index.ts` types (`Aircraft`, `ChecklistPhase`, `ChecklistItem`, `ItemSeverity`)
+
+---
+
+### Task 1: Foundation + All 19 Operational Phases
+
+Replaces the entire `piperArcher.ts` file. After this task the aircraft builds and displays correctly in the app with all pre-flight, engine, taxi, takeoff, cruise, and landing phases. Emergency phases are added in Task 2.
+
+**Files:**
+- Modify: `src/data/aircraft/piperArcher.ts` (complete replacement)
+
+- [ ] **Step 1: Verify current line count before replacing**
+
+Run:
+```powershell
+(Get-Content src\data\aircraft\piperArcher.ts).Count
+```
+Expected: 427 (confirm you're looking at the right file before overwriting)
+
+- [ ] **Step 2: Write the complete new file**
+
+Write the following content to `src/data/aircraft/piperArcher.ts` in full — do NOT preserve any existing content:
+
+```typescript
+import type { Aircraft } from '../../types'
+
+export const piperArcher: Aircraft = {
+  id: 'piper-pa28-archer',
+  name: 'Piper PA-28-181 Archer II',
+  manufacturer: 'Piper',
+  model: 'PA-28-181',
+  category: 'SEP',
+  description: 'Popular four-seat low-wing trainer with carbureted Lycoming O-360-A4M engine. Fixed gear, manual flaps, LEFT/RIGHT fuel selector (no BOTH position). Pilot manages fuel tanks manually — alternate every 30 min in cruise.',
+  specs: {
+    engines: 1,
+    engineType: 'Lycoming O-360-A4M (180 HP, carbureted)',
+    maxSpeed: '128 KTAS',
+    range: '520 NM',
+    ceiling: '14,100 ft',
+    seats: 4,
+  },
+  vSpeeds: {
+    'Vso': '49 KIAS',
+    'Vs': '55 KIAS',
+    'Vr': '55 KIAS',
+    'Vx': '64 KIAS',
+    'Vy': '76 KIAS',
+    'Vg': '76 KIAS',
+    'Vno': '125 KIAS',
+    'Vne': '154 KIAS',
+    'Vfe (10°)': '102 KIAS',
+    'Vfe (25°/40°)': '89 KIAS',
+    'Va (2550 lb)': '113 KIAS',
+    'Va (min wt)': '89 KIAS',
+    'X-Wind Max': '17 KTS',
+  },
+  referenceData: [
+    {
+      kind: 'speeds',
+      title: 'V-Speeds Reference',
+      items: {
+        'Vso (Stall — landing config)': '49 KIAS',
+        'Vs (Stall — clean)': '55 KIAS',
+        'Vr (Rotation)': '55 KIAS',
+        'Vx (Best Angle)': '64 KIAS',
+        'Vy (Best Rate)': '76 KIAS',
+        'Vg (Best Glide)': '76 KIAS',
+        'Va @ 2550 lb (Maneuvering)': '113 KIAS',
+        'Va @ min weight': '89 KIAS',
+        'Vfe (flaps 10°)': '102 KIAS',
+        'Vfe (flaps 25°/40°)': '89 KIAS',
+        'Vno (Max Structural Cruise)': '125 KIAS',
+        'Vne (Never Exceed)': '154 KIAS',
+        'X-Wind Max Demo': '17 KTS',
+      },
+    },
+    {
+      kind: 'maneuver',
+      title: 'Pre-Maneuver Checks (ABCD)',
+      steps: [
+        'A — Airspace: Identify class and restrictions',
+        'B — Altitude: Verify adequate (≥1500 ft AGL private / ≥3000 ft AGL commercial)',
+        'C — Airspeed: Determine entry speed for the maneuver',
+        'D — Best Place to Land: Identify field within glide range',
+        'Clear the area — 90°/180°/90° or 360° clearing turns',
+        'Configure — GUMPSS check',
+        'Declare — Make radio call if appropriate',
+      ],
+    },
+    {
+      kind: 'maneuver',
+      title: 'Steep Turns',
+      steps: [
+        'Reference point / heading — Establish',
+        'Entry airspeed — 100 KIAS (at or below Va 113 KIAS)',
+        'Roll into 45° bank (50° for commercial)',
+        'Trim — Apply back pressure to maintain altitude',
+        'Power — Adjust as required to maintain altitude',
+        'Roll out on entry heading',
+      ],
+      standards: [
+        'Private: Alt ±100 ft, Heading ±10°, AS ±10 KIAS, Bank ±10°',
+        'Commercial: Alt ±100 ft, Heading ±10°, AS ±10 KIAS, Bank ±5°',
+      ],
+    },
+    {
+      kind: 'maneuver',
+      title: 'Slow Flight',
+      steps: [
+        'Reference point / heading — Establish',
+        'Throttle — Reduce and configure; carb heat ON',
+        'Flaps — Lower in increments (Vfe: 102 KIAS for 10°, 89 KIAS for 25°/40°)',
+        'Target airspeed — 55 KIAS',
+        'Power — Adjust as required to maintain altitude',
+        'Rudder — Use to prevent adverse yaw; controls will be sluggish',
+      ],
+      standards: [
+        'Private: Alt >1500 AGL ±100 ft, Heading ±10°, AS +10/−0 KIAS',
+        'Commercial: Alt >1500 AGL ±50 ft, AS +5/−0 KIAS',
+      ],
+    },
+    {
+      kind: 'maneuver',
+      title: 'Power-Off Stall (from Slow Flight)',
+      steps: [
+        '★ ENTER FROM SLOW FLIGHT ★',
+        'Reference point / heading — Establish',
+        'Set carb heat ON; maintain 60 KIAS with slight rate of descent',
+        'Throttle — Idle',
+        'Pitch — Level, increase back pressure; hold altitude (no sink)',
+        'CALLOUTS: Stall Horn → Buffet → Control Degradation → Stall (Break)',
+        'Recover on FIRST indication of stall',
+        'Recovery: Full throttle + carb heat OFF → pitch Vx (64 KIAS) → climb → flaps up incrementally',
+      ],
+      standards: [
+        'Private: Alt >1500 AGL ±100 ft, Heading ±10°, AS ±10 KIAS',
+        'Commercial: Bank ±5°',
+      ],
+    },
+    {
+      kind: 'maneuver',
+      title: 'Power-On Stall',
+      steps: [
+        'Reference point / heading — Establish',
+        'Trim — Takeoff setting',
+        'Set carb heat ON; airspeed 55 KIAS',
+        'Throttle — Full power',
+        'Pitch — Increase 18–22°, maximum 25°',
+        'CALLOUTS: Stall Horn → Buffet → Control Degradation → Stall (Break)',
+        'Recover on FIRST indication of stall',
+        'Recovery: Reduce AOA → accelerate to Vy (76 KIAS) → establish climb',
+      ],
+      standards: [
+        'Alt >1500 AGL ±100 ft, Heading ±10°, AS ±10 KIAS, Bank ±5°',
+      ],
+    },
+    {
+      kind: 'maneuver',
+      title: 'Accelerated Stall',
+      steps: [
+        'Reference point / heading — Establish',
+        'Set carb heat ON',
+        'Airspeed — 80 KIAS',
+        'Bank — 45°',
+        'Pitch — Increase back pressure smoothly and firmly',
+        'Recover on FIRST indication',
+        'Recovery: Reduce AOA → full power → accelerate to Vx (64 KIAS) → establish climb',
+      ],
+      standards: [
+        'Entry altitude NLT 3000 ft AGL',
+      ],
+    },
+    {
+      kind: 'maneuver',
+      title: 'Ground Reference Maneuvers',
+      steps: [
+        'Reference point / heading — Establish',
+        'Wind direction — Determine from surface indicators',
+        'Airspeed — At or below Va (113 KIAS)',
+        'Altitude — 600–1000 ft AGL',
+        'Bank — Steepen on downwind, shallow on upwind to maintain constant radius',
+        'Rudder — Coordinate throughout; no slipping or skidding',
+      ],
+      standards: [
+        'Alt 600–1000 AGL ±100 ft, Heading ±10°, AS ±10 KIAS, Bank ±5°',
+      ],
+    },
+    {
+      kind: 'keyval',
+      title: 'Performance Formulas',
+      items: {
+        'PA (Pressure Alt)': '(29.92 − Current Altimeter Setting) × 1000 + Field Elevation',
+        'DA (Density Alt)': 'PA + (120 × (OAT °C − ISA °C))',
+        'Va (weight adj)': '√(Current Weight ÷ MGTOW) × Va @ MGTOW',
+        'CG': 'Total Moment ÷ Total Weight',
+      },
+    },
+    {
+      kind: 'keyval',
+      title: 'IMSAFE — Crew Self-Check',
+      items: {
+        'I — Illness': 'Are we feeling well enough to fly today?',
+        'M — Medications': 'On any FAA-prohibited medications?',
+        'S — Stress': 'Acute or chronic stressors affecting judgment or performance?',
+        'A — Alcohol': '8 hrs bottle-to-throttle, BAC <.04, no residual effects',
+        'F — Fatigue & Food': 'Adequate rest? Eaten and hydrated?',
+        'E — Emotions / Everything': 'Right headspace? External pressures? Anything on your mind?',
+      },
+    },
+    {
+      kind: 'keyval',
+      title: 'SAFETY — Passenger Brief',
+      items: {
+        'S — Seatbelts': 'Demonstrate operation; identify when to remain belted',
+        'A — Air Vents & Aeromedical': 'Vent operation; hypoxia, motion sickness, hyperventilation',
+        'F — Fire Extinguisher': 'Location and how to operate',
+        'E — Exits & Egress': 'Door/window ops, egress strategies, off-airport landing door considerations',
+        'T — Talking, Traffic, Teamwork': 'Quiet during critical phases; traffic scan (see something, say something); 3-way control exchange',
+        'Y — Your Considerations': 'Non-rated pax radio/control if incapacitated; PLBs; ANYTHING else relevant',
+      },
+    },
+    {
+      kind: 'keyval',
+      title: 'NWKRAFT — Preflight Planning',
+      items: {
+        'N — NOTAMs': 'Reviewed for departure, en route, and destination',
+        'W — Weather': 'Current and forecast; winds, ceilings, icing, turbulence; alternates',
+        'K — Known ATC Delays': 'Ground stops, TFRs, flow control programs',
+        'R — Runway Distance': 'Available at all intended landing points',
+        'A — Alternates': 'Required? Identified? Weather above minimums? Fueled?',
+        'F — Fuel Required': 'Reserve met? VFR: +45 min day / +30 min night',
+        'T — Takeoff & Landing Perf': 'Computed for actual conditions (DA, weight, wind); margins adequate',
+      },
+    },
+    {
+      kind: 'keyval',
+      title: 'VFR Equipment — FAR 91.205(b) Day / (c) +Night',
+      items: {
+        'Day: Altimeter': 'Sensitive barometric altimeter',
+        'Day: Tachometer': 'Each engine',
+        'Day: Oil Pressure Gauge': 'Each pressure-lubricated engine',
+        'Day: Manifold Pressure': 'Each altitude engine',
+        'Day: Airspeed Indicator': 'Required',
+        'Day: Temp Gauge': 'Liquid-cooled engine coolant temperature',
+        'Day: Oil Temp Gauge': 'Each air-cooled engine',
+        '+Night: Fuel Gauges': 'Each tank in use',
+        '+Night: Anti-Collision Light': 'Flashing beacon or strobe',
+        '+Night: ELT': 'Per FAR 91.207',
+        '+Night: Safety Belts': 'All occupants',
+        '+Night: Fuses': 'One spare set',
+        '+Night: Position Lights': 'Red/green/white NAV lights',
+        '+Night: Source of Power': 'Adequate electrical source for all night equipment',
+        '+Night: Landing Light': 'Required if operated for hire',
+      },
+    },
+  ],
+  phases: [
+    {
+      id: 'pilot-assessment',
+      name: 'Pilot Self-Assessment',
+      category: 'preflight',
+      items: [
+        {
+          id: 'pa-01',
+          action: 'IMSAFE check',
+          response: 'COMPLETE',
+          note: 'Illness · Medication · Stress · Alcohol · Fatigue · Emotion/External pressures',
+          severity: 'warning',
+        },
+        {
+          id: 'pa-02',
+          action: 'NWKRAFT check',
+          response: 'COMPLETE',
+          note: 'NOTAMs · Weather · Known ATC delays · Runway lengths · Alternates · Fuel · TFRs',
+        },
+        { id: 'pa-03', action: 'Weather', response: 'CURRENT AND FORECAST — winds, ceilings, icing, turbulence checked' },
+        { id: 'pa-04', action: 'Weight & balance', response: 'COMPUTED — within limits', severity: 'warning' },
+        { id: 'pa-05', action: 'Performance', response: 'COMPUTED — takeoff and landing distances for actual conditions' },
+      ],
+    },
+    {
+      id: 'preflight-docs',
+      name: 'Preflight Documentation',
+      category: 'preflight',
+      items: [
+        { id: 'pd-01', action: 'Airworthiness certificate', response: 'ON BOARD', severity: 'warning' },
+        { id: 'pd-02', action: 'Registration', response: 'ON BOARD', severity: 'warning' },
+        { id: 'pd-03', action: 'Radio station license', response: 'ON BOARD' },
+        { id: 'pd-04', action: 'Operating handbook (POH)', response: 'ON BOARD', severity: 'warning' },
+        { id: 'pd-05', action: 'Weight and balance', response: 'CURRENT AND ON BOARD', severity: 'warning' },
+        { id: 'pd-06', action: 'Aircraft logbooks', response: 'CHECKED — annual, 100-hr, ELT current' },
+        { id: 'pd-07', action: 'Transponder / altimeter', response: 'CURRENT — checked within 24 calendar months', severity: 'caution' },
+      ],
+    },
+    {
+      id: 'cockpit-inspection',
+      name: 'Cockpit Inspection',
+      category: 'preflight',
+      items: [
+        { id: 'ci-01', action: 'Hobbs / tach', response: 'RECORD — time in, time out planned' },
+        { id: 'ci-02', action: 'Control lock', response: 'REMOVE' },
+        { id: 'ci-03', action: 'Ignition', response: 'OFF — keys out', severity: 'warning' },
+        { id: 'ci-04', action: 'Master switch', response: 'ON briefly — check fuel gauges' },
+        { id: 'ci-05', action: 'Fuel gauges', response: 'NOTE QUANTITY — cross-check against visual during walk-around' },
+        { id: 'ci-06', action: 'Master switch', response: 'OFF' },
+        { id: 'ci-07', action: 'Avionics master', response: 'OFF' },
+        { id: 'ci-08', action: 'Circuit breakers', response: 'ALL IN' },
+        { id: 'ci-09', action: 'Fire extinguisher', response: 'PRESENT AND CHARGED' },
+        { id: 'ci-10', action: 'ELT', response: 'ARMED' },
+      ],
+    },
+    {
+      id: 'walkaround',
+      name: 'Exterior Walk-Around',
+      category: 'preflight',
+      items: [
+        { id: 'wa-01', action: 'Left cabin door', response: 'CONDITION — latches operate, window secure' },
+        { id: 'wa-02', action: 'Left fuselage', response: 'CONDITION — no dents, cracks, or loose panels' },
+        { id: 'wa-03', action: 'Static ports (left)', response: 'CLEAR — unobstructed' },
+        { id: 'wa-04', action: 'Antennas', response: 'SECURE' },
+        { id: 'wa-05', action: 'Left horizontal stabilizer', response: 'CONDITION — leading edge, surface' },
+        { id: 'wa-06', action: 'Left elevator', response: 'FREE — full travel, hinge pins secure' },
+        { id: 'wa-07', action: 'Elevator trim tab', response: 'SECURE — no excessive play' },
+        { id: 'wa-08', action: 'Vertical stabilizer', response: 'CONDITION — no deformation' },
+        { id: 'wa-09', action: 'Rudder', response: 'FREE — full travel, hinge pins, no slop' },
+        { id: 'wa-10', action: 'Tail tie-down', response: 'REMOVED', severity: 'warning' },
+        { id: 'wa-11', action: 'Right horizontal stabilizer', response: 'CONDITION — leading edge, surface' },
+        { id: 'wa-12', action: 'Right elevator', response: 'FREE — full travel, hinge pins secure' },
+        { id: 'wa-13', action: 'Right fuselage', response: 'CONDITION' },
+        { id: 'wa-14', action: 'Static ports (right)', response: 'CLEAR — unobstructed' },
+        { id: 'wa-15', action: 'Right wing tip', response: 'CONDITION — nav light secure' },
+        { id: 'wa-16', action: 'Right aileron', response: 'FREE — full travel, hinge pins, pushrod secure' },
+        { id: 'wa-17', action: 'Right flap', response: 'CONDITION — hinge pins secure' },
+        { id: 'wa-18', action: 'Right wing leading edge', response: 'CONDITION — no deformation, ice, or damage' },
+        {
+          id: 'wa-19',
+          action: 'Right fuel cap',
+          response: 'REMOVE — visual check (blue = 100LL), RE-SECURE FIRMLY',
+          severity: 'warning',
+          note: 'Low-wing: loose fuel cap causes inflight siphoning. Confirm locked.',
+        },
+        {
+          id: 'wa-20',
+          action: 'Right fuel quick-drain',
+          response: 'DRAIN — sample into tester; check for water/sediment; blue = 100LL',
+          severity: 'warning',
+        },
+        { id: 'wa-21', action: 'Right fuel vent', response: 'CLEAR — unobstructed (underside leading edge)' },
+        { id: 'wa-22', action: 'Right main gear', response: 'TIRE inflated, no flat; gear leg clean' },
+        {
+          id: 'wa-23',
+          action: 'Propeller',
+          response: 'CONDITION — no nicks, cracks, corrosion; spinner secure',
+          severity: 'warning',
+        },
+        { id: 'wa-24', action: 'Air filter', response: 'CHECK — unobstructed, no bugs or debris' },
+        { id: 'wa-25', action: 'Engine cowling', response: 'SECURE — all latches engaged' },
+        {
+          id: 'wa-26',
+          action: 'Oil level',
+          response: 'CHECK — 6 qt minimum for flight, 8 qt full; cap secure',
+          severity: 'warning',
+        },
+        { id: 'wa-27', action: 'Engine compartment', response: 'NO LEAKS — oil, fuel, or hydraulic staining' },
+        { id: 'wa-28', action: 'Nose gear', response: 'STRUT inflated, tire condition, shimmy dampener secure' },
+        {
+          id: 'wa-29',
+          action: 'Left fuel quick-drain',
+          response: 'DRAIN — sample into tester; check for water/sediment',
+          severity: 'warning',
+        },
+        {
+          id: 'wa-30',
+          action: 'Left fuel cap',
+          response: 'REMOVE — visual check, RE-SECURE FIRMLY',
+          severity: 'warning',
+        },
+        { id: 'wa-31', action: 'Left fuel vent', response: 'CLEAR — unobstructed' },
+        {
+          id: 'wa-32',
+          action: 'Pitot tube',
+          response: 'COVER REMOVED — clear, no obstructions, no insects',
+          severity: 'warning',
+        },
+        {
+          id: 'wa-33',
+          action: 'Stall warning vane',
+          response: 'FREE — gently lift to verify horn sounds',
+          severity: 'caution',
+        },
+        { id: 'wa-34', action: 'Left wing leading edge', response: 'CONDITION — no deformation, ice, or damage' },
+        { id: 'wa-35', action: 'Left flap', response: 'CONDITION — hinge pins secure' },
+        { id: 'wa-36', action: 'Left aileron', response: 'FREE — full travel, hinge pins, pushrod secure' },
+        { id: 'wa-37', action: 'Left wing tip', response: 'CONDITION — nav light secure' },
+        { id: 'wa-38', action: 'Left main gear', response: 'TIRE inflated, no flat; gear leg clean, brake line' },
+        { id: 'wa-39', action: 'Wing tie-downs', response: 'BOTH REMOVED', severity: 'warning' },
+      ],
+    },
+    {
+      id: 'before-start',
+      name: 'Before Engine Start',
+      category: 'startup',
+      items: [
+        { id: 'bs-01', action: 'Passenger briefing (SAFETY)', response: 'COMPLETE — seatbelts, exits, fire ext, sterile cockpit' },
+        {
+          id: 'bs-02',
+          action: 'Seats',
+          response: 'ADJUSTED AND LOCKED — verify seat rails engaged',
+          severity: 'warning',
+        },
+        { id: 'bs-03', action: 'Seatbelts', response: 'FASTENED — all occupants' },
+        { id: 'bs-04', action: 'Rudder pedals', response: 'ADJUSTED' },
+        { id: 'bs-05', action: 'Doors and windows', response: 'CLOSED AND LATCHED' },
+        { id: 'bs-06', action: 'Parking brake', response: 'SET' },
+        {
+          id: 'bs-07',
+          action: 'Fuel selector',
+          response: 'FULLEST TANK — LEFT or RIGHT, not OFF',
+          severity: 'warning',
+          note: 'No BOTH position on Archer II. Select the fullest tank for start and takeoff.',
+        },
+        { id: 'bs-08', action: 'Mixture', response: 'RICH' },
+        { id: 'bs-09', action: 'Throttle', response: 'CRACKED — 1/4 inch open' },
+        { id: 'bs-10', action: 'Avionics master', response: 'OFF' },
+        { id: 'bs-11', action: 'Master switch (BAT)', response: 'ON' },
+        { id: 'bs-12', action: 'Circuit breakers', response: 'ALL IN' },
+        { id: 'bs-13', action: 'Beacon', response: 'ON' },
+      ],
+    },
+    {
+      id: 'engine-start',
+      name: 'Engine Start',
+      category: 'startup',
+      items: [
+        {
+          id: 'es-01',
+          action: 'Carb heat',
+          response: 'COLD (OFF)',
+          note: 'Carb heat reduces mixture richness — always OFF before cranking',
+        },
+        {
+          id: 'es-02',
+          action: 'Primer',
+          response: 'COLD: 3–4 strokes · WARM: 1–2 · HOT: 0 — IN AND LOCKED',
+          severity: 'caution',
+          note: 'Lock primer fully — unlocked primer causes rough running or no-start',
+        },
+        { id: 'es-03', action: 'Fuel pump', response: 'ON' },
+        {
+          id: 'es-04',
+          action: '"CLEAR PROP!"',
+          response: 'CALL OUT — visually verify area clear both sides',
+          severity: 'warning',
+        },
+        { id: 'es-05', action: 'Ignition', response: 'START — release key at first fire' },
+        {
+          id: 'es-06',
+          action: 'Throttle',
+          response: 'SET 1000 RPM warm-up',
+          note: 'HOT START: throttle full, mixture IDLE CUT-OFF, fuel pump OFF, crank — mixture to RICH at fire, throttle back',
+        },
+        {
+          id: 'es-07',
+          action: 'Oil pressure',
+          response: 'CHECK — must show within 30 seconds',
+          severity: 'warning',
+        },
+        { id: 'es-08', action: 'Alternator', response: 'ON' },
+        {
+          id: 'es-09',
+          action: 'Fuel pump',
+          response: 'OFF — verify fuel pressure holds',
+          severity: 'caution',
+          note: 'If pressure drops when fuel pump OFF, keep pump ON and investigate before flight',
+        },
+        { id: 'es-10', action: 'Avionics master', response: 'ON' },
+        { id: 'es-11', action: 'Engine gauges', response: 'CHECK — oil temp rising, all in green' },
+      ],
+    },
+    {
+      id: 'after-start',
+      name: 'After Start',
+      category: 'startup',
+      items: [
+        { id: 'as-01', action: 'Radios', response: 'ON — ATIS, ground/CTAF frequency set' },
+        { id: 'as-02', action: 'Transponder', response: 'STBY' },
+        { id: 'as-03', action: 'Lights', response: 'AS REQUIRED — nav lights if dusk or dark' },
+        { id: 'as-04', action: 'Ammeter', response: 'CHECK — showing charge' },
+        { id: 'as-05', action: 'Suction gauge', response: 'CHECK — 4.8–5.1 inHg' },
+        { id: 'as-06', action: 'Throttle', response: 'WARM-UP at 1000 RPM — oil temp in green before run-up' },
+      ],
+    },
+    {
+      id: 'before-taxi',
+      name: 'Before Taxi',
+      category: 'taxi',
+      items: [
+        { id: 'bt-01', action: 'ATIS', response: 'COPIED — QNH, active runway, wind' },
+        { id: 'bt-02', action: 'Altimeter', response: 'SET — verify field elevation ±75 ft' },
+        { id: 'bt-03', action: 'DI / heading indicator', response: 'ALIGNED with compass' },
+        { id: 'bt-04', action: 'Heading bug', response: 'SET — departure runway heading' },
+        { id: 'bt-05', action: 'Altitude bug', response: 'SET — initial target altitude' },
+        { id: 'bt-06', action: 'GPS / Nav', response: 'SET — destination entered, route verified' },
+        { id: 'bt-07', action: 'Taxi clearance', response: 'OBTAINED — route reviewed, hotspots noted' },
+        { id: 'bt-08', action: 'Brakes', response: 'TEST — brief application before moving' },
+        { id: 'bt-09', action: 'Taxi route', response: 'REVIEWED — hold short lines and runway crossings identified' },
+      ],
+    },
+    {
+      id: 'taxi',
+      name: 'Taxi',
+      category: 'taxi',
+      items: [
+        { id: 'tx-01', action: 'Taxi speed', response: 'WALKING PACE on ramp / controlled speed on taxiway' },
+        { id: 'tx-02', action: 'Brakes', response: 'TEST — brief application, verify effectiveness' },
+        {
+          id: 'tx-03',
+          action: 'Flight controls — crosswind',
+          response: 'INTO wind (aileron toward wind, elevator as required)',
+          severity: 'caution',
+        },
+        { id: 'tx-04', action: 'Turn coordinator', response: 'CHECK — correct direction during turns' },
+        { id: 'tx-05', action: 'AI / attitude indicator', response: 'STABLE — no flag or unusual precession' },
+        { id: 'tx-06', action: 'DI / heading indicator', response: 'TRACKING — verify matches compass through turns' },
+        { id: 'tx-07', action: 'Hold short lines', response: 'DO NOT CROSS without clearance', severity: 'warning' },
+      ],
+    },
+    {
+      id: 'runup',
+      name: 'Run-Up / Before Takeoff',
+      category: 'runup',
+      items: [
+        { id: 'ru-01', action: 'Parking brake', response: 'SET' },
+        { id: 'ru-02', action: 'Flight controls', response: 'FREE AND CORRECT — full travel check' },
+        { id: 'ru-03', action: 'Fuel selector', response: 'FULLEST TANK' },
+        { id: 'ru-04', action: 'Mixture', response: 'RICH (or as altitude requires)' },
+        { id: 'ru-05', action: 'Engine instruments', response: 'ALL GREEN — oil temp/pressure before high power' },
+        { id: 'ru-06', action: 'Throttle', response: '2000 RPM' },
+        {
+          id: 'ru-07',
+          action: 'Carb heat',
+          response: 'ON — check RPM drop 100–175 RPM, then OFF',
+          severity: 'warning',
+          note: 'Drop then full recovery = no ice. Rise then drop to pre-test = ice cleared. No drop at all = suspect gauge.',
+        },
+        {
+          id: 'ru-08',
+          action: 'Magnetos',
+          response: 'L then BOTH then R — max 175 RPM drop; max 50 RPM differential',
+          severity: 'caution',
+          note: 'If drop exceeds 175 RPM or differential exceeds 50 RPM, do not take off.',
+        },
+        { id: 'ru-09', action: 'Ammeter', response: 'CHECK — showing charge' },
+        { id: 'ru-10', action: 'Vacuum / suction', response: '5.0 inHg — GREEN ARC' },
+        { id: 'ru-11', action: 'Engine instruments', response: 'ALL GREEN' },
+        { id: 'ru-12', action: 'Throttle', response: 'IDLE CHECK — 400–500 RPM smooth, then set 1000 RPM' },
+        { id: 'ru-13', action: 'Fuel pump', response: 'ON' },
+        { id: 'ru-14', action: 'Flaps', response: 'SET — 0° normal / 25° short or soft field' },
+        { id: 'ru-15', action: 'Trim', response: 'NEUTRAL / SET FOR TAKEOFF' },
+        { id: 'ru-16', action: 'Heading bug', response: 'SET — runway heading' },
+        { id: 'ru-17', action: 'Altitude bug', response: 'SET — target altitude' },
+        { id: 'ru-18', action: 'Doors and windows', response: 'CLOSED AND LATCHED' },
+        { id: 'ru-19', action: 'Seatbelts', response: 'ALL SECURE' },
+        { id: 'ru-20', action: 'Transponder', response: 'ALT' },
+        { id: 'ru-21', action: 'Lights', response: 'ALL ON — strobes, landing light, nav' },
+      ],
+    },
+    {
+      id: 'takeoff-brief',
+      name: 'Takeoff Brief',
+      category: 'takeoff',
+      items: [
+        { id: 'tb-01', action: 'Runway', response: 'CONFIRM — correct runway, condition, clear', severity: 'warning' },
+        {
+          id: 'tb-02',
+          action: 'Engine failure below 300 ft AGL',
+          response: 'LAND AHEAD — no turn-back; slight turn only to avoid obstacles',
+          severity: 'warning',
+        },
+        {
+          id: 'tb-03',
+          action: 'Engine failure above 300 ft AGL',
+          response: 'EMERGENCY LANDING FIELD — identify now; 360° return only if >1000 ft',
+          severity: 'caution',
+        },
+        { id: 'tb-04', action: 'Abort criteria', response: 'LOSS of power, abnormal gauge, control issue — reject before Vr' },
+        { id: 'tb-05', action: 'Rotation speed', response: 'Vr 55 KIAS' },
+        { id: 'tb-06', action: 'Climb speed', response: 'Vy 76 KIAS — obstacle: Vx 64 KIAS' },
+        { id: 'tb-07', action: 'Departure heading and frequency', response: 'REVIEWED' },
+        { id: 'tb-08', action: 'Emergency landing area', response: 'IDENTIFIED', severity: 'caution' },
+      ],
+    },
+    {
+      id: 'normal-takeoff',
+      name: 'Normal Takeoff',
+      category: 'takeoff',
+      items: [
+        { id: 'nt-01', action: 'Fuel pump', response: 'ON — confirm before rolling' },
+        { id: 'nt-02', action: 'Throttle', response: 'FULL AND SMOOTH — check RPM (~2400 at full power)' },
+        { id: 'nt-03', action: 'Engine instruments at full power', response: 'SCAN — oil pressure, RPM, airspeed alive' },
+        { id: 'nt-04', action: 'Directional control', response: 'RUDDER — maintain centerline' },
+        { id: 'nt-05', action: 'Rotation', response: 'Vr 55 KIAS — smooth back pressure, 10° nose-up attitude' },
+        { id: 'nt-06', action: 'Positive rate', response: 'CONFIRM — VSI and altimeter both increasing' },
+        { id: 'nt-07', action: 'Pitch for Vy', response: '76 KIAS — obstacle: Vx 64 KIAS until clear' },
+        { id: 'nt-08', action: 'Flaps', response: 'RETRACT — incrementally after clear of obstacles, positive rate' },
+        {
+          id: 'nt-09',
+          action: 'Fuel pump',
+          response: 'OFF above 1000 ft AGL — check pressure holds',
+          severity: 'caution',
+          note: 'If pressure drops when pump OFF, leave ON and investigate after landing.',
+        },
+      ],
+    },
+    {
+      id: 'cruise-climb',
+      name: 'Cruise Climb',
+      category: 'climb',
+      items: [
+        { id: 'cc-01', action: 'Airspeed', response: 'Vy 76 KIAS — or cruise climb ~90 KIAS for engine cooling' },
+        { id: 'cc-02', action: 'Engine instruments', response: 'MONITOR — oil temp, oil pressure, ammeter' },
+        { id: 'cc-03', action: 'Mixture', response: 'RICH below 3000 ft DA — lean above for best power' },
+        { id: 'cc-04', action: 'Fuel selector', response: 'FULLEST TANK — note time for tank alternation' },
+        { id: 'cc-05', action: 'Traffic', response: 'SCAN — clear area at level-off' },
+      ],
+    },
+    {
+      id: 'cruise',
+      name: 'Cruise',
+      category: 'cruise',
+      items: [
+        { id: 'cr-01', action: 'Power', response: 'SET — 55–75% (refer to POH cruise tables)' },
+        { id: 'cr-02', action: 'Mixture', response: 'LEAN — peak EGT minus 50°F rich of peak, or by RPM method' },
+        {
+          id: 'cr-03',
+          action: 'Fuel selector',
+          response: 'ALTERNATE TANKS every 30 min — LEFT / RIGHT / LEFT…',
+          severity: 'caution',
+        },
+        { id: 'cr-04', action: 'Engine gauges', response: 'MONITOR — oil temp, oil pressure, ammeter within limits' },
+        { id: 'cr-05', action: 'Fuel quantity', response: 'CHECK — time remaining vs. flight plan' },
+        { id: 'cr-06', action: 'Altimeter', response: 'CHECK — new QNH as needed' },
+        { id: 'cr-07', action: 'Weather', response: 'MONITOR — update ATIS/AWOS as needed' },
+        { id: 'cr-08', action: 'Position', response: 'CROSS-CHECK — GPS track vs. planned route' },
+      ],
+    },
+    {
+      id: 'descent',
+      name: 'Descent / Before Landing',
+      category: 'descent',
+      items: [
+        { id: 'de-01', action: 'ATIS', response: 'COPIED — QNH, active runway, wind, NOTAMs' },
+        { id: 'de-02', action: 'Altimeter', response: 'SET — destination QNH; verify field elevation check' },
+        { id: 'de-03', action: 'Approach brief', response: 'COMPLETE — runway, pattern entry, go-around plan' },
+        { id: 'de-04', action: 'G — Gas', response: 'FUEL PUMP ON; selector FULLEST TANK', severity: 'warning' },
+        { id: 'de-05', action: 'U — Undercarriage', response: 'FIXED GEAR — verbalize "three green" for habit building' },
+        { id: 'de-06', action: 'M — Mixture', response: 'RICH' },
+        { id: 'de-07', action: 'P — Propeller', response: 'FIXED PITCH — N/A' },
+        { id: 'de-08', action: 'S — Seatbelts / Switches', response: 'SEATBELTS SECURE; landing light ON' },
+        {
+          id: 'de-09',
+          action: 'S — Speed',
+          response: 'BELOW Vfe before flaps — 102 KIAS for first notch (10°)',
+          severity: 'caution',
+        },
+        {
+          id: 'de-10',
+          action: 'Carb heat',
+          response: 'AS REQUIRED — ON if icing conditions suspected',
+          severity: 'caution',
+          note: 'Visible moisture, OAT ≤10°C, or rough engine in descent = carb heat ON',
+        },
+        { id: 'de-11', action: 'Flaps', response: 'EXTEND in increments — 10°, 25°, 40° as speed permits' },
+      ],
+    },
+    {
+      id: 'normal-landing',
+      name: 'Normal Landing',
+      category: 'landing',
+      items: [
+        { id: 'la-01', action: 'Final approach speed', response: '70–75 KIAS full flaps (adjust for weight and wind)' },
+        { id: 'la-02', action: 'Threshold speed', response: '65 KIAS over threshold — reduce on round-out' },
+        { id: 'la-03', action: 'Round-out and flare', response: 'HOLD — back pressure, reduce power smoothly to idle' },
+        { id: 'la-04', action: 'Touchdown', response: 'MAIN WHEELS FIRST — slight nose-high, on centerline' },
+        { id: 'la-05', action: 'Roll-out', response: 'RUDDER for directional control, back pressure maintained' },
+        { id: 'la-06', action: 'Brakes', response: 'SMOOTH and EVEN — after roll-out established' },
+        { id: 'la-07', action: 'Clear runway', response: 'EXIT at taxiway speed — positively clear hold short line' },
+      ],
+    },
+    {
+      id: 'go-around',
+      name: 'Go-Around / Missed Approach',
+      category: 'landing',
+      items: [
+        { id: 'ga-01', action: 'Throttle', response: 'FULL AND SMOOTH', severity: 'warning' },
+        {
+          id: 'ga-02',
+          action: 'Carb heat',
+          response: 'OFF IMMEDIATELY',
+          severity: 'warning',
+          note: 'Carb heat reduces power — OFF at the same moment as full throttle.',
+        },
+        { id: 'ga-03', action: 'Flaps', response: 'RETRACT one notch (40° → 25°) — do not fully retract at low speed' },
+        { id: 'ga-04', action: 'Pitch', response: 'ESTABLISH positive climb attitude — Vx 64 KIAS initially' },
+        { id: 'ga-05', action: 'Positive rate', response: 'CONFIRM VSI climbing — flaps UP incrementally' },
+        { id: 'ga-06', action: 'Airspeed', response: 'Vy 76 KIAS after flaps up' },
+        { id: 'ga-07', action: 'Fuel pump', response: 'VERIFY ON' },
+        { id: 'ga-08', action: 'Trim', response: 'ADJUST for climb' },
+        { id: 'ga-09', action: 'ATC / CTAF', response: 'ADVISE — "going around"' },
+      ],
+    },
+    {
+      id: 'after-landing',
+      name: 'After Landing / Taxi In',
+      category: 'landing',
+      items: [
+        { id: 'al-01', action: 'Flaps', response: 'UP' },
+        { id: 'al-02', action: 'Trim', response: 'NEUTRAL' },
+        { id: 'al-03', action: 'Carb heat', response: 'OFF' },
+        { id: 'al-04', action: 'Fuel pump', response: 'OFF' },
+        { id: 'al-05', action: 'Transponder', response: 'STBY (1200 code)' },
+        { id: 'al-06', action: 'Wing strobes', response: 'OFF', note: 'Anti-collision beacon remains ON' },
+        { id: 'al-07', action: 'Landing light', response: 'OFF — or on for taxi visibility as required' },
+        { id: 'al-08', action: 'Mixture', response: 'LEAN for taxi — prevents plug fouling' },
+        { id: 'al-09', action: 'Taxi clearance', response: 'OBTAIN or self-announce on CTAF' },
+      ],
+    },
+    {
+      id: 'shutdown',
+      name: 'Shutdown & Securing',
+      category: 'shutdown',
+      items: [
+        { id: 'sd-01', action: 'Parking brake', response: 'SET' },
+        { id: 'sd-02', action: 'Radios and avionics', response: 'OFF' },
+        { id: 'sd-03', action: 'Lights', response: 'OFF' },
+        {
+          id: 'sd-04',
+          action: 'Throttle',
+          response: 'IDLE — 1000 RPM, 2 min cool-down',
+          note: 'Allow CHTs to stabilize before shutdown — prevents shock cooling',
+        },
+        {
+          id: 'sd-05',
+          action: 'Mixture',
+          response: 'IDLE CUT-OFF — engine stops',
+          severity: 'warning',
+          note: 'Always stop engine with mixture, not ignition',
+        },
+        { id: 'sd-06', action: 'Magnetos', response: 'OFF — key out' },
+        { id: 'sd-07', action: 'Alternator', response: 'OFF' },
+        { id: 'sd-08', action: 'Master switch', response: 'OFF' },
+        { id: 'sd-09', action: 'Fuel selector', response: 'OFF' },
+        { id: 'sd-10', action: 'Control lock', response: 'INSTALL' },
+        { id: 'sd-11', action: 'Pitot cover', response: 'INSTALL' },
+        { id: 'sd-12', action: 'Hobbs / tach', response: 'RECORD — time out' },
+        { id: 'sd-13', action: 'Fuel caps', response: 'VERIFY SECURE — both wings', severity: 'warning' },
+        { id: 'sd-14', action: 'Tie-downs', response: 'INSTALL — wings and tail' },
+        { id: 'sd-15', action: 'Chocks', response: 'IN — if required by ramp' },
+      ],
+    },
+  ],
+}
+```
+
+- [ ] **Step 3: Verify TypeScript compiles**
+
+Run:
+```powershell
+npm run build 2>&1 | Select-String -Pattern "error TS|Build failed|ERROR" | Select-Object -First 20
+```
+Expected: No output (no errors). If there are errors, fix them before committing.
+
+- [ ] **Step 4: Spot-check in browser**
+
+Run the dev server:
+```powershell
+npm run dev
+```
+Open the app, select Piper Archer II, verify:
+- Aircraft card shows "Piper PA-28-181 Archer II" with "carbureted" in description
+- V-speeds show Vso 49, Vr 55, Vx 64, Vy 76, Vg 76
+- 19 phases visible (Pilot Self-Assessment through Shutdown & Securing)
+- Run-Up phase has carb heat "ON — check RPM drop 100–175 RPM, then OFF"
+- Magneto check shows "max 175 RPM drop; max 50 RPM differential"
+
+- [ ] **Step 5: Commit**
+
+```powershell
+git add src/data/aircraft/piperArcher.ts
+git commit -m "feat(archer): complete overhaul — fix engine type, V-speeds, add 19 phases"
+```
+
+---
+
+### Task 2: Add 8 Emergency Phases
+
+Appends 8 emergency-category phases to the `piperArcher.ts` phases array. The current file ends with `],\n}` closing the phases array and object. Replace that closing to insert the emergencies.
+
+**Files:**
+- Modify: `src/data/aircraft/piperArcher.ts`
+
+- [ ] **Step 1: Locate the closing of the phases array**
+
+Run:
+```powershell
+(Get-Content src\data\aircraft\piperArcher.ts)[-5..-1]
+```
+Expected: You should see lines containing `},`, `],`, `}` — the shutdown phase closing and phases array closing.
+
+- [ ] **Step 2: Add emergency phases before the closing `],`**
+
+Find this exact string (the last shutdown item through end of file — unique anchor):
+```typescript
+        { id: 'sd-15', action: 'Chocks', response: 'IN — if required by ramp' },
+      ],
+    },
+  ],
+}
+```
+
+Replace it with:
+```typescript
+        { id: 'sd-15', action: 'Chocks', response: 'IN — if required by ramp' },
+      ],
+    },
+    {
+      id: 'emergency-engine-failure',
+      name: 'Engine Failure In-Flight',
+      category: 'emergency',
+      items: [
+        { id: 'ef-01', action: 'Best glide', response: 'ESTABLISH — 76 KIAS', severity: 'warning' },
+        { id: 'ef-02', action: 'Landing area', response: 'SELECT — within glide range, into wind if possible' },
+        { id: 'ef-03', action: 'Fuel selector', response: 'SWITCH TANKS — fullest or other tank' },
+        { id: 'ef-04', action: 'Fuel pump', response: 'ON' },
+        { id: 'ef-05', action: 'Mixture', response: 'RICH' },
+        { id: 'ef-06', action: 'Carb heat', response: 'ON — check for carb ice', severity: 'caution' },
+        { id: 'ef-07', action: 'Throttle', response: 'FULL' },
+        { id: 'ef-08', action: 'Ignition', response: 'BOTH — then START if not restarting' },
+        { id: 'ef-09', action: 'Primer', response: 'IN AND LOCKED' },
+        { id: 'ef-10', action: 'Squawk 7700', response: 'SET', severity: 'warning' },
+        { id: 'ef-11', action: 'MAYDAY — 121.5 MHz', response: 'TRANSMIT — position, altitude, intentions', severity: 'warning' },
+        { id: 'ef-12', action: 'Prepare for landing', response: 'FLAPS as required; master and fuel OFF before touchdown' },
+      ],
+    },
+    {
+      id: 'emergency-engine-failure-takeoff',
+      name: 'Engine Failure After Takeoff',
+      category: 'emergency',
+      items: [
+        { id: 'efat-01', action: 'LAND AHEAD', response: 'MAINTAIN CONTROL — no turn-back below 500 ft AGL', severity: 'warning' },
+        { id: 'efat-02', action: 'Throttle', response: 'IDLE' },
+        { id: 'efat-03', action: 'Best glide', response: '76 KIAS' },
+        { id: 'efat-04', action: 'Flaps', response: 'AS REQUIRED for terrain' },
+        { id: 'efat-05', action: 'Master and fuel', response: 'OFF before touchdown' },
+        { id: 'efat-06', action: 'Doors', response: 'UNLATCH before touchdown — prevents jamming on impact' },
+      ],
+    },
+    {
+      id: 'emergency-engine-roughness',
+      name: 'Engine Roughness / Partial Power',
+      category: 'emergency',
+      items: [
+        {
+          id: 'er-01',
+          action: 'Carb heat',
+          response: 'ON — hold 30 seconds, monitor RPM',
+          severity: 'warning',
+          note: 'RPM rises then returns to smooth = ice was present and cleared. Normal.',
+        },
+        { id: 'er-02', action: 'Fuel pump', response: 'ON' },
+        { id: 'er-03', action: 'Fuel selector', response: 'SWITCH TANKS' },
+        { id: 'er-04', action: 'Mixture', response: 'ADJUST — try rich, then slightly lean' },
+        { id: 'er-05', action: 'Ignition', response: 'CHECK — cycle BOTH, L, BOTH, R, BOTH' },
+        { id: 'er-06', action: 'Engine gauges', response: 'CHECK — oil pressure, oil temp, fuel pressure' },
+        { id: 'er-07', action: 'If no improvement', response: 'DIVERT — land as soon as practical', severity: 'caution' },
+      ],
+    },
+    {
+      id: 'emergency-engine-fire',
+      name: 'Engine Fire In-Flight',
+      category: 'emergency',
+      items: [
+        { id: 'enf-01', action: 'Mixture', response: 'IDLE CUT-OFF', severity: 'warning' },
+        { id: 'enf-02', action: 'Fuel selector', response: 'OFF', severity: 'warning' },
+        { id: 'enf-03', action: 'Fuel pump', response: 'OFF' },
+        { id: 'enf-04', action: 'Throttle', response: 'CLOSE' },
+        { id: 'enf-05', action: 'Heater and vents', response: 'OFF — avoid feeding fire' },
+        { id: 'enf-06', action: 'Best glide', response: '76 KIAS — select emergency landing area' },
+        { id: 'enf-07', action: 'Airspeed', response: 'INCREASE if fire persists — airflow may extinguish' },
+        { id: 'enf-08', action: 'Mayday', response: 'SQUAWK 7700, transmit on 121.5', severity: 'warning' },
+        { id: 'enf-09', action: 'Forced landing', response: 'EXECUTE — master OFF before touchdown' },
+      ],
+    },
+    {
+      id: 'emergency-electrical-fire',
+      name: 'Electrical Fire',
+      category: 'emergency',
+      items: [
+        { id: 'elef-01', action: 'Avionics master', response: 'OFF', severity: 'warning' },
+        { id: 'elef-02', action: 'All electrical switches', response: 'OFF' },
+        { id: 'elef-03', action: 'Master switch', response: 'OFF', severity: 'warning' },
+        { id: 'elef-04', action: 'Vents / fresh air', response: 'OPEN — ventilate cockpit' },
+        { id: 'elef-05', action: 'Fire extinguisher', response: 'USE if fire visible and accessible' },
+        { id: 'elef-06', action: 'Land as soon as practical', response: 'RESTORE only essential electrics one at a time to identify source', severity: 'caution' },
+      ],
+    },
+    {
+      id: 'emergency-alternator-failure',
+      name: 'Alternator Failure',
+      category: 'emergency',
+      items: [
+        { id: 'af-01', action: 'Identify', response: 'AMMETER discharging; ALT WARN light ON', severity: 'warning' },
+        { id: 'af-02', action: 'Alternator switch', response: 'CYCLE OFF then ON — check ammeter' },
+        { id: 'af-03', action: 'Circuit breaker', response: 'CHECK — alt breaker; reset once if tripped' },
+        { id: 'af-04', action: 'Electrical load', response: 'REDUCE — avionics off, lights off; essentials only' },
+        {
+          id: 'af-05',
+          action: 'Battery time',
+          response: 'ESTIMATE — ~30 min on battery alone; plan accordingly',
+          severity: 'caution',
+        },
+        { id: 'af-06', action: 'Divert', response: 'LAND AS SOON AS PRACTICAL — before battery exhausted' },
+      ],
+    },
+    {
+      id: 'emergency-oil-pressure',
+      name: 'Loss of Oil Pressure',
+      category: 'emergency',
+      items: [
+        { id: 'lop-01', action: 'Oil pressure gauge', response: 'CONFIRM — low or zero reading', severity: 'warning' },
+        { id: 'lop-02', action: 'Oil temperature', response: 'CHECK — rising confirms actual oil loss vs. gauge failure' },
+        { id: 'lop-03', action: 'Power', response: 'REDUCE — lower power reduces engine stress' },
+        {
+          id: 'lop-04',
+          action: 'Land immediately',
+          response: 'SELECT NEAREST SUITABLE FIELD — engine seizure may be imminent',
+          severity: 'warning',
+        },
+        { id: 'lop-05', action: 'Mayday', response: 'SQUAWK 7700, transmit if time permits' },
+      ],
+    },
+    {
+      id: 'emergency-open-door',
+      name: 'Open Door In-Flight',
+      category: 'emergency',
+      items: [
+        {
+          id: 'od-01',
+          action: 'Maintain aircraft control',
+          response: 'FLY THE AIRPLANE — open door does not significantly affect controllability',
+          severity: 'warning',
+        },
+        { id: 'od-02', action: 'Airspeed', response: 'MAINTAIN normal approach speed — door drag is minor' },
+        { id: 'od-03', action: 'Door latch', response: 'ATTEMPT re-latch only if safe (not PIC during critical phase)' },
+        { id: 'od-04', action: 'Land normally', response: 'CONTINUE normal pattern and landing — latch on ground' },
+        {
+          id: 'od-05',
+          action: 'Note',
+          response: 'Do not hold door against slipstream — distraction risk',
+          severity: 'caution',
+        },
+      ],
+    },
+  ],
+}
+```
+
+- [ ] **Step 3: Verify TypeScript compiles**
+
+Run:
+```powershell
+npm run build 2>&1 | Select-String -Pattern "error TS|Build failed|ERROR" | Select-Object -First 20
+```
+Expected: No output.
+
+- [ ] **Step 4: Spot-check in browser**
+
+With the dev server running, select Piper Archer II and navigate to the Emergency section. Verify all 8 emergency phases appear:
+- Engine Failure In-Flight (best glide 76 KIAS — not the old 73)
+- Engine Failure After Takeoff
+- Engine Roughness / Partial Power
+- Engine Fire In-Flight
+- Electrical Fire
+- Alternator Failure
+- Loss of Oil Pressure
+- Open Door In-Flight
+
+- [ ] **Step 5: Commit**
+
+```powershell
+git add src/data/aircraft/piperArcher.ts
+git commit -m "feat(archer): add 8 emergency procedures"
+```
+
+---
+
+### Task 3: Piper Warrior Magneto Limit Fix
+
+The Warrior currently shows `max 125 RPM drop` for magnetos. The Lycoming O-320-D3G limit is **150 RPM** max individual drop with **50 RPM** differential — matching Lycoming SI-1289A. Fix the single run-up item.
+
+**Files:**
+- Modify: `src/data/aircraft/piperWarrior.ts` (single item)
+
+- [ ] **Step 1: Confirm current value**
+
+Run:
+```powershell
+Select-String -Path src\data\aircraft\piperWarrior.ts -Pattern "Magnetos"
+```
+Expected output contains: `max 125 RPM drop / 50 RPM diff`
+
+- [ ] **Step 2: Fix the magneto response**
+
+In `src/data/aircraft/piperWarrior.ts`, find:
+```typescript
+        { id: 'ru-05', action: 'Magnetos', response: 'CHECK — max 125 RPM drop / 50 RPM diff', severity: 'caution' },
+```
+
+Replace with:
+```typescript
+        { id: 'ru-05', action: 'Magnetos', response: 'CHECK — L then BOTH then R; max 150 RPM drop, max 50 RPM differential', severity: 'caution' },
+```
+
+- [ ] **Step 3: Verify TypeScript compiles**
+
+Run:
+```powershell
+npm run build 2>&1 | Select-String -Pattern "error TS|Build failed|ERROR" | Select-Object -First 20
+```
+Expected: No output.
+
+- [ ] **Step 4: Commit**
+
+```powershell
+git add src/data/aircraft/piperWarrior.ts
+git commit -m "fix(warrior): correct magneto RPM drop limit to 150 per Lycoming O-320 SI-1289A"
+```
