@@ -282,7 +282,7 @@ export const piperWarrior: Aircraft = {
         { id: 'ru-02', action: 'Controls', response: 'FREE & CORRECT' },
         { id: 'ru-03', action: 'Mixture', response: 'RICH' },
         { id: 'ru-04', action: 'Carb heat', response: 'ON — warm at 1800 RPM, then COLD' },
-        { id: 'ru-05', action: 'Magnetos', response: 'CHECK — max 125 RPM drop / 50 RPM diff', severity: 'caution' },
+        { id: 'ru-05', action: 'Magnetos', response: 'CHECK — L then BOTH then R; max 150 RPM drop, max 50 RPM differential', severity: 'caution' },
         { id: 'ru-06', action: 'Engine gauges', response: 'CHECK GREEN' },
       ],
     },
