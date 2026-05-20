@@ -1,235 +1,45 @@
-import type { Aircraft } from '../../types'
+# Piper Warrior PA-28-161 Phases Overhaul — Implementation Plan
 
-export const piperWarrior: Aircraft = {
-  id: 'piper-warrior-iii',
-  name: 'Piper PA-28-161 Warrior III',
-  manufacturer: 'Piper',
-  model: 'PA-28-161',
-  category: 'SEP',
-  description: 'Widely used four-seat trainer and rental aircraft. Tapered wing Warrior is docile and forgiving — ideal for PPL and instrument training.',
-  specs: {
-    engines: 1,
-    engineType: 'Lycoming O-320-D3G (160 HP)',
-    maxSpeed: '120 KTAS',
-    range: '440 NM',
-    ceiling: '11,000 ft',
-    seats: 4,
-  },
-  vSpeeds: {
-    'Vso': '49 KIAS',
-    'Vs': '55 KIAS',
-    'Vr': '55 KIAS',
-    'Vx': '64 KIAS',
-    'Vy': '74 KIAS',
-    'Vg': '73 KIAS',
-    'Vno': '125 KIAS',
-    'Vne': '154 KIAS',
-    'Vfe (0–25°)': '102 KIAS',
-    'Vfe (25–40°)': '88 KIAS',
-    'Va (2440 lbs)': '113 KIAS',
-    'Vapp': '71 KIAS',
-    'X-Wind Max': '17 KTS',
-  },
-  referenceData: [
-    {
-      kind: 'speeds',
-      title: 'V-Speeds Reference',
-      items: {
-        'Vso (Stall Landing Config)': '49 KIAS',
-        'Vs (Stall Clean)': '55 KIAS',
-        'Vr (Rotation)': '55 KIAS',
-        'Vx (Best Angle of Climb)': '64 KIAS',
-        'Vy (Best Rate of Climb)': '74 KIAS',
-        'Vg / Glide (Best Glide)': '73 KIAS',
-        'Vno (Max Structural Cruise)': '125 KIAS',
-        'Vne (Never Exceed)': '154 KIAS',
-        'Vfe (Flaps 0–25°)': '102 KIAS',
-        'Vfe (Flaps 25–40°)': '88 KIAS',
-        'Va (2440 lbs, Maneuvering)': '113 KIAS',
-        'Vapp (Normal Approach)': '71 KIAS',
-        'X-Wind Max Demo': '17 KTS',
-      },
-    },
-    {
-      kind: 'maneuver',
-      title: 'Pre-Maneuver Checks (ABCD)',
-      steps: [
-        'A — Airspace: Identify class and restrictions',
-        'B — Altitude: Verify adequate (≥1500 ft AGL private / ≥3000 ft AGL commercial)',
-        'C — Airspeed: Determine entry speed for the maneuver',
-        'D — Best Place to Land: Identify field within glide range',
-        'Clear the area — 90°/180°/90° or 360° clearing turns',
-        'Configure — GUMPSS check',
-        'Declare — Make radio call if appropriate',
-      ],
-    },
-    {
-      kind: 'maneuver',
-      title: 'Steep Turns',
-      steps: [
-        'Reference point / heading — Establish',
-        'Entry airspeed — 95 KIAS (at or below Va 113 KIAS)',
-        'Roll into 45° bank (50° for commercial)',
-        'Trim — Apply back pressure to maintain altitude',
-        'Power — Adjust as required to maintain altitude',
-        'Roll out on entry heading',
-      ],
-      standards: [
-        'Private: Alt ±100 ft, Heading ±10°, AS ±10 KIAS, Bank ±10°',
-        'Commercial: Alt ±100 ft, Heading ±10°, AS ±10 KIAS, Bank ±5°',
-      ],
-    },
-    {
-      kind: 'maneuver',
-      title: 'Slow Flight',
-      steps: [
-        'Reference point / heading — Establish',
-        'Throttle — Reduce and configure; carb heat on',
-        'Flaps — Lower in increments (Vfe: 102 KIAS for 0–25°, 88 KIAS for 25–40°)',
-        'Target airspeed — 52 KIAS',
-        'Power — Adjust as required to maintain altitude',
-        'Rudder — Use to prevent adverse yaw; controls will be sluggish',
-      ],
-      standards: [
-        'Private: Alt >1500 AGL ±100 ft, Heading ±10°, AS +10/−0 KIAS',
-        'Commercial: Alt >1500 AGL ±50 ft, AS +5/−0 KIAS',
-      ],
-    },
-    {
-      kind: 'maneuver',
-      title: 'Power-Off Stall (from Slow Flight)',
-      steps: [
-        '★ ENTER FROM SLOW FLIGHT ★',
-        'Reference point / heading — Establish',
-        'Set carb heat on; maintain 60 KIAS with slight rate of descent',
-        'Throttle — Idle',
-        'Pitch — Level, increase back pressure; hold altitude (no sink)',
-        'CALLOUTS: Stall Horn → Buffet → Control Degradation → Stall (Break)',
-        'Recover on FIRST indication of stall',
-        'Recovery: Full throttle + carb heat off → pitch Vx (64 KIAS) → climb → flaps up incrementally',
-      ],
-      standards: [
-        'Private: Alt >1500 AGL ±100 ft, Heading ±10°, AS ±10 KIAS',
-        'Commercial: Bank ±5°',
-      ],
-    },
-    {
-      kind: 'maneuver',
-      title: 'Power-On Stall',
-      steps: [
-        'Reference point / heading — Establish',
-        'Trim — Takeoff setting',
-        'Set carb heat on; airspeed 55 KIAS',
-        'Throttle — Full power',
-        'Pitch — Increase 18–22°, maximum 25°',
-        'CALLOUTS: Stall Horn → Buffet → Control Degradation → Stall (Break)',
-        'Recover on FIRST indication of stall',
-        'Recovery: Reduce AOA → accelerate to Vy (74 KIAS) → establish climb',
-      ],
-      standards: [
-        'Alt >1500 AGL ±100 ft, Heading ±10°, AS ±10 KIAS, Bank ±5°',
-      ],
-    },
-    {
-      kind: 'maneuver',
-      title: 'Accelerated Stall',
-      steps: [
-        'Reference point / heading — Establish',
-        'Set carb heat on',
-        'Airspeed — 75 KIAS',
-        'Bank — 45°',
-        'Pitch — Increase back pressure smoothly and firmly',
-        'Recover on FIRST indication',
-        'Recovery: Reduce AOA → full power → accelerate to Vx (64 KIAS) → establish climb',
-      ],
-      standards: [
-        'Entry altitude NLT 3000 ft AGL',
-      ],
-    },
-    {
-      kind: 'maneuver',
-      title: 'Ground Reference Maneuvers',
-      steps: [
-        'Reference point / heading — Establish',
-        'Wind direction — Determine from surface indicators',
-        'Airspeed — At or below Va (113 KIAS)',
-        'Altitude — 600–1000 ft AGL',
-        'Bank — Steepen on downwind, shallow on upwind to maintain constant radius',
-        'Rudder — Coordinate throughout; no slipping or skidding',
-      ],
-      standards: [
-        'Alt 600–1000 AGL ±100 ft, Heading ±10°, AS ±10 KIAS, Bank ±5°',
-      ],
-    },
-    {
-      kind: 'keyval',
-      title: 'Performance Formulas',
-      items: {
-        'PA (Pressure Alt)': '(29.92 − Current Altimeter Setting) × 1000 + Field Elevation',
-        'DA (Density Alt)': 'PA + (120 × (OAT °C − ISA °C))',
-        'Va (weight adj)': '√(Current Weight ÷ MGTOW) × Va @ MGTOW',
-        'CG': 'Total Moment ÷ Total Weight',
-      },
-    },
-    {
-      kind: 'keyval',
-      title: 'IMSAFE — Crew Self-Check',
-      items: {
-        'I — Illness': 'Are we feeling well enough to fly today?',
-        'M — Medications': 'On any FAA-prohibited medications?',
-        'S — Stress': 'Acute or chronic stressors affecting judgment or performance?',
-        'A — Alcohol': '8 hrs bottle-to-throttle, BAC <.04, no residual effects',
-        'F — Fatigue & Food': 'Adequate rest? Eaten and hydrated?',
-        'E — Emotions / Everything': 'Right headspace? External pressures? Anything on your mind?',
-      },
-    },
-    {
-      kind: 'keyval',
-      title: 'SAFETY — Passenger Brief',
-      items: {
-        'S — Seatbelts': 'Demonstrate operation; identify when to remain belted',
-        'A — Air Vents & Aeromedical': 'Vent operation; hypoxia, motion sickness, hyperventilation',
-        'F — Fire Extinguisher': 'Location and how to operate',
-        'E — Exits & Egress': 'Door/window ops, egress strategies, off-airport landing door considerations',
-        'T — Talking, Traffic, Teamwork': 'Quiet during critical phases; traffic scan (see something, say something); 3-way control exchange',
-        'Y — Your Considerations': 'Non-rated pax radio/control if incapacitated; PLBs; ANYTHING else relevant',
-      },
-    },
-    {
-      kind: 'keyval',
-      title: 'NWKRAFT — Preflight Planning',
-      items: {
-        'N — NOTAMs': 'Reviewed for departure, en route, and destination',
-        'W — Weather': 'Current and forecast; winds, ceilings, icing, turbulence; alternates',
-        'K — Known ATC Delays': 'Ground stops, TFRs, flow control programs',
-        'R — Runway Distance': 'Available at all intended landing points',
-        'A — Alternates': 'Required? Identified? Weather above minimums? Fueled?',
-        'F — Fuel Required': 'Reserve met? VFR: +45 min day / +30 min night',
-        'T — Takeoff & Landing Perf': 'Computed for actual conditions (DA, weight, wind); margins adequate',
-      },
-    },
-    {
-      kind: 'keyval',
-      title: 'VFR Equipment — FAR 91.205(b) Day / (c) +Night',
-      items: {
-        'Day: Altimeter': 'Sensitive barometric altimeter',
-        'Day: Tachometer': 'Each engine',
-        'Day: Oil Pressure Gauge': 'Each pressure-lubricated engine',
-        'Day: Manifold Pressure': 'Each altitude engine',
-        'Day: Airspeed Indicator': 'Required',
-        'Day: Temp Gauge': 'Liquid-cooled engine coolant temperature',
-        'Day: Oil Temp Gauge': 'Each air-cooled engine',
-        '+Night: Fuel Gauges': 'Each tank in use',
-        '+Night: Anti-Collision Light': 'Flashing beacon or strobe',
-        '+Night: ELT': 'Per FAR 91.207',
-        '+Night: Safety Belts': 'All occupants',
-        '+Night: Fuses': 'One spare set',
-        '+Night: Position Lights': 'Red/green/white NAV lights',
-        '+Night: Source of Power': 'Adequate electrical source for all night equipment',
-        '+Night: Landing Light': 'Required if operated for hire',
-      },
-    },
-  ],
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** Replace the sparse 11-phase `piperWarrior.ts` phases array with a comprehensive 24-phase structure (1 preflight + 15 operational + 8 emergency) matching the Archer II and C172S pattern.
+
+**Architecture:** Surgical replacement — only the `phases: [...]` array is replaced. All other properties (id, name, manufacturer, specs, vSpeeds, referenceData) are preserved exactly as-is.
+
+**Tech Stack:** TypeScript, Vite+React PWA. File: `src/data/aircraft/piperWarrior.ts`.
+
+**Warrior-specific values (differ from Archer):**
+- Best glide (Vg): **73 KIAS** (Archer: 76)
+- Best rate of climb (Vy): **74 KIAS** (Archer: 76)
+- Best angle of climb (Vx): **64 KIAS** (same)
+- Magneto max individual drop: **150 RPM** (Archer: 175) — per Lycoming O-320
+- Engine: **Lycoming O-320-D3G, 160 HP** (Archer: O-360-A4M, 180 HP)
+- Fuel system: **LEFT/RIGHT/OFF** (no BOTH position — identical to Archer)
+- Carb heat procedures: **identical to Archer**
+- Fuel pump management: **identical to Archer**
+
+---
+
+### Task 1: Replace phases array — Operational Phases (preflight through shutdown)
+
+**Files:**
+- Modify: `src/data/aircraft/piperWarrior.ts` — replace `phases: [...]` array with 16 operational phases
+
+- [ ] **Step 1: Read the file to confirm the insertion boundary**
+
+```powershell
+Select-String -Path src\data\aircraft\piperWarrior.ts -Pattern "phases:"
+```
+
+Expected: One match showing `phases: [` near line 233.
+
+- [ ] **Step 2: Replace the entire phases array**
+
+In `src/data/aircraft/piperWarrior.ts`, find and replace the entire `phases: [` block (from line ~233 to the closing `],` before the final `}`) with the following. Use the Write or Edit tool — the old phases array starts at `phases: [` and the file ends with two closing braces `}\n}\n`.
+
+The new phases array (Task 1 covers phases 1–16, Task 2 will append emergencies):
+
+```typescript
   phases: [
     {
       id: 'preflight',
@@ -662,6 +472,35 @@ export const piperWarrior: Aircraft = {
         { id: 'sd-15', action: 'Chocks', response: 'IN — if required by ramp' },
       ],
     },
+```
+
+- [ ] **Step 3: Build and verify**
+
+```powershell
+npm run build 2>&1 | Select-String -Pattern "error|warning" | Select-Object -First 20
+```
+
+Expected: Zero TypeScript errors. Zero build errors.
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add src/data/aircraft/piperWarrior.ts
+git commit -m "feat(warrior): overhaul operational phases — add 16 comprehensive phases matching Archer/C172S structure"
+```
+
+---
+
+### Task 2: Append 8 Emergency Phases
+
+**Files:**
+- Modify: `src/data/aircraft/piperWarrior.ts` — append 8 emergency phases to the phases array (after the shutdown phase, before the closing `],`)
+
+- [ ] **Step 1: Append emergency phases**
+
+After the shutdown phase closing brace (`},`) and before the final `],\n}`, add:
+
+```typescript
     {
       id: 'emergency-engine-failure',
       name: 'Engine Failure In-Flight',
@@ -795,4 +634,35 @@ export const piperWarrior: Aircraft = {
       ],
     },
   ],
-}
+```
+
+- [ ] **Step 2: Build and verify**
+
+```powershell
+npm run build 2>&1 | Select-String -Pattern "error|warning" | Select-Object -First 20
+```
+
+Expected: Zero TypeScript errors. Zero build errors.
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add src/data/aircraft/piperWarrior.ts
+git commit -m "feat(warrior): add 8 emergency procedures matching Archer structure (Vg 73 KIAS)"
+```
+
+---
+
+## Spec Compliance Checklist
+
+After both tasks complete, verify:
+- [ ] 24 total phases (16 operational + 8 emergency)
+- [ ] Single preflight phase with 56 items (pf-01 through pf-56)
+- [ ] Vy = 74 KIAS everywhere (not 76 — that's the Archer)
+- [ ] Vg = 73 KIAS everywhere (not 76 — that's the Archer)
+- [ ] Magnetos: "max 150 RPM drop; max 50 RPM differential" (not 175)
+- [ ] Fuel pump: ON for start/takeoff/landing, OFF in cruise with pressure check
+- [ ] Carb heat: ON at run-up, OFF IMMEDIATELY at go-around (severity: 'warning')
+- [ ] Fuel selector notes say "No BOTH position on Warrior"
+- [ ] All existing referenceData preserved (maneuvers, IMSAFE, NWKRAFT, etc.)
+- [ ] All existing vSpeeds preserved
