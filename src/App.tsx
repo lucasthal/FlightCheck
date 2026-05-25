@@ -6,12 +6,14 @@ import { LoginScreen } from './components/LoginScreen'
 import { SettingsSheet } from './components/SettingsSheet'
 import { FeedbackButton } from './components/FeedbackButton'
 import { AuthProvider, useAuth } from './hooks/useAuth'
-import { usePreferences } from './hooks/usePreferences'
+import { PreferencesProvider } from './hooks/usePreferences'
 
 export default function App() {
   return (
     <AuthProvider>
-      <AppInner />
+      <PreferencesProvider>
+        <AppInner />
+      </PreferencesProvider>
     </AuthProvider>
   )
 }
@@ -21,7 +23,6 @@ function AppInner() {
   const [activePhaseName, setActivePhaseName] = useState<string | null>(null)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const { user, loading } = useAuth()
-  usePreferences(user)
 
   if (loading) {
     return (

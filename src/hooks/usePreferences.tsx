@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext, createContext, type ReactNode } from 'react'
 import type { User } from '@supabase/supabase-js'
 import { supabase } from '../lib/supabase'
+import { useAuth } from './useAuth'
 import {
   type UserPreferences,
   type Theme,
@@ -37,12 +38,10 @@ function writeLocalPreferences(prefs: UserPreferences): void {
   localStorage.setItem(LS_KEY, JSON.stringify(prefs))
 }
 
-export function usePreferences(user: User | null): UsePreferencesResult {
-  // Initialize synchronously from localStorage so every instance of this hook
-  // (App, SettingsSheet, ChecklistView) starts at the user's saved theme
-  // rather than DEFAULT_PREFERENCES. Without this, mounting a new instance
-  // briefly applies the default theme via its useEffect, overriding the saved
-  // theme — symptom: navigating from home → checklist reverted to dark.
+// Internal hook that actually owns the preferences state and runs side effects.
+// Only called once, from PreferencesProvider — every other call site reads via
+// the context.
+function useProvidePreferences(user: User | null): UsePreferencesResult {
   const [preferences, setPreferences] = useState<UserPreferences>(
     () => readLocalPreferences() ?? DEFAULT_PREFERENCES
   )
@@ -141,4 +140,22 @@ export function usePreferences(user: User | null): UsePreferencesResult {
   }
 
   return { preferences, updatePreference, loading }
+}
+
+// ── Context wiring ────────────────────────────────────────────────
+const PreferencesContext = createContext<UsePreferencesResult | null>(null)
+
+export function PreferencesProvider({ children }: { children: ReactNode }) {
+  const { user } = useAuth()
+  const value = useProvidePreferences(user)
+  return <PreferencesContext.Provider value={value}>{children}</PreferencesContext.Provider>
+}
+
+// The exported hook every component uses. Reads from the single Provider above,
+// so all consumers share the same state — no per-instance Supabase loads, no
+// races between SettingsSheet updates and ChecklistView re-fetches.
+export function usePreferences(): UsePreferencesResult {
+  const ctx = useContext(PreferencesContext)
+  if (!ctx) throw new Error('usePreferences must be used within PreferencesProvider')
+  return ctx
 }

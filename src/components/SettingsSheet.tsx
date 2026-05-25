@@ -25,7 +25,7 @@ const TEXT_SIZES: { value: TextSize; label: string }[] = [
 
 export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
   const { user } = useAuth()
-  const { preferences, updatePreference } = usePreferences(user)
+  const { preferences, updatePreference } = usePreferences()
   const [profileList, setProfileList] = useState<{ id: string; name: string }[]>([])
 
   useEffect(() => {

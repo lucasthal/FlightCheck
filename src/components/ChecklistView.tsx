@@ -72,7 +72,7 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings, onPhaseChange 
   const { isOnline } = useNetworkStatus()
   const editor = useProfileEditor()
   const { user } = useAuth()
-  const { preferences } = usePreferences(user)
+  const { preferences } = usePreferences()
 
   useWakeLock({ enabled: preferences.keep_screen_awake })
 
@@ -104,7 +104,9 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings, onPhaseChange 
   const [activeTab, setActiveTab] = useState<'checklist' | 'reference'>('checklist')
   const contentRef = useRef<HTMLDivElement>(null)
   const userScrolledRef = useRef(false)
-  const [spacerHeight, setSpacerHeight] = useState(0)
+  const [topSpacer, setTopSpacer] = useState(0)
+  const [bottomSpacer, setBottomSpacer] = useState(0)
+  const topSpacerRef = useRef(0)
 
   const normalPhases = activeAircraft.phases.filter(p => p.category !== 'emergency')
   const emergencyPhases = activeAircraft.phases.filter(p => p.category === 'emergency')
@@ -143,17 +145,33 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings, onPhaseChange 
 
   useLayoutEffect(() => {
     if (!preferences.autoscroll) {
-      setSpacerHeight(0)
+      topSpacerRef.current = 0
+      setTopSpacer(0)
+      setBottomSpacer(0)
       return
     }
     const recalc = () => {
       const c = contentRef.current
       if (!c) return
       const firstItem = c.querySelector<HTMLElement>('[data-item-id]')
-      const itemHalf = firstItem ? firstItem.clientHeight / 2 : 24
-      // Bottom spacer must allow the final scroll target (Complete Phase button) to
-      // reach the click-through point at ACTIVE_ITEM_POSITION_RATIO down the container.
-      setSpacerHeight(Math.max(0, c.clientHeight * (1 - ACTIVE_ITEM_POSITION_RATIO) - itemHalf))
+      if (!firstItem) return
+      const itemHalf = firstItem.clientHeight / 2
+      // naturalHeaderH = whatever PhaseBanner + VSpeedCard etc. take up,
+      // excluding the current top spacer (which we subtract back out).
+      const naturalHeaderH = firstItem.offsetTop - topSpacerRef.current
+      // Top spacer: only as much extra space as needed to position the first
+      // item at the click-through ratio. If the natural header is already
+      // taller than that, no spacer is added at all.
+      const newTop = Math.max(
+        0,
+        c.clientHeight * ACTIVE_ITEM_POSITION_RATIO - itemHalf - naturalHeaderH
+      )
+      // Bottom spacer: gives the final scroll target (Complete Phase button)
+      // enough runway to reach the click-through ratio.
+      const newBottom = Math.max(0, c.clientHeight * (1 - ACTIVE_ITEM_POSITION_RATIO) - itemHalf)
+      topSpacerRef.current = newTop
+      setTopSpacer(newTop)
+      setBottomSpacer(newBottom)
     }
     recalc()
     window.addEventListener('resize', recalc)
@@ -528,6 +546,7 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings, onPhaseChange 
                   isPhaseComplete={isPhaseComplete}
                   category={aircraft.category}
                 />
+                <div style={{ height: topSpacer }} aria-hidden="true" />
                 <ChecklistItems phase={activePhase} isItemChecked={isItemChecked} onToggle={handleToggleItem} />
                 <div className="mt-6" data-complete-target="true">
                   <button
@@ -548,7 +567,7 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings, onPhaseChange 
                     </p>
                   )}
                 </div>
-                <div style={{ height: spacerHeight }} aria-hidden="true" />
+                <div style={{ height: bottomSpacer }} aria-hidden="true" />
               </div>
             ) : (
               <div className="flex items-center justify-center h-full text-cockpit-text-dim">
