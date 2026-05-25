@@ -397,6 +397,33 @@ export const cessna152: Aircraft = {
       ],
     },
     {
+      id: 'before-taxi',
+      name: 'Before Taxi',
+      category: 'taxi',
+      items: [
+        { id: 'bt-01', action: 'Seat belts', response: 'SECURED — all occupants' },
+        { id: 'bt-02', action: 'Flaps', response: 'UP — 0°' },
+        { id: 'bt-03', action: 'Avionics', response: 'ON' },
+        { id: 'bt-04', action: 'ATIS / AWOS', response: 'COPIED — QNH, active runway, NOTAMs' },
+        { id: 'bt-05', action: 'Altimeter', response: 'SET — within 75 ft of field elevation' },
+        { id: 'bt-06', action: 'Transponder', response: 'VERIFY SQUAWK — 1200 VFR (or assigned code)' },
+        { id: 'bt-07', action: 'Taxi light', response: 'ON', note: 'Turn landing light and strobes ON when crossing a runway during taxi' },
+        { id: 'bt-08', action: 'Parking brake', response: 'RELEASE' },
+        { id: 'bt-09', action: 'Radios', response: 'SET — ground frequency' },
+      ],
+    },
+    {
+      id: 'taxi',
+      name: 'Taxi',
+      category: 'taxi',
+      items: [
+        { id: 'tx-01', action: 'Taxi clearance', response: 'COPIED — write down route' },
+        { id: 'tx-02', action: 'Taxi route', response: 'REVIEW — confirm planned route before rolling' },
+        { id: 'tx-03', action: 'Brake test', response: 'CHECK — test both sides on initial roll', severity: 'caution' },
+        { id: 'tx-04', action: 'Instruments on the roll', response: 'CHECK', note: 'Turn Coordinator: wing dips direction of turn, ball goes opposite\nVSI: neutral\nAirspeed: near zero\nHSI & Compass: indicating correct direction during turns\nAttitude Indicator: blue over brown, within 5° of horizon\nAltimeter: set to field elevation, within 75 ft' },
+      ],
+    },
+    {
       id: 'runup',
       name: 'Engine Run-Up',
       category: 'runup',
