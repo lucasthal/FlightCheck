@@ -104,6 +104,7 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings, onPhaseChange 
   const [activeTab, setActiveTab] = useState<'checklist' | 'reference'>('checklist')
   const contentRef = useRef<HTMLDivElement>(null)
   const userScrolledRef = useRef(false)
+  const programmaticScrollRef = useRef(false)
   const [bottomSpacer, setBottomSpacer] = useState(0)
 
   const normalPhases = activeAircraft.phases.filter(p => p.category !== 'emergency')
@@ -121,7 +122,10 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings, onPhaseChange 
   const accentBorder = CATEGORY_BORDER[aircraft.category]
 
   useEffect(() => {
-    contentRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
+    if (!contentRef.current) return
+    programmaticScrollRef.current = true
+    contentRef.current.scrollTo({ top: 0, behavior: 'smooth' })
+    window.setTimeout(() => { programmaticScrollRef.current = false }, 700)
   }, [activePhaseId])
 
   useEffect(() => {
@@ -132,12 +136,23 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings, onPhaseChange 
     if (editMode) return
     const el = contentRef.current
     if (!el) return
+    // Detect manual scrolling (so a manual scroll mid-phase suppresses the
+    // next autoscroll). We use the `scroll` event filtered by a
+    // programmaticScrollRef flag instead of `touchmove`, because `touchmove`
+    // fires for the tiny finger movement during a normal tap and would make
+    // userScrolledRef true on every check, suppressing every autoscroll on
+    // iOS. `wheel` is fine for desktop.
     const onUserScroll = () => { userScrolledRef.current = true }
+    const onScroll = () => {
+      if (!programmaticScrollRef.current) {
+        userScrolledRef.current = true
+      }
+    }
     el.addEventListener('wheel', onUserScroll, { passive: true })
-    el.addEventListener('touchmove', onUserScroll, { passive: true })
+    el.addEventListener('scroll', onScroll, { passive: true })
     return () => {
       el.removeEventListener('wheel', onUserScroll)
-      el.removeEventListener('touchmove', onUserScroll)
+      el.removeEventListener('scroll', onScroll)
     }
   }, [editMode])
 
@@ -306,7 +321,12 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings, onPhaseChange 
           : container.querySelector<HTMLElement>('[data-complete-target]')
         if (el) {
           const top = el.offsetTop - container.clientHeight * ACTIVE_ITEM_POSITION_RATIO + el.clientHeight / 2
+          programmaticScrollRef.current = true
           container.scrollTo({ top, behavior: 'smooth' })
+          // Smooth-scroll animation typically completes well under 700ms;
+          // we clear the flag after that so subsequent real user scrolls
+          // are recognized.
+          window.setTimeout(() => { programmaticScrollRef.current = false }, 700)
         }
       }
       userScrolledRef.current = false
