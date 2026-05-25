@@ -102,6 +102,7 @@ export interface UserPreferences {
   text_size:           TextSize
   keep_screen_awake:   boolean
   default_aircraft_id: string | null
+  autoscroll:          boolean
 }
 
 export const DEFAULT_PREFERENCES: UserPreferences = {
@@ -109,4 +110,5 @@ export const DEFAULT_PREFERENCES: UserPreferences = {
   text_size:           'md',
   keep_screen_awake:   false,
   default_aircraft_id: null,
+  autoscroll:          true,
 }

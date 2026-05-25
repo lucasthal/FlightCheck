@@ -68,6 +68,7 @@ export function usePreferences(user: User | null): UsePreferencesResult {
             text_size:           data.text_size           ?? DEFAULT_PREFERENCES.text_size,
             keep_screen_awake:   data.keep_screen_awake   ?? DEFAULT_PREFERENCES.keep_screen_awake,
             default_aircraft_id: data.default_aircraft_id ?? DEFAULT_PREFERENCES.default_aircraft_id,
+            autoscroll:          data.autoscroll          ?? DEFAULT_PREFERENCES.autoscroll,
           }
           setPreferences(loaded)
           writeLocalPreferences(loaded)
