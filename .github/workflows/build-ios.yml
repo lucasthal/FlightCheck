@@ -53,6 +53,7 @@ jobs:
             -authenticationKeyIssuerID ${{ secrets.APPSTORE_API_ISSUER_ID }} \
             -skipPackagePluginValidation \
             -skipMacroValidation \
+            DEVELOPMENT_TEAM=${{ secrets.APPLE_TEAM_ID }} \
             archive
 
       - name: Export IPA
