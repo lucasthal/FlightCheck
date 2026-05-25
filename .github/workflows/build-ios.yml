@@ -32,6 +32,13 @@ jobs:
           mkdir -p ~/.private_keys
           echo "${{ secrets.APPSTORE_API_KEY_BASE64 }}" | base64 -d > ~/.private_keys/AuthKey_${{ secrets.APPSTORE_API_KEY_ID }}.p8
 
+      - name: Resolve Swift packages
+        run: |
+          xcodebuild \
+            -project ios/App/App.xcodeproj \
+            -scheme App \
+            -resolvePackageDependencies
+
       - name: Build and archive
         run: |
           xcodebuild \
@@ -44,6 +51,8 @@ jobs:
             -authenticationKeyPath ~/.private_keys/AuthKey_${{ secrets.APPSTORE_API_KEY_ID }}.p8 \
             -authenticationKeyID ${{ secrets.APPSTORE_API_KEY_ID }} \
             -authenticationKeyIssuerID ${{ secrets.APPSTORE_API_ISSUER_ID }} \
+            -skipPackagePluginValidation \
+            -skipMacroValidation \
             archive
 
       - name: Export IPA
