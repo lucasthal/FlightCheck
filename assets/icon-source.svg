@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <!-- Sunrise gradient: amber-400 → amber-500 → orange-600 -->
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="55%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#ea580c"/>
+    </linearGradient>
+
+    <!-- Subtle warm highlight upper-left for depth -->
+    <radialGradient id="glow" cx="25%" cy="20%" r="65%">
+      <stop offset="0%" stop-color="#fef3c7" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#fef3c7" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background fills full canvas; corners may be cropped by circle/squircle masks -->
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+  <rect width="1024" height="1024" fill="url(#glow)"/>
+
+  <!-- Flight-path checkmark trail (solid white, fits in circular safe area) -->
+  <path d="M 140 500 Q 240 580 340 700 Q 365 720 577 459"
+        fill="none"
+        stroke="white"
+        stroke-width="48"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+
+  <!-- Modern Cessna 172 silhouette, scaled/positioned to stay within circular safe area -->
+  <g transform="translate(685 330) rotate(-50) scale(1.45)">
+    <path d="M 125 0
+             C 125 -8, 122 -14, 105 -16
+             L 40 -16
+             L 35 -130
+             Q 30 -140, 18 -140
+             Q 0 -140, -2 -130
+             L -10 -16
+             L -100 -16
+             C -109 -16, -116 -9, -116 0
+             C -116 9, -109 16, -100 16
+             L -10 16
+             L -2 130
+             Q 0 140, 18 140
+             Q 30 140, 35 130
+             L 40 16
+             L 105 16
+             C 122 14, 125 8, 125 0
+             Z"
+          fill="white"
+          stroke="white"
+          stroke-width="4"
+          stroke-linejoin="round"
+          stroke-linecap="round"/>
+  </g>
+</svg>

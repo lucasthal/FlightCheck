@@ -6,3 +6,4 @@ dist
 .env.local
 flightcheck-release.keystore
 android/key.properties
+*.pem
