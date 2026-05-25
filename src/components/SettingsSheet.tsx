@@ -132,6 +132,24 @@ export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
             </button>
           </div>
 
+          {/* Auto-scroll to next item */}
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-medium text-cockpit-text-primary">Auto-scroll to next item</p>
+            <button
+              onClick={() => updatePreference('autoscroll', !preferences.autoscroll)}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                preferences.autoscroll ? 'bg-cockpit-amber' : 'bg-cockpit-border'
+              }`}
+              aria-label="Toggle auto-scroll to next item"
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  preferences.autoscroll ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
+          </div>
+
           {/* Default aircraft */}
           <div className="space-y-2">
             <p className="text-sm font-medium text-cockpit-text-primary">Default aircraft</p>
