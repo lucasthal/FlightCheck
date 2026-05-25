@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect, useLayoutEffect, useCallback } from 'react'
 import type { Aircraft, ChecklistPhase, AircraftCategory, PhaseCategory } from '../types'
 import { useChecklist } from '../hooks/useChecklist'
 import { useProfiles } from '../hooks/useProfiles'
@@ -100,6 +100,7 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings, onPhaseChange 
   const [activeTab, setActiveTab] = useState<'checklist' | 'reference'>('checklist')
   const contentRef = useRef<HTMLDivElement>(null)
   const userScrolledRef = useRef(false)
+  const [spacerHeight, setSpacerHeight] = useState(0)
 
   const normalPhases = activeAircraft.phases.filter(p => p.category !== 'emergency')
   const emergencyPhases = activeAircraft.phases.filter(p => p.category === 'emergency')
@@ -135,6 +136,23 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings, onPhaseChange 
       el.removeEventListener('touchmove', onUserScroll)
     }
   }, [editMode])
+
+  useLayoutEffect(() => {
+    if (!preferences.autoscroll) {
+      setSpacerHeight(0)
+      return
+    }
+    const recalc = () => {
+      const c = contentRef.current
+      if (!c) return
+      const firstItem = c.querySelector<HTMLElement>('[data-item-id]')
+      const itemHalf = firstItem ? firstItem.clientHeight / 2 : 24
+      setSpacerHeight(Math.max(0, c.clientHeight / 2 - itemHalf))
+    }
+    recalc()
+    window.addEventListener('resize', recalc)
+    return () => window.removeEventListener('resize', recalc)
+  }, [preferences.autoscroll, activePhaseId, editMode])
 
   // Reset phase selection when active profile changes (phase IDs differ between profile and original)
   useEffect(() => {
@@ -265,7 +283,7 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings, onPhaseChange 
 
   const handleToggleItem = useCallback((id: string) => {
     if (!isItemChecked(id) && activePhase) {
-      if (!userScrolledRef.current) {
+      if (!userScrolledRef.current && preferences.autoscroll) {
         const items = activePhase.items
         const idx = items.findIndex(i => i.id === id)
         const nextItem = items.slice(idx + 1).find(i => !isItemChecked(i.id))
@@ -281,7 +299,7 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings, onPhaseChange 
       userScrolledRef.current = false
     }
     toggleItem(id)
-  }, [toggleItem, isItemChecked, activePhase])
+  }, [toggleItem, isItemChecked, activePhase, preferences.autoscroll])
 
   const handleCompletePhase = () => {
     completePhase(activePhaseId)
@@ -501,7 +519,9 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings, onPhaseChange 
                   isPhaseComplete={isPhaseComplete}
                   category={aircraft.category}
                 />
+                <div style={{ height: spacerHeight }} aria-hidden="true" />
                 <ChecklistItems phase={activePhase} isItemChecked={isItemChecked} onToggle={handleToggleItem} />
+                <div style={{ height: spacerHeight }} aria-hidden="true" />
                 <div className="mt-6">
                   <button
                     onClick={handleCompletePhase}
