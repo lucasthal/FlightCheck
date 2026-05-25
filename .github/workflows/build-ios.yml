@@ -81,6 +81,7 @@ jobs:
           xcrun altool \
             --upload-app \
             -f ios/App/output/App.ipa \
+            -t ios \
             --apiKey ${{ secrets.APPSTORE_API_KEY_ID }} \
             --apiIssuer ${{ secrets.APPSTORE_API_ISSUER_ID }}
 
