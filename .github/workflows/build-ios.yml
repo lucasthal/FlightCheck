@@ -46,8 +46,7 @@ jobs:
 
       - name: Select Xcode 26
         run: |
-          ls /Applications/Xcode*.app -d
-          sudo xcode-select -s /Applications/Xcode_26.0.app/Contents/Developer
+          sudo xcode-select -s /Applications/Xcode_26.3.app/Contents/Developer
           xcodebuild -version
 
       - name: Resolve Swift packages
