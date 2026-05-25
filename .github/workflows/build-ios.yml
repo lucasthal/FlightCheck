@@ -74,11 +74,7 @@ jobs:
             -exportArchive \
             -archivePath ios/App/App.xcarchive \
             -exportPath ios/App/output \
-            -exportOptionsPlist ios/App/ExportOptions.plist \
-            -allowProvisioningUpdates \
-            -authenticationKeyPath ~/.private_keys/AuthKey_${{ secrets.APPSTORE_API_KEY_ID }}.p8 \
-            -authenticationKeyID ${{ secrets.APPSTORE_API_KEY_ID }} \
-            -authenticationKeyIssuerID ${{ secrets.APPSTORE_API_ISSUER_ID }}
+            -exportOptionsPlist ios/App/ExportOptions.plist
 
       - name: Upload to App Store Connect
         run: |
