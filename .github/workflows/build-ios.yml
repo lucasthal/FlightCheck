@@ -44,6 +44,12 @@ jobs:
           mkdir -p ~/.private_keys
           echo "${{ secrets.APPSTORE_API_KEY_BASE64 }}" | base64 -d > ~/.private_keys/AuthKey_${{ secrets.APPSTORE_API_KEY_ID }}.p8
 
+      - name: Select Xcode 26
+        run: |
+          ls /Applications/Xcode*.app -d
+          sudo xcode-select -s /Applications/Xcode_26.0.app/Contents/Developer
+          xcodebuild -version
+
       - name: Resolve Swift packages
         run: |
           xcodebuild \
