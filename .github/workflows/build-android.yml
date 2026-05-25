@@ -21,8 +21,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build web app
+      - name: Build web app (Capacitor mode — relative paths, no service worker)
         run: npm run build
+        env:
+          CAPACITOR_BUILD: 'true'
 
       - name: Set up Java
         uses: actions/setup-java@v4

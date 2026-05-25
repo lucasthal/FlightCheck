@@ -2,10 +2,14 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
+const isCapacitor = process.env.CAPACITOR_BUILD === 'true'
+
 export default defineConfig({
+  base: isCapacitor ? './' : '/',
   plugins: [
     react(),
     VitePWA({
+      disable: isCapacitor,
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'favicon.svg', 'apple-touch-icon-180x180.png'],
       manifest: {
