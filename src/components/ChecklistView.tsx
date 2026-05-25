@@ -24,6 +24,10 @@ import { PhaseStrip } from './PhaseStrip'
 import { VSpeedCard } from './VSpeedCard'
 import { ReferenceTab } from './ReferenceTab'
 
+// Position of the active (next-to-tap) item within the scroll container.
+// 0.5 = exact center; 0.55 = slightly below center (thumb-friendly).
+const ACTIVE_ITEM_POSITION_RATIO = 0.55
+
 const CATEGORY_ACCENT: Record<AircraftCategory, string> = {
   SEP:        'text-sky-400',
   MEP:        'text-violet-400',
@@ -147,7 +151,9 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings, onPhaseChange 
       if (!c) return
       const firstItem = c.querySelector<HTMLElement>('[data-item-id]')
       const itemHalf = firstItem ? firstItem.clientHeight / 2 : 24
-      setSpacerHeight(Math.max(0, c.clientHeight / 2 - itemHalf))
+      // Bottom spacer must allow the final scroll target (Complete Phase button) to
+      // reach the click-through point at ACTIVE_ITEM_POSITION_RATIO down the container.
+      setSpacerHeight(Math.max(0, c.clientHeight * (1 - ACTIVE_ITEM_POSITION_RATIO) - itemHalf))
     }
     recalc()
     window.addEventListener('resize', recalc)
@@ -283,17 +289,20 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings, onPhaseChange 
 
   const handleToggleItem = useCallback((id: string) => {
     if (!isItemChecked(id) && activePhase) {
-      if (!userScrolledRef.current && preferences.autoscroll) {
+      if (!userScrolledRef.current && preferences.autoscroll && contentRef.current) {
+        const container = contentRef.current
         const items = activePhase.items
         const idx = items.findIndex(i => i.id === id)
+        // First, see if there's another unchecked item after this one. Otherwise
+        // (we just checked the last one), target the Complete Phase button so
+        // the user's thumb doesn't have to leave the click-through zone.
         const nextItem = items.slice(idx + 1).find(i => !isItemChecked(i.id))
-        if (nextItem && contentRef.current) {
-          const container = contentRef.current
-          const el = container.querySelector<HTMLElement>(`[data-item-id="${nextItem.id}"]`)
-          if (el) {
-            const top = el.offsetTop - container.clientHeight / 2 + el.clientHeight / 2
-            container.scrollTo({ top, behavior: 'smooth' })
-          }
+        const el = nextItem
+          ? container.querySelector<HTMLElement>(`[data-item-id="${nextItem.id}"]`)
+          : container.querySelector<HTMLElement>('[data-complete-target]')
+        if (el) {
+          const top = el.offsetTop - container.clientHeight * ACTIVE_ITEM_POSITION_RATIO + el.clientHeight / 2
+          container.scrollTo({ top, behavior: 'smooth' })
         }
       }
       userScrolledRef.current = false
@@ -519,10 +528,8 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings, onPhaseChange 
                   isPhaseComplete={isPhaseComplete}
                   category={aircraft.category}
                 />
-                <div style={{ height: spacerHeight }} aria-hidden="true" />
                 <ChecklistItems phase={activePhase} isItemChecked={isItemChecked} onToggle={handleToggleItem} />
-                <div style={{ height: spacerHeight }} aria-hidden="true" />
-                <div className="mt-6">
+                <div className="mt-6" data-complete-target="true">
                   <button
                     onClick={handleCompletePhase}
                     disabled={!phaseAllChecked}
@@ -541,6 +548,7 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings, onPhaseChange 
                     </p>
                   )}
                 </div>
+                <div style={{ height: spacerHeight }} aria-hidden="true" />
               </div>
             ) : (
               <div className="flex items-center justify-center h-full text-cockpit-text-dim">
