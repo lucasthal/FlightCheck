@@ -38,7 +38,14 @@ function writeLocalPreferences(prefs: UserPreferences): void {
 }
 
 export function usePreferences(user: User | null): UsePreferencesResult {
-  const [preferences, setPreferences] = useState<UserPreferences>(DEFAULT_PREFERENCES)
+  // Initialize synchronously from localStorage so every instance of this hook
+  // (App, SettingsSheet, ChecklistView) starts at the user's saved theme
+  // rather than DEFAULT_PREFERENCES. Without this, mounting a new instance
+  // briefly applies the default theme via its useEffect, overriding the saved
+  // theme — symptom: navigating from home → checklist reverted to dark.
+  const [preferences, setPreferences] = useState<UserPreferences>(
+    () => readLocalPreferences() ?? DEFAULT_PREFERENCES
+  )
   const [loading, setLoading] = useState(true)
 
   // ── Load preferences ────────────────────────────────────────────

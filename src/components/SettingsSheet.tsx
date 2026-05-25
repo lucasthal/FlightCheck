@@ -11,7 +11,7 @@ interface SettingsSheetProps {
 }
 
 const THEMES: { value: Theme; label: string }[] = [
-  { value: 'dark',  label: 'Dark' },
+  { value: 'dark',  label: 'Default' },
   { value: 'night', label: 'Night' },
   { value: 'day',   label: 'Day' },
 ]
