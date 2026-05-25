@@ -27,6 +27,18 @@ jobs:
       - name: Sync Capacitor (iOS assets)
         run: npx cap sync ios
 
+      - name: Import Distribution Certificate
+        uses: apple-actions/import-codesign-certs@v3
+        with:
+          p12-file-base64: ${{ secrets.DISTRIBUTION_CERT_P12_BASE64 }}
+          p12-password: ${{ secrets.DISTRIBUTION_CERT_PASSWORD }}
+
+      - name: Import Provisioning Profile
+        run: |
+          PP_PATH="$HOME/Library/MobileDevice/Provisioning Profiles"
+          mkdir -p "$PP_PATH"
+          echo "${{ secrets.PROVISIONING_PROFILE_BASE64 }}" | base64 -d > "$PP_PATH/FlightCheck.mobileprovision"
+
       - name: Decode App Store Connect API Key
         run: |
           mkdir -p ~/.private_keys
@@ -47,13 +59,12 @@ jobs:
             -configuration Release \
             -archivePath ios/App/App.xcarchive \
             -destination "generic/platform=iOS" \
-            -allowProvisioningUpdates \
-            -authenticationKeyPath ~/.private_keys/AuthKey_${{ secrets.APPSTORE_API_KEY_ID }}.p8 \
-            -authenticationKeyID ${{ secrets.APPSTORE_API_KEY_ID }} \
-            -authenticationKeyIssuerID ${{ secrets.APPSTORE_API_ISSUER_ID }} \
             -skipPackagePluginValidation \
             -skipMacroValidation \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
             DEVELOPMENT_TEAM=${{ secrets.APPLE_TEAM_ID }} \
+            PROVISIONING_PROFILE_SPECIFIER="FlightCheck App Store" \
             archive
 
       - name: Export IPA
