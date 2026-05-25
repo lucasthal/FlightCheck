@@ -1,6 +1,12 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import type { User, AuthError } from '@supabase/supabase-js'
+import { Capacitor } from '@capacitor/core'
+import { App } from '@capacitor/app'
+import { Browser } from '@capacitor/browser'
 import { supabase } from '../lib/supabase'
+
+const isNative = Capacitor.isNativePlatform()
+const NATIVE_REDIRECT_URL = 'com.flightcheck.app://auth-callback'
 
 interface SignUpResult {
   error: AuthError | null
@@ -32,6 +38,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe()
   }, [])
 
+  useEffect(() => {
+    if (!isNative) return
+    const handlePromise = App.addListener('appUrlOpen', async ({ url }) => {
+      if (!url.startsWith(NATIVE_REDIRECT_URL)) return
+      const fragment = url.split('#')[1] ?? ''
+      const params = new URLSearchParams(fragment)
+      const access_token = params.get('access_token')
+      const refresh_token = params.get('refresh_token')
+      if (access_token && refresh_token) {
+        await supabase.auth.setSession({ access_token, refresh_token })
+      }
+      await Browser.close().catch(() => {})
+    })
+    return () => { handlePromise.then(h => h.remove()) }
+  }, [])
+
   const signIn = async (email: string, password: string): Promise<AuthError | null> => {
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     return error
@@ -55,10 +77,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const signInWithGoogle = async (): Promise<AuthError | null> => {
-    const { error } = await supabase.auth.signInWithOAuth({
+    const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: window.location.origin },
+      options: {
+        redirectTo: isNative ? NATIVE_REDIRECT_URL : window.location.origin,
+        skipBrowserRedirect: isNative,
+      },
     })
+    if (isNative && !error && data?.url) {
+      await Browser.open({ url: data.url })
+    }
     return error
   }
 

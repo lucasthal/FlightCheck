@@ -18,36 +18,6 @@
   </head>
   <body class="bg-cockpit-bg text-cockpit-text-primary">
     <div id="root"></div>
-    <div id="__boot_status" style="position:fixed;inset:0;padding:20px;color:#fff;font:14px/1.4 -apple-system,system-ui,monospace;white-space:pre-wrap;overflow:auto;pointer-events:none;z-index:99999;">
-      <div id="__boot_log">[boot] index.html parsed</div>
-    </div>
-    <script>
-      (function () {
-        var log = document.getElementById('__boot_log');
-        var append = function (msg) {
-          if (log) log.textContent += '\n' + msg;
-        };
-        window.addEventListener('error', function (e) {
-          append('[error] ' + (e.message || e.error) + ' @ ' + (e.filename || '?') + ':' + (e.lineno || '?'));
-        });
-        window.addEventListener('unhandledrejection', function (e) {
-          append('[reject] ' + (e.reason && (e.reason.stack || e.reason.message || e.reason)));
-        });
-        append('[boot] window.location = ' + window.location.href);
-        append('[boot] userAgent = ' + navigator.userAgent.slice(0, 80));
-        // Hide diagnostic once React mounts content into #root
-        var checkMount = setInterval(function () {
-          var root = document.getElementById('root');
-          if (root && root.childElementCount > 0) {
-            var diag = document.getElementById('__boot_status');
-            if (diag) diag.style.display = 'none';
-            clearInterval(checkMount);
-          }
-        }, 250);
-        setTimeout(function () { append('[boot] +3s elapsed'); }, 3000);
-        setTimeout(function () { append('[boot] +10s elapsed — React likely failed to mount'); }, 10000);
-      })();
-    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
