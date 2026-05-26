@@ -25,8 +25,12 @@ import { VSpeedCard } from './VSpeedCard'
 import { ReferenceTab } from './ReferenceTab'
 
 // Position of the active (next-to-tap) item within the scroll container.
-// 0.5 = exact center; 0.55 = slightly below center (thumb-friendly).
-const ACTIVE_ITEM_POSITION_RATIO = 0.55
+// 0.5 = exact center of items area; 0.85 = lower portion of items area,
+// which on a typical phone screen falls into the natural thumb zone.
+// Higher values put the active item lower on screen (closer to thumb)
+// but require more checked items above before early items can reach the
+// landing point via scroll (without a top spacer).
+const ACTIVE_ITEM_POSITION_RATIO = 0.85
 
 const CATEGORY_ACCENT: Record<AircraftCategory, string> = {
   SEP:        'text-sky-400',
