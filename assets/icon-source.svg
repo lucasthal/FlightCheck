@@ -1,55 +1,30 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1024" height="1024">
   <defs>
-    <!-- Sunrise gradient: amber-400 → amber-500 → orange-600 -->
     <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#fbbf24"/>
       <stop offset="55%" stop-color="#f59e0b"/>
       <stop offset="100%" stop-color="#ea580c"/>
     </linearGradient>
-
-    <!-- Subtle warm highlight upper-left for depth -->
     <radialGradient id="glow" cx="25%" cy="20%" r="65%">
       <stop offset="0%" stop-color="#fef3c7" stop-opacity="0.35"/>
       <stop offset="100%" stop-color="#fef3c7" stop-opacity="0"/>
     </radialGradient>
   </defs>
 
-  <!-- Background fills full canvas; corners may be cropped by circle/squircle masks -->
-  <rect width="1024" height="1024" fill="url(#bg)"/>
-  <rect width="1024" height="1024" fill="url(#glow)"/>
+  <!-- Amber gradient background (same as header's bg-gradient-to-br from-cockpit-amber to-orange-500 container) -->
+  <rect width="24" height="24" fill="url(#bg)"/>
+  <rect width="24" height="24" fill="url(#glow)"/>
 
-  <!-- Flight-path checkmark trail (solid white, fits in circular safe area) -->
-  <path d="M 140 500 Q 240 580 340 700 Q 365 720 577 459"
-        fill="none"
+  <!-- Flight-path checkmark trail (identical to header SVG) -->
+  <path d="M 3 13 Q 5 15 8 18 Q 9 18 14 12"
         stroke="white"
-        stroke-width="48"
+        stroke-width="2.2"
         stroke-linecap="round"
-        stroke-linejoin="round"/>
+        stroke-linejoin="round"
+        fill="none"/>
 
-  <!-- Modern Cessna 172 silhouette, scaled/positioned to stay within circular safe area -->
-  <g transform="translate(685 330) rotate(-50) scale(1.45)">
-    <path d="M 125 0
-             C 125 -8, 122 -14, 105 -16
-             L 40 -16
-             L 35 -130
-             Q 30 -140, 18 -140
-             Q 0 -140, -2 -130
-             L -10 -16
-             L -100 -16
-             C -109 -16, -116 -9, -116 0
-             C -116 9, -109 16, -100 16
-             L -10 16
-             L -2 130
-             Q 0 140, 18 140
-             Q 30 140, 35 130
-             L 40 16
-             L 105 16
-             C 122 14, 125 8, 125 0
-             Z"
-          fill="white"
-          stroke="white"
-          stroke-width="4"
-          stroke-linejoin="round"
-          stroke-linecap="round"/>
-  </g>
+  <!-- Simplified Cessna silhouette (identical to header SVG) -->
+  <path transform="translate(17 8) rotate(-50)"
+        d="M 2.5 0 L 1.2 -0.45 L 1.2 -2.2 L -0.2 -2.2 L -0.2 -0.45 L -2 -0.45 L -2.5 0 L -2 0.45 L -0.2 0.45 L -0.2 2.2 L 1.2 2.2 L 1.2 0.45 Z"
+        fill="white"/>
 </svg>
