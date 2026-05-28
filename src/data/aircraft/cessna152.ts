@@ -263,19 +263,6 @@ export const cessna152: Aircraft = {
     },
     {
       kind: 'keyval',
-      title: 'Pre-Maneuver ABCD',
-      items: {
-        'A — Airspace': 'Identify class and restrictions',
-        'B — Altitude': 'Verify adequate (≥1500 ft AGL private / ≥3000 ft AGL commercial)',
-        'C — Airspeed': 'Determine entry speed for the maneuver',
-        'D — Best Place to Land': 'Identify field within glide range',
-        'Clear the area': '90°/180°/90° or 360° clearing turns',
-        'Configure': 'GUMPSS check',
-        'Declare': 'Make radio call if appropriate',
-      },
-    },
-    {
-      kind: 'keyval',
       title: 'Performance Formulas',
       items: {
         'PA (Pressure Alt)': '(29.92 − Current Altimeter Setting) × 1000 + Field Elevation',

@@ -63,18 +63,6 @@ export const cessna172n: Aircraft = {
     },
     {
       kind: 'maneuver',
-      title: 'Pre-Maneuver Checks (ABCD)',
-      steps: [
-        'A — Airspace: Identify class and restrictions',
-        'B — Altitude: Verify adequate (≥1500 ft AGL private / ≥3000 ft AGL commercial)',
-        'C — Airspeed: Determine entry speed for the maneuver',
-        'D — Best Place to Land: Identify field within glide range',
-        'Clear the area — 90°/180°/90° or 360° clearing turns',
-        'Configure — GUMPSS check',
-      ],
-    },
-    {
-      kind: 'maneuver',
       title: 'Steep Turns',
       steps: [
         'Reference point / heading — Establish',
