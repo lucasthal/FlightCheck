@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FlightCheck — Support</title>
+  <meta name="description" content="Support and contact for FlightCheck, the pilot checklist and POH reference app.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --border: #334155;
+      --text: #f1f5f9;
+      --text-dim: #94a3b8;
+      --accent-from: #f59e0b;
+      --accent-to: #f97316;
+    }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container { max-width: 720px; margin: 0 auto; padding: 32px 24px 64px; }
+    header { text-align: center; padding: 32px 0 16px; }
+    .logo {
+      width: 96px; height: 96px;
+      margin: 0 auto 16px;
+      background: linear-gradient(135deg, var(--accent-from), var(--accent-to));
+      border-radius: 24px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 8px 24px rgba(245, 158, 11, 0.3);
+    }
+    .logo svg { width: 64px; height: 64px; }
+    h1 { font-size: 32px; margin: 0 0 8px; letter-spacing: -0.5px; }
+    .subtitle { color: var(--text-dim); font-size: 16px; margin: 0; }
+    h2 { font-size: 20px; margin: 32px 0 12px; letter-spacing: -0.25px; }
+    p { margin: 0 0 12px; }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin: 16px 0;
+    }
+    .card p:last-child { margin-bottom: 0; }
+    .contact a {
+      color: var(--accent-from);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .contact a:hover { text-decoration: underline; }
+    .disclaimer {
+      background: rgba(245, 158, 11, 0.08);
+      border-left: 3px solid var(--accent-from);
+      padding: 16px 20px;
+      border-radius: 4px;
+      font-size: 14px;
+      margin: 24px 0;
+    }
+    .disclaimer strong { color: var(--accent-from); }
+    footer {
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 14px;
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--text-dim); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M 3.5 13 Q 5.5 15 8.5 18 Q 9.5 18 14.5 12" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <path transform="translate(17.5 8) rotate(-50)" d="M 2.5 0 L 1.2 -0.45 L 1.2 -2.2 L -0.2 -2.2 L -0.2 -0.45 L -2 -0.45 L -2.5 0 L -2 0.45 L -0.2 0.45 L -0.2 2.2 L 1.2 2.2 L 1.2 0.45 Z" fill="white"/>
+        </svg>
+      </div>
+      <h1>FlightCheck</h1>
+      <p class="subtitle">Pilot checklists &amp; POH reference</p>
+    </header>
+
+    <section>
+      <h2>Contact &amp; support</h2>
+      <div class="card contact">
+        <p>For questions, feature requests, or bug reports:</p>
+        <p><strong>Email:</strong> <a href="mailto:lucas.b.thal@gmail.com?subject=FlightCheck%20support">lucas.b.thal@gmail.com</a></p>
+        <p><strong>GitHub Issues:</strong> <a href="https://github.com/lucasthal/FlightCheck/issues">github.com/lucasthal/FlightCheck/issues</a></p>
+        <p>Response time: typically within a few days.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>About FlightCheck</h2>
+      <p>FlightCheck is a checklist and quick-reference app for student and private pilots, covering common training and personal aircraft including the Cessna 152, 172 (M/N/P/S), 182, Piper Warrior and Archer, Beechcraft Baron and Bonanza, Mooney M20, Cirrus SR22, and more.</p>
+      <p>Each aircraft profile includes phase-by-phase normal procedures, emergency and abnormal procedures, V-speeds, performance tables (takeoff, landing, climb, cruise) transcribed from POH Section 5, and maneuver procedures with ACS tolerances.</p>
+    </section>
+
+    <section>
+      <h2>Common questions</h2>
+      <div class="card">
+        <p><strong>Where does the V-speed and performance data come from?</strong></p>
+        <p>All V-speeds, operating limitations, and performance tables are transcribed from official Pilot's Operating Handbooks (POHs) for each specific aircraft variant. Source references (POH section / figure number) are included in the relevant table notes.</p>
+      </div>
+      <div class="card">
+        <p><strong>Does FlightCheck work offline?</strong></p>
+        <p>Yes. Once an aircraft profile is loaded, checklists and reference data are available without an internet connection. Sign-in is optional and only used to sync preferences across devices.</p>
+      </div>
+      <div class="card">
+        <p><strong>How do I report wrong data?</strong></p>
+        <p>If you spot an error in any V-speed, table value, or procedure, please email or open a GitHub issue with the aircraft model, the page in the app, and the POH section that disagrees. Aviation data corrections are prioritized.</p>
+      </div>
+      <div class="card">
+        <p><strong>What about my privacy?</strong></p>
+        <p>FlightCheck collects only the minimum needed to run the app (email for sign-in and preferences for cross-device sync). No advertising, no analytics tracking, no third-party data sharing. Full details on the <a href="privacy.html">Privacy Policy</a> page.</p>
+      </div>
+    </section>
+
+    <div class="disclaimer">
+      <strong>For reference and study only.</strong> FlightCheck data is sourced from official Pilot's Operating Handbooks but is provided for reference and study only. Always verify all procedures, V-speeds, and performance figures against the actual POH for your specific aircraft and serial number before flight. FlightCheck is not a substitute for the POH/AFM, FAA regulations, or your CFI's guidance.
+    </div>
+
+    <footer>
+      <p>FlightCheck &middot; Built by Lucas Thal &middot; <a href="privacy.html">Privacy Policy</a> &middot; <a href="https://github.com/lucasthal/FlightCheck">github.com/lucasthal/FlightCheck</a></p>
+    </footer>
+  </div>
+</body>
+</html>
