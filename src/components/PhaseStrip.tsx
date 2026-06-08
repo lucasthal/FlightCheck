@@ -1,4 +1,5 @@
 // src/components/PhaseStrip.tsx
+import { useEffect, useRef } from 'react'
 import { AlertTriangle, RotateCcw } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import type { AircraftCategory, ChecklistPhase } from '../types'
@@ -26,6 +27,19 @@ export function PhaseStrip({
   category,
 }: Props) {
   const hex = ACCENT_HEX[category]
+  const stripRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const container = stripRef.current
+    if (!container) return
+    const activeButton = container.querySelector<HTMLElement>(
+      `[data-phase-id="${activePhaseId}"]`,
+    )
+    if (!activeButton) return
+    const targetScroll =
+      activeButton.offsetLeft - container.clientWidth / 2 + activeButton.offsetWidth / 2
+    container.scrollTo({ left: targetScroll, behavior: 'smooth' })
+  }, [activePhaseId])
 
   return (
     <div className="lg:hidden safe-bottom flex-shrink-0 bg-cockpit-panel border-t border-cockpit-border z-10">
@@ -48,7 +62,10 @@ export function PhaseStrip({
       </div>
 
       {/* Scrollable phase pill strip */}
-      <div className="flex gap-2 px-3 py-2.5 overflow-x-auto scrollbar-none">
+      <div
+        ref={stripRef}
+        className="flex gap-2 md:gap-3 px-3 md:px-4 py-2.5 md:py-4 overflow-x-auto scrollbar-none"
+      >
         {normalPhases.map(phase => {
           const complete = isPhaseComplete(phase.id)
           const active = phase.id === activePhaseId
@@ -57,8 +74,9 @@ export function PhaseStrip({
           return (
             <button
               key={phase.id}
+              data-phase-id={phase.id}
               onClick={() => onSelectPhase(phase.id)}
-              className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-full flex-shrink-0 text-xs font-medium border transition-colors duration-200 active:scale-95 touch-target"
+              className="relative flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-1.5 md:py-2.5 rounded-full flex-shrink-0 text-xs md:text-sm font-medium border transition-colors duration-200 active:scale-95 touch-target"
               style={
                 active
                   ? { borderColor: `${hex}59`, color: hex }
@@ -78,7 +96,7 @@ export function PhaseStrip({
               {complete && !active && (
                 <span className="absolute inset-0 rounded-full" style={{ background: '#22c55e12' }} />
               )}
-              <span className="relative text-sm leading-none">{icon}</span>
+              <span className="relative text-sm md:text-base leading-none">{icon}</span>
               <span className="relative">{complete ? `✓ ${phase.name}` : phase.name}</span>
             </button>
           )
