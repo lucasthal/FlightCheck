@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
 import { X } from 'lucide-react'
+import { Capacitor } from '@capacitor/core'
 import { usePreferences } from '../hooks/usePreferences'
 import type { Theme, TextSize } from '../types'
 import { useAuth } from '../hooks/useAuth'
+import { useEntitlement } from '../hooks/useEntitlement'
 import { supabase } from '../lib/supabase'
 
 interface SettingsSheetProps {
@@ -26,7 +28,19 @@ const TEXT_SIZES: { value: TextSize; label: string }[] = [
 export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
   const { user } = useAuth()
   const { preferences, updatePreference } = usePreferences()
+  const { source, trialEndsAt, isEntitled } = useEntitlement()
   const [profileList, setProfileList] = useState<{ id: string; name: string }[]>([])
+
+  const handleManageStripe = async () => {
+    try {
+      const { Purchases } = await import('@revenuecat/purchases-js')
+      const info = await Purchases.getSharedInstance().getCustomerInfo()
+      const url = (info as { managementURL?: string | null }).managementURL
+      if (url) window.open(url, '_blank')
+    } catch (err) {
+      console.error('[Settings] manage subscription failed', err)
+    }
+  }
 
   useEffect(() => {
     if (!user) return
@@ -74,6 +88,45 @@ export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
         </div>
 
         <div className="px-4 pb-8 space-y-6">
+          {/* Subscription */}
+          {isEntitled && source && (
+            <div className="space-y-1">
+              <p className="text-xs text-cockpit-text-dim uppercase tracking-wide">
+                Subscription
+              </p>
+              {source === 'apple' && (
+                <>
+                  <p className="text-sm text-cockpit-text-primary">Subscribed via App Store</p>
+                  <p className="text-xs text-cockpit-text-dim">
+                    Manage in Settings → Apple ID → Subscriptions
+                  </p>
+                </>
+              )}
+              {source === 'stripe' && (
+                <>
+                  <p className="text-sm text-cockpit-text-primary">Subscribed via Web</p>
+                  {Capacitor.isNativePlatform() ? (
+                    <p className="text-xs text-cockpit-text-dim">
+                      Manage your subscription at flightcheckapp.com
+                    </p>
+                  ) : (
+                    <button
+                      onClick={handleManageStripe}
+                      className="text-xs text-cockpit-amber hover:underline"
+                    >
+                      Manage subscription →
+                    </button>
+                  )}
+                </>
+              )}
+              {trialEndsAt && (
+                <p className="text-xs text-cockpit-amber">
+                  Trial ends {trialEndsAt.toLocaleDateString()}
+                </p>
+              )}
+            </div>
+          )}
+
           {/* Theme */}
           <div className="space-y-2">
             <p className="text-sm font-medium text-cockpit-text-primary">Theme</p>
