@@ -4,6 +4,7 @@ import { Capacitor } from '@capacitor/core'
 import { App } from '@capacitor/app'
 import { Browser } from '@capacitor/browser'
 import { supabase } from '../lib/supabase'
+import { initRevenueCat, logOutRevenueCat } from '../lib/revenuecat'
 
 const isNative = Capacitor.isNativePlatform()
 const NATIVE_REDIRECT_URL = 'com.flightcheck.app://auth-callback'
@@ -32,6 +33,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
+      if (session?.user) {
+        initRevenueCat(session.user.id).catch(err =>
+          console.error('[RC] init failed', err),
+        )
+      }
       setLoading(false)
     })
 
@@ -84,6 +90,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const signOut = async () => {
+    await logOutRevenueCat().catch(err => console.error('[RC] logout failed', err))
     await supabase.auth.signOut()
   }
 
