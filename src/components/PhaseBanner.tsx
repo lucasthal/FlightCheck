@@ -58,7 +58,10 @@ export function PhaseBanner({
           >
             {phase.name}
           </div>
-          <div className="font-mono text-xs mt-0.5 uppercase tracking-wide">
+          <div
+            className="font-mono text-xs mt-0.5 uppercase tracking-wide"
+            style={{ fontSize: 'calc(0.75rem * var(--text-scale))' }}
+          >
             {isComplete ? (
               <span className="flex items-center gap-1 text-cockpit-green">
                 <CheckCircle2 className="w-3 h-3" />
@@ -75,7 +78,7 @@ export function PhaseBanner({
         {/* Percentage / complete mark */}
         <div
           className="font-mono font-bold text-2xl flex-shrink-0 tabular-nums"
-          style={{ color: isComplete ? '#22c55e' : hex }}
+          style={{ color: isComplete ? '#22c55e' : hex, fontSize: 'calc(1.5rem * var(--text-scale))' }}
         >
           {isComplete ? '✓' : `${pct}%`}
         </div>

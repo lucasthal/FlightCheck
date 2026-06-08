@@ -76,7 +76,7 @@ export function PhaseStrip({
               key={phase.id}
               data-phase-id={phase.id}
               onClick={() => onSelectPhase(phase.id)}
-              className="relative flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-1.5 md:py-2.5 rounded-full flex-shrink-0 text-xs md:text-sm font-medium border transition-colors duration-200 active:scale-95 touch-target"
+              className="relative flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-1.5 md:py-2.5 rounded-full flex-shrink-0 text-[calc(0.75rem*var(--text-scale))] md:text-[calc(0.875rem*var(--text-scale))] font-medium border transition-colors duration-200 active:scale-95 touch-target"
               style={
                 active
                   ? { borderColor: `${hex}59`, color: hex }
@@ -96,7 +96,7 @@ export function PhaseStrip({
               {complete && !active && (
                 <span className="absolute inset-0 rounded-full" style={{ background: '#22c55e12' }} />
               )}
-              <span className="relative text-sm md:text-base leading-none">{icon}</span>
+              <span className="relative text-[calc(0.875rem*var(--text-scale))] md:text-[calc(1rem*var(--text-scale))] leading-none">{icon}</span>
               <span className="relative">{complete ? `✓ ${phase.name}` : phase.name}</span>
             </button>
           )

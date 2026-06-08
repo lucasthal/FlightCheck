@@ -322,13 +322,29 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings, onPhaseChange 
 
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className={`text-xs font-bold font-mono ${accentColor} uppercase tracking-wider`}>
+              <span
+                className={`text-xs font-bold font-mono ${accentColor} uppercase tracking-wider`}
+                style={{ fontSize: 'calc(0.75rem * var(--text-scale))' }}
+              >
                 {aircraft.category}
               </span>
-              <span className="text-cockpit-text-dim text-xs">·</span>
-              <span className="text-xs text-cockpit-text-dim truncate">{aircraft.manufacturer}</span>
+              <span
+                className="text-cockpit-text-dim text-xs"
+                style={{ fontSize: 'calc(0.75rem * var(--text-scale))' }}
+              >
+                ·
+              </span>
+              <span
+                className="text-xs text-cockpit-text-dim truncate"
+                style={{ fontSize: 'calc(0.75rem * var(--text-scale))' }}
+              >
+                {aircraft.manufacturer}
+              </span>
             </div>
-            <div className="font-bold text-sm truncate leading-tight text-cockpit-text-primary">
+            <div
+              className="font-bold text-sm truncate leading-tight text-cockpit-text-primary"
+              style={{ fontSize: 'calc(0.875rem * var(--text-scale))' }}
+            >
               {aircraft.model} — {aircraft.name.split(' ').slice(-1)[0]}
             </div>
             {/* Profile picker */}

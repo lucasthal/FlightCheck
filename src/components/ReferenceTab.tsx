@@ -18,7 +18,7 @@ export function ReferenceTab({ sections }: Props) {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-5 pb-40 lg:pb-10">
+    <div className="text-scale-scope max-w-2xl mx-auto px-4 py-5 pb-40 lg:pb-10">
       {sections.map((section, i) => {
         if (section.kind === 'speeds') return <SpeedsCard key={i} title={section.title} items={section.items} />
         if (section.kind === 'maneuver') return <ManeuverCard key={i} title={section.title} steps={section.steps} standards={section.standards} />

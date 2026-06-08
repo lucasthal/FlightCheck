@@ -56,6 +56,18 @@
   @supports (-webkit-touch-callout: none) {
     input, select, textarea { font-size: 16px !important; }
   }
+
+  /* WebKit/iOS autofill: replace the forced yellow background and black text
+     with our theme colors so autofilled values stay legible on the dark UI. */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-text-fill-color: rgb(var(--c-text-primary)) !important;
+    -webkit-box-shadow: 0 0 0 1000px rgb(var(--c-bg)) inset !important;
+    caret-color: rgb(var(--c-text-primary));
+    transition: background-color 9999s ease-in-out 0s;
+  }
   body {
     @apply bg-cockpit-bg text-cockpit-text-primary font-sans;
     min-height: 100dvh;
@@ -134,4 +146,16 @@
   .touch-target { min-height: 44px; min-width: 44px; }
   .scrollbar-none { scrollbar-width: none; }
   .scrollbar-none::-webkit-scrollbar { display: none; }
+
+  /* Container-scoped text scaling: applies --text-scale to every Tailwind
+     text-{size} utility inside the element. Higher specificity than the
+     bare Tailwind classes, so this wins. Use on any subtree that should
+     respect the user's text-size preference. */
+  .text-scale-scope .text-xs   { font-size: calc(0.75rem  * var(--text-scale)); }
+  .text-scale-scope .text-sm   { font-size: calc(0.875rem * var(--text-scale)); }
+  .text-scale-scope .text-base { font-size: calc(1rem     * var(--text-scale)); }
+  .text-scale-scope .text-lg   { font-size: calc(1.125rem * var(--text-scale)); }
+  .text-scale-scope .text-xl   { font-size: calc(1.25rem  * var(--text-scale)); }
+  .text-scale-scope .text-2xl  { font-size: calc(1.5rem   * var(--text-scale)); }
+  .text-scale-scope .text-3xl  { font-size: calc(1.875rem * var(--text-scale)); }
 }
