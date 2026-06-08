@@ -42,13 +42,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!isNative) return
     const handlePromise = App.addListener('appUrlOpen', async ({ url }) => {
       if (!url.startsWith(NATIVE_REDIRECT_URL)) return
+
+      // Supabase OAuth can return either PKCE (?code=) or implicit (#access_token=)
+      const queryString = url.split('?')[1]?.split('#')[0] ?? ''
       const fragment = url.split('#')[1] ?? ''
-      const params = new URLSearchParams(fragment)
-      const access_token = params.get('access_token')
-      const refresh_token = params.get('refresh_token')
-      if (access_token && refresh_token) {
-        await supabase.auth.setSession({ access_token, refresh_token })
+      const queryParams = new URLSearchParams(queryString)
+      const fragmentParams = new URLSearchParams(fragment)
+
+      const code = queryParams.get('code')
+      if (code) {
+        await supabase.auth.exchangeCodeForSession(code)
+      } else {
+        const access_token = fragmentParams.get('access_token')
+        const refresh_token = fragmentParams.get('refresh_token')
+        if (access_token && refresh_token) {
+          await supabase.auth.setSession({ access_token, refresh_token })
+        }
       }
+
       await Browser.close().catch(() => {})
     })
     return () => { handlePromise.then(h => h.remove()) }
