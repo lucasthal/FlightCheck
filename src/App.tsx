@@ -3,9 +3,11 @@ import type { Aircraft } from './types'
 import { AircraftSelector } from './components/AircraftSelector'
 import { ChecklistView } from './components/ChecklistView'
 import { LoginScreen } from './components/LoginScreen'
+import { Paywall } from './components/Paywall'
 import { SettingsSheet } from './components/SettingsSheet'
 import { FeedbackButton } from './components/FeedbackButton'
 import { AuthProvider, useAuth } from './hooks/useAuth'
+import { useEntitlement } from './hooks/useEntitlement'
 import { PreferencesProvider } from './hooks/usePreferences'
 
 export default function App() {
@@ -18,22 +20,35 @@ export default function App() {
   )
 }
 
+function Spinner() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-cockpit-bg">
+      <div className="w-8 h-8 rounded-full border-2 border-cockpit-amber/30 border-t-cockpit-amber animate-spin" />
+    </div>
+  )
+}
+
 function AppInner() {
   const [selectedAircraft, setSelectedAircraft] = useState<Aircraft | null>(null)
   const [activePhaseName, setActivePhaseName] = useState<string | null>(null)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const { user, loading } = useAuth()
+  const { isEntitled, isLoading: entLoading } = useEntitlement()
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-cockpit-bg">
-        <div className="w-8 h-8 rounded-full border-2 border-cockpit-amber/30 border-t-cockpit-amber animate-spin" />
-      </div>
-    )
+    return <Spinner />
   }
 
   if (!user) {
     return <LoginScreen />
+  }
+
+  if (entLoading) {
+    return <Spinner />
+  }
+
+  if (!isEntitled) {
+    return <Paywall />
   }
 
   const handleSelectAircraft = (aircraft: Aircraft) => {
