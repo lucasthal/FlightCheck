@@ -27,6 +27,8 @@ jobs:
           CAPACITOR_BUILD: 'true'
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_REVENUECAT_WEB_KEY: ${{ secrets.VITE_REVENUECAT_WEB_KEY }}
+          VITE_REVENUECAT_IOS_KEY: ${{ secrets.VITE_REVENUECAT_IOS_KEY }}
 
       - name: Sync Capacitor (iOS assets)
         run: npx cap sync ios
