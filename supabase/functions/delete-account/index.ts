@@ -34,7 +34,10 @@ Deno.serve(async (req) => {
     `https://api.revenuecat.com/v1/subscribers/${encodeURIComponent(user.id)}`,
     {
       method: 'DELETE',
-      headers: { Authorization: `Bearer ${Deno.env.get('RC_SECRET_API_KEY')}` },
+      headers: {
+        Authorization: `Bearer ${Deno.env.get('RC_SECRET_API_KEY')}`,
+        'Content-Type': 'application/json',
+      },
     },
   )
   if (!rcRes.ok && rcRes.status !== 404) {
