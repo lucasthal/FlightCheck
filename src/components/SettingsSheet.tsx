@@ -26,7 +26,7 @@ const TEXT_SIZES: { value: TextSize; label: string }[] = [
 ]
 
 export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
-  const { user } = useAuth()
+  const { user, signOut } = useAuth()
   const { preferences, updatePreference } = usePreferences()
   const { source, trialEndsAt, isEntitled } = useEntitlement()
   const [profileList, setProfileList] = useState<{ id: string; name: string }[]>([])
@@ -40,6 +40,23 @@ export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
     } catch (err) {
       console.error('[Settings] manage subscription failed', err)
     }
+  }
+
+  const [confirmingDelete, setConfirmingDelete] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
+
+  const handleDeleteAccount = async () => {
+    setDeleting(true)
+    setDeleteError(null)
+    const { error } = await supabase.functions.invoke('delete-account')
+    if (error) {
+      setDeleting(false)
+      setDeleteError('Account deletion failed. Please try again or contact support@flightcheckapp.com.')
+      return
+    }
+    // Account is gone server-side; sign out locally (server signOut may 403 — ignore)
+    await signOut().catch(() => {})
   }
 
   useEffect(() => {
@@ -216,6 +233,58 @@ export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
                 <option key={p.id} value={p.id}>{p.name}</option>
               ))}
             </select>
+          </div>
+
+          {/* Danger zone */}
+          <div className="space-y-2 border-t border-cockpit-border pt-4">
+            <p className="text-xs text-red-400 uppercase tracking-wide">Danger zone</p>
+            {!confirmingDelete ? (
+              <button
+                onClick={() => setConfirmingDelete(true)}
+                className="text-sm text-red-400 hover:text-red-300 transition-colors"
+              >
+                Delete account
+              </button>
+            ) : (
+              <div className="space-y-3 rounded-xl border border-red-500/30 bg-red-500/5 p-4">
+                <p className="text-sm font-medium text-cockpit-text-primary">
+                  Permanently delete your account?
+                </p>
+                <p className="text-xs text-cockpit-text-secondary">
+                  All your data — checklist profiles, custom items, favorites, and
+                  preferences — will be permanently erased. This cannot be undone.
+                </p>
+                {isEntitled && source === 'stripe' && (
+                  <p className="text-xs text-cockpit-text-secondary">
+                    Your web subscription will be cancelled automatically.
+                  </p>
+                )}
+                {isEntitled && source === 'apple' && (
+                  <p className="text-xs text-cockpit-amber">
+                    Your App Store subscription is billed by Apple and will not stop
+                    when your account is deleted — cancel it in Settings → Apple ID →
+                    Subscriptions.
+                  </p>
+                )}
+                {deleteError && <p className="text-xs text-red-400">{deleteError}</p>}
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => { setConfirmingDelete(false); setDeleteError(null) }}
+                    disabled={deleting}
+                    className="flex-1 rounded-lg border border-cockpit-border bg-cockpit-card px-3 py-2 text-sm text-cockpit-text-primary disabled:opacity-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleDeleteAccount}
+                    disabled={deleting}
+                    className="flex-1 rounded-lg bg-red-500 px-3 py-2 text-sm font-semibold text-white hover:bg-red-600 transition-colors disabled:opacity-50"
+                  >
+                    {deleting ? 'Deleting…' : 'Permanently delete'}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
