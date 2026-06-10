@@ -42,6 +42,29 @@ export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
     }
   }
 
+  const currentName = (user?.user_metadata?.full_name as string | undefined) ?? ''
+  const [nameInput, setNameInput] = useState('')
+  const [savingName, setSavingName] = useState(false)
+  const [nameStatus, setNameStatus] = useState<'saved' | 'error' | null>(null)
+
+  useEffect(() => {
+    if (isOpen) {
+      setNameInput(currentName)
+      setNameStatus(null)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, user?.id])
+
+  const handleSaveName = async () => {
+    const name = nameInput.trim()
+    if (!name || name === currentName) return
+    setSavingName(true)
+    setNameStatus(null)
+    const { error } = await supabase.auth.updateUser({ data: { full_name: name } })
+    setSavingName(false)
+    setNameStatus(error ? 'error' : 'saved')
+  }
+
   const [confirmingDelete, setConfirmingDelete] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [deleteError, setDeleteError] = useState<string | null>(null)
@@ -105,6 +128,34 @@ export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
         </div>
 
         <div className="px-4 pb-8 space-y-6">
+          {/* Display name */}
+          <div className="space-y-2">
+            <p className="text-sm font-medium text-cockpit-text-primary">Display name</p>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={nameInput}
+                onChange={e => { setNameInput(e.target.value); setNameStatus(null) }}
+                placeholder="How should we address you?"
+                maxLength={60}
+                className="flex-1 bg-cockpit-card border border-cockpit-border rounded-lg px-3 py-2 text-cockpit-text-primary text-sm placeholder:text-cockpit-text-dim"
+              />
+              <button
+                onClick={handleSaveName}
+                disabled={savingName || !nameInput.trim() || nameInput.trim() === currentName}
+                className="rounded-lg bg-cockpit-amber px-4 py-2 text-sm font-medium text-black transition-colors hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {savingName ? 'Saving…' : 'Save'}
+              </button>
+            </div>
+            {nameStatus === 'saved' && (
+              <p className="text-xs text-green-400">Name updated</p>
+            )}
+            {nameStatus === 'error' && (
+              <p className="text-xs text-red-400">Could not save name. Please try again.</p>
+            )}
+          </div>
+
           {/* Subscription */}
           {isEntitled && source && (
             <div className="space-y-1">
