@@ -21,6 +21,7 @@ interface AuthContextValue {
   signUp: (email: string, password: string, displayName: string) => Promise<SignUpResult>
   signOut: () => Promise<void>
   signInWithGoogle: () => Promise<AuthError | null>
+  signInWithApple: () => Promise<AuthError | null>
   resetPassword: (email: string) => Promise<AuthError | null>
 }
 
@@ -108,6 +109,53 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return error
   }
 
+  const signInWithApple = async (): Promise<AuthError | null> => {
+    if (isNative) {
+      try {
+        // Apple requires the nonce in the request to be the SHA-256 hash of
+        // the nonce Supabase verifies against the identity token.
+        const rawNonce = crypto.randomUUID() + crypto.randomUUID()
+        const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(rawNonce))
+        const hashedNonce = Array.from(new Uint8Array(digest))
+          .map(b => b.toString(16).padStart(2, '0'))
+          .join('')
+
+        const { SignInWithApple } = await import('@capacitor-community/apple-sign-in')
+        const result = await SignInWithApple.authorize({
+          clientId: 'com.flightcheck.app',
+          redirectURI: `${import.meta.env.VITE_SUPABASE_URL}/auth/v1/callback`,
+          scopes: 'email name',
+          nonce: hashedNonce,
+        })
+
+        const { error } = await supabase.auth.signInWithIdToken({
+          provider: 'apple',
+          token: result.response.identityToken,
+          nonce: rawNonce,
+        })
+        if (error) return error
+
+        // Apple only provides the name on FIRST authorization — persist it
+        if (result.response.givenName) {
+          const fullName = [result.response.givenName, result.response.familyName]
+            .filter(Boolean)
+            .join(' ')
+          await supabase.auth.updateUser({ data: { full_name: fullName } })
+        }
+        return null
+      } catch (err) {
+        // Native sheet dismissed by the user — not an error
+        if (err instanceof Error && /cancel/i.test(err.message)) return null
+        return { name: 'AuthApiError', message: 'Apple sign-in failed' } as AuthError
+      }
+    }
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'apple',
+      options: { redirectTo: window.location.origin },
+    })
+    return error
+  }
+
   const resetPassword = async (email: string): Promise<AuthError | null> => {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: window.location.origin,
@@ -116,7 +164,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut, signInWithGoogle, resetPassword }}>
+    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut, signInWithGoogle, signInWithApple, resetPassword }}>
       {children}
     </AuthContext.Provider>
   )
