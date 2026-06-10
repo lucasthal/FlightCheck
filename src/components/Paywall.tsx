@@ -40,8 +40,23 @@ export function Paywall({ priceLabel, onPurchased }: Props) {
     } catch (err) {
       console.error('[Paywall] startCheckout failed', err)
       const msg = err instanceof Error ? err.message : 'Checkout failed'
-      // User closing the checkout sheet is not an error worth surfacing
-      if (!/cancel/i.test(msg)) setError(msg)
+      if (/already active/i.test(msg)) {
+        // The subscription exists server-side but customer info hasn't
+        // caught up yet — poll until it does, then unlock.
+        setActivating(true)
+        const state = await waitForEntitlement()
+        if (state.isEntitled) {
+          onPurchased(state)
+          return
+        }
+        setError(
+          'Your subscription is active but not syncing. Please reload the page, '
+          + 'or contact support@flightcheckapp.com.',
+        )
+      } else if (!/cancel/i.test(msg)) {
+        // User closing the checkout sheet is not an error worth surfacing
+        setError(msg)
+      }
     } finally {
       setSubmitting(false)
       setActivating(false)
