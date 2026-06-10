@@ -77,24 +77,44 @@ export async function getCurrentEntitlement(): Promise<EntitlementState> {
 
 /**
  * Initiates checkout for the "premium" entitlement on the current platform.
- * On web, this returns a Stripe Checkout URL (caller redirects the browser).
- * On iOS, this presents the native StoreKit sheet.
+ * Web: purchases-js renders its checkout in-page and resolves when the
+ * purchase completes. iOS: presents the native StoreKit sheet. Both SDKs
+ * resolve with fresh customer info, which is parsed and returned so the
+ * caller can unlock immediately without re-fetching (RC's API can lag a
+ * just-completed purchase by minutes).
  */
-export async function startCheckout(): Promise<{ checkoutUrl?: string }> {
+export async function startCheckout(): Promise<EntitlementState> {
   if (Capacitor.isNativePlatform()) {
     const { Purchases } = await import('@revenuecat/purchases-capacitor')
     const offerings = await Purchases.getOfferings()
     const pkg = offerings.current?.availablePackages[0]
     if (!pkg) throw new Error('No subscription package available')
-    await Purchases.purchasePackage({ aPackage: pkg })
-    return {}
+    const result = await Purchases.purchasePackage({ aPackage: pkg })
+    return parseEntitlement(result.customerInfo)
   } else {
     const { Purchases } = await import('@revenuecat/purchases-js')
     const offerings = await Purchases.getSharedInstance().getOfferings()
     const pkg = offerings.current?.availablePackages[0]
     if (!pkg) throw new Error('No subscription package available')
     const result = await Purchases.getSharedInstance().purchase({ rcPackage: pkg })
-    return { checkoutUrl: (result as { redirectURL?: string }).redirectURL }
+    return parseEntitlement((result as { customerInfo?: unknown }).customerInfo)
+  }
+}
+
+/**
+ * Polls until the entitlement becomes active or the timeout elapses. Fallback
+ * for the rare case where a completed purchase hasn't propagated to the
+ * customer-info endpoint yet.
+ */
+export async function waitForEntitlement(
+  timeoutMs = 90_000,
+  intervalMs = 3_000,
+): Promise<EntitlementState> {
+  const deadline = Date.now() + timeoutMs
+  for (;;) {
+    const state = await getCurrentEntitlement()
+    if (state.isEntitled || Date.now() >= deadline) return state
+    await new Promise((resolve) => setTimeout(resolve, intervalMs))
   }
 }
 
@@ -116,7 +136,7 @@ function parseEntitlement(customerInfo: unknown): EntitlementState {
   const source: EntitlementSource =
     store === 'app_store' ? 'apple'
     : store === 'play_store' ? 'google'
-    : store === 'stripe' ? 'stripe'
+    : store === 'stripe' || store === 'rc_billing' ? 'stripe'
     : null
   const trialEndsAt =
     ent.periodType?.toLowerCase() === 'trial' && ent.expirationDate

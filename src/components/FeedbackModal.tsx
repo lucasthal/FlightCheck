@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { X } from 'lucide-react'
 import type { Aircraft } from '../types'
 import { useAuth } from '../hooks/useAuth'
+import { getDisplayName } from '../lib/displayName'
 import { useFeedback } from '../hooks/useFeedback'
 
 interface Props {
@@ -21,12 +22,7 @@ export function FeedbackModal({ isOpen, onClose, aircraft, phaseName }: Props) {
 
   useEffect(() => {
     if (isOpen) {
-      setName(
-        (user?.user_metadata?.full_name as string | undefined)
-        ?? (user?.user_metadata?.name as string | undefined)
-        ?? user?.email?.split('@')[0]
-        ?? ''
-      )
+      setName(getDisplayName(user) ?? '')
       setMessage('')
       reset()
       // allow modal to finish mounting before stealing focus

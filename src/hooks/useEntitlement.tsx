@@ -13,6 +13,7 @@ interface UseEntitlementResult {
   trialEndsAt: Date | null
   source: EntitlementSource
   refresh: () => Promise<void>
+  apply: (next: EntitlementState) => void
 }
 
 const INITIAL: EntitlementState = {
@@ -49,6 +50,13 @@ export function useEntitlement(): UseEntitlementResult {
     }
   }
 
+  // Set entitlement state directly from a just-completed purchase result,
+  // bypassing the customer-info fetch (which can lag a fresh purchase).
+  const apply = (next: EntitlementState) => {
+    setState(next)
+    setIsLoading(false)
+  }
+
   useEffect(() => {
     if (authLoading) return
     setIsLoading(true)
@@ -74,5 +82,6 @@ export function useEntitlement(): UseEntitlementResult {
     trialEndsAt: state.trialEndsAt,
     source: state.source,
     refresh,
+    apply,
   }
 }

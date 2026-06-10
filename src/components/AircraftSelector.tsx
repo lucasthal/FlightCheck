@@ -3,6 +3,7 @@ import { allAircraft, aircraftByCategory } from '../data'
 import type { Aircraft, AircraftCategory } from '../types'
 import { Search, Zap, Users, Gauge, ArrowUp, Star, LogOut, ChevronDown, Settings } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
+import { getDisplayName } from '../lib/displayName'
 import { useFavorites } from '../hooks/useFavorites'
 import { FleetStrip } from './FleetStrip'
 import { useNetworkStatus } from '../hooks/useNetworkStatus'
@@ -142,9 +143,7 @@ export function AircraftSelector({ onSelect, onOpenSettings }: Props) {
   const categoryCount = (cat: AircraftCategory | 'All') =>
     cat === 'All' ? allAircraft.length : (aircraftByCategory[cat as AircraftCategory]?.length ?? 0)
 
-  const displayName = (user?.user_metadata?.full_name as string | undefined)
-    ?? user?.email?.split('@')[0]
-    ?? 'Pilot'
+  const displayName = getDisplayName(user) ?? 'Pilot'
 
   const initials = displayName.slice(0, 2).toUpperCase()
   const avatarUrl = user?.user_metadata?.avatar_url as string | undefined

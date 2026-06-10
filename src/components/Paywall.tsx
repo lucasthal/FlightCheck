@@ -1,38 +1,50 @@
 import { useState } from 'react'
 import { Capacitor } from '@capacitor/core'
 import { Loader2 } from 'lucide-react'
-import { startCheckout } from '../lib/revenuecat'
+import { startCheckout, waitForEntitlement, type EntitlementState } from '../lib/revenuecat'
 import { useAuth } from '../hooks/useAuth'
 
 interface Props {
   priceLabel?: string // e.g. "$4.99/mo" — falls back to generic copy if absent
+  onPurchased: (state: EntitlementState) => void
 }
 
 /**
  * Full-screen paywall. Rendered when the authenticated user has no active
  * entitlement. Single CTA initiates platform-appropriate checkout.
  */
-export function Paywall({ priceLabel }: Props) {
+export function Paywall({ priceLabel, onPurchased }: Props) {
   const { signOut } = useAuth()
   const [submitting, setSubmitting] = useState(false)
+  const [activating, setActivating] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const handleSubscribe = async () => {
     setError(null)
     setSubmitting(true)
     try {
-      const result = await startCheckout()
-      if (result.checkoutUrl) {
-        // Web: redirect to Stripe Checkout
-        window.location.href = result.checkoutUrl
+      let state = await startCheckout()
+      if (!state.isEntitled) {
+        // Purchase completed but the entitlement hasn't propagated yet
+        setActivating(true)
+        state = await waitForEntitlement()
       }
-      // iOS: StoreKit sheet handles UX; the useEntitlement hook will
-      // pick up the new state on resume
+      if (state.isEntitled) {
+        onPurchased(state)
+        return
+      }
+      setError(
+        'Your purchase succeeded but is taking longer than usual to activate. '
+        + 'Please reload in a minute, or contact support@flightcheckapp.com.',
+      )
     } catch (err) {
       console.error('[Paywall] startCheckout failed', err)
-      setError(err instanceof Error ? err.message : 'Checkout failed')
+      const msg = err instanceof Error ? err.message : 'Checkout failed'
+      // User closing the checkout sheet is not an error worth surfacing
+      if (!/cancel/i.test(msg)) setError(msg)
     } finally {
       setSubmitting(false)
+      setActivating(false)
     }
   }
 
@@ -84,7 +96,7 @@ export function Paywall({ priceLabel }: Props) {
               flex items-center justify-center gap-2"
           >
             {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
-            {submitting ? 'Opening checkout…' : 'Start free trial'}
+            {activating ? 'Activating subscription…' : submitting ? 'Opening checkout…' : 'Start free trial'}
           </button>
 
           {!Capacitor.isNativePlatform() && (

@@ -33,7 +33,7 @@ function AppInner() {
   const [activePhaseName, setActivePhaseName] = useState<string | null>(null)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const { user, loading } = useAuth()
-  const { isEntitled, isLoading: entLoading } = useEntitlement()
+  const { isEntitled, isLoading: entLoading, apply } = useEntitlement()
 
   if (loading) {
     return <Spinner />
@@ -48,7 +48,7 @@ function AppInner() {
   }
 
   if (!isEntitled) {
-    return <Paywall />
+    return <Paywall onPurchased={apply} />
   }
 
   const handleSelectAircraft = (aircraft: Aircraft) => {
