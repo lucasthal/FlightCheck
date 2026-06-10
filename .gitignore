@@ -7,3 +7,5 @@ dist
 flightcheck-release.keystore
 android/key.properties
 *.pem
+*.p8
+supabase/.temp/
