@@ -51,6 +51,28 @@ export const piperWarrior: Aircraft = {
       },
     },
     {
+      kind: 'keyval',
+      title: 'Aircraft Quick Reference',
+      items: {
+        'Engine': 'Lycoming O-320-D3G, 160 BHP',
+        'Max Takeoff Weight': '2,440 lbs',
+        'Standard Empty Weight': 'See POH',
+        'Max Useful Load': 'See POH',
+        'Fuel Capacity': 'See POH',
+        'Usable Fuel': 'See POH',
+        'Cruise Fuel Burn': 'See POH Section 5',
+        'Oil Capacity': 'See POH',
+        'Cruise Range (est.)': '~440 NM',
+        'Service Ceiling': '11,000 ft',
+        'Takeoff Ground Roll': 'See POH Section 5',
+        'Takeoff Over 50 ft Obstacle': 'See POH Section 5',
+        'Landing Ground Roll': 'See POH Section 5',
+        'Landing Over 50 ft Obstacle': 'See POH Section 5',
+        'Stall Speed (Clean)': '55 KIAS',
+        'Stall Speed (Landing Config)': '49 KIAS',
+      },
+    },
+    {
       kind: 'maneuver',
       title: 'Steep Turns',
       steps: [

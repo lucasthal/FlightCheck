@@ -64,6 +64,28 @@ export const kingAirB200: Aircraft = {
     },
     {
       kind: 'keyval',
+      title: 'Aircraft Quick Reference',
+      items: {
+        'Engines': 'Pratt & Whitney Canada PT6A-52, 850 SHP each',
+        'Max Takeoff Weight': 'See POH',
+        'Standard Empty Weight': 'See POH',
+        'Max Useful Load': 'See POH',
+        'Fuel Capacity': 'See POH',
+        'Usable Fuel': 'See POH',
+        'Cruise Fuel Burn': 'See POH Section 5',
+        'Oil Capacity': 'See POH (per engine)',
+        'Cruise Range (est.)': '~1,580 NM',
+        'Service Ceiling': '35,000 ft',
+        'Takeoff Ground Roll': 'See POH Section 5',
+        'Takeoff Over 50 ft Obstacle': 'See POH Section 5',
+        'Landing Ground Roll': 'See POH Section 5',
+        'Landing Over 50 ft Obstacle': 'See POH Section 5',
+        'Stall Speed (Clean)': '102 KIAS',
+        'Stall Speed (Landing Config)': '93 KIAS',
+      },
+    },
+    {
+      kind: 'keyval',
       title: 'Engine Failure After V1',
       items: {
         'Above V1': 'Continue takeoff — do NOT abort',

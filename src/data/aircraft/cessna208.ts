@@ -54,6 +54,28 @@ export const cessna208: Aircraft = {
     },
     {
       kind: 'keyval',
+      title: 'Aircraft Quick Reference',
+      items: {
+        'Engine': 'Pratt & Whitney Canada PT6A-140, 867 SHP',
+        'Max Takeoff Weight': 'See POH',
+        'Standard Empty Weight': 'See POH',
+        'Max Useful Load': 'See POH',
+        'Fuel Capacity': 'See POH',
+        'Usable Fuel': 'See POH',
+        'Cruise Fuel Burn': 'See POH Section 5',
+        'Oil Capacity': 'See POH',
+        'Cruise Range (est.)': '~1,070 NM',
+        'Service Ceiling': '25,000 ft',
+        'Takeoff Ground Roll': 'See POH Section 5',
+        'Takeoff Over 50 ft Obstacle': 'See POH Section 5',
+        'Landing Ground Roll': 'See POH Section 5',
+        'Landing Over 50 ft Obstacle': 'See POH Section 5',
+        'Stall Speed (Clean)': '76 KIAS',
+        'Stall Speed (Landing Config)': '61 KIAS',
+      },
+    },
+    {
+      kind: 'keyval',
       title: 'PT6A-140 Engine Limits',
       items: {
         'ITT — Start (max)': '1090°C (transient, 2 sec)',

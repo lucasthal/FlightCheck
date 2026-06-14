@@ -55,6 +55,28 @@ export const cirrusSR22: Aircraft = {
     },
     {
       kind: 'keyval',
+      title: 'Aircraft Quick Reference',
+      items: {
+        'Engine': 'Continental IO-550-N, 310 BHP',
+        'Max Takeoff Weight': '3,600 lbs',
+        'Standard Empty Weight': 'See POH',
+        'Max Useful Load': 'See POH',
+        'Fuel Capacity': 'See POH',
+        'Usable Fuel': 'See POH',
+        'Cruise Fuel Burn': 'See POH Section 5',
+        'Oil Capacity': 'See POH',
+        'Cruise Range (est.)': '~1,049 NM',
+        'Service Ceiling': '17,500 ft',
+        'Takeoff Ground Roll': 'See POH Section 5',
+        'Takeoff Over 50 ft Obstacle': 'See POH Section 5',
+        'Landing Ground Roll': 'See POH Section 5',
+        'Landing Over 50 ft Obstacle': 'See POH Section 5',
+        'Stall Speed (Clean)': '73 KIAS',
+        'Stall Speed (Landing Config)': '63 KIAS',
+      },
+    },
+    {
+      kind: 'keyval',
       title: 'CAPS Deployment Criteria',
       items: {
         'Uncontrolled Flight': 'Aircraft is not responding to control inputs — PULL',

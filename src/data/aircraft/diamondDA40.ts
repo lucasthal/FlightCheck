@@ -52,6 +52,28 @@ export const diamondDA40: Aircraft = {
     },
     {
       kind: 'keyval',
+      title: 'Aircraft Quick Reference',
+      items: {
+        'Engine': 'Austro Engine AE300, 168 BHP (diesel — Jet-A only)',
+        'Max Takeoff Weight': 'See POH',
+        'Standard Empty Weight': 'See POH',
+        'Max Useful Load': 'See POH',
+        'Fuel Capacity': 'See POH',
+        'Usable Fuel': 'See POH',
+        'Cruise Fuel Burn': 'See POH',
+        'Oil Capacity': 'See POH',
+        'Cruise Range (est.)': '~810 NM',
+        'Service Ceiling': '18,000 ft',
+        'Takeoff Ground Roll': 'See POH',
+        'Takeoff Over 50 ft Obstacle': 'See POH',
+        'Landing Ground Roll': 'See POH',
+        'Landing Over 50 ft Obstacle': 'See POH',
+        'Stall Speed (Clean)': '59 KIAS',
+        'Stall Speed (Landing Config)': '51 KIAS',
+      },
+    },
+    {
+      kind: 'keyval',
       title: 'DA40 NG Diesel Engine Notes',
       items: {
         'Fuel Type': 'Jet-A / Jet-A1 / Diesel ONLY — DO NOT use avgas (100LL)',

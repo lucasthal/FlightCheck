@@ -62,6 +62,28 @@ export const piperSeminole: Aircraft = {
     },
     {
       kind: 'keyval',
+      title: 'Aircraft Quick Reference',
+      items: {
+        'Engines': 'Lycoming O-360-A1H6 / LO-360-A1H6, 180 BHP each (counter-rotating)',
+        'Max Takeoff Weight': '3,800 lbs',
+        'Standard Empty Weight': 'See POH',
+        'Max Useful Load': 'See POH',
+        'Fuel Capacity': 'See POH',
+        'Usable Fuel': 'See POH',
+        'Cruise Fuel Burn': 'See POH Section 5',
+        'Oil Capacity': 'See POH (per engine)',
+        'Cruise Range (est.)': '~920 NM',
+        'Service Ceiling': '15,000 ft',
+        'Takeoff Ground Roll': 'See POH Section 5',
+        'Takeoff Over 50 ft Obstacle': 'See POH Section 5',
+        'Landing Ground Roll': 'See POH Section 5',
+        'Landing Over 50 ft Obstacle': 'See POH Section 5',
+        'Stall Speed (Clean)': '64 KIAS',
+        'Stall Speed (Landing Config)': '57 KIAS',
+      },
+    },
+    {
+      kind: 'keyval',
       title: 'Engine Failure — Immediate Action Memory Items',
       items: {
         'Step 1 — Identify': 'Dead foot = dead engine: rudder pressure identifies the failed engine (foot pushing on live side)',

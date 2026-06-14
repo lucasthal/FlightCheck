@@ -54,6 +54,28 @@ export const tbm960: Aircraft = {
     },
     {
       kind: 'keyval',
+      title: 'Aircraft Quick Reference',
+      items: {
+        'Engine': 'Pratt & Whitney Canada PT6E-66XT (flat-rated to 1,020 SHP; engine capacity 1,825 SHP)',
+        'Max Takeoff Weight': 'See POH',
+        'Standard Empty Weight': 'See POH',
+        'Max Useful Load': 'See POH',
+        'Fuel Capacity': 'See POH',
+        'Usable Fuel': 'See POH',
+        'Cruise Fuel Burn': 'See POH Section 5',
+        'Oil Capacity': 'See POH',
+        'Cruise Range (est.)': '~1,730 NM',
+        'Service Ceiling': '31,000 ft',
+        'Takeoff Ground Roll': 'See POH Section 5',
+        'Takeoff Over 50 ft Obstacle': 'See POH Section 5',
+        'Landing Ground Roll': 'See POH Section 5',
+        'Landing Over 50 ft Obstacle': 'See POH Section 5',
+        'Stall Speed (Clean)': '91 KIAS',
+        'Stall Speed (Landing Config)': '77 KIAS',
+      },
+    },
+    {
+      kind: 'keyval',
       title: 'PT6E-66XT EECU Notes',
       items: {
         'EECU': 'Full-Authority Digital Engine Control (FADEC-style)',

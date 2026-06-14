@@ -56,6 +56,28 @@ export const pilatusPC12: Aircraft = {
     },
     {
       kind: 'keyval',
+      title: 'Aircraft Quick Reference',
+      items: {
+        'Engine': 'Pratt & Whitney Canada PT6A-67P, 1,200 SHP',
+        'Max Takeoff Weight': 'See POH',
+        'Standard Empty Weight': 'See POH',
+        'Max Useful Load': 'See POH',
+        'Fuel Capacity': 'See POH',
+        'Usable Fuel': 'See POH',
+        'Cruise Fuel Burn': 'See POH Section 5',
+        'Oil Capacity': 'See POH',
+        'Cruise Range (est.)': '~1,803 NM',
+        'Service Ceiling': '30,000 ft',
+        'Takeoff Ground Roll': 'See POH Section 5',
+        'Takeoff Over 50 ft Obstacle': 'See POH Section 5',
+        'Landing Ground Roll': 'See POH Section 5',
+        'Landing Over 50 ft Obstacle': 'See POH Section 5',
+        'Stall Speed (Clean)': '92 KIAS',
+        'Stall Speed (Landing Config)': '78 KIAS',
+      },
+    },
+    {
+      kind: 'keyval',
       title: 'PT6A-67P Engine Limits',
       items: {
         'ITT — Takeoff (max 5 min)': '765°C',

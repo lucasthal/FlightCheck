@@ -64,6 +64,28 @@ export const baronG58: Aircraft = {
     },
     {
       kind: 'keyval',
+      title: 'Aircraft Quick Reference',
+      items: {
+        'Engines': 'Continental IO-550-C, 300 BHP each',
+        'Max Takeoff Weight': '5,500 lbs',
+        'Standard Empty Weight': 'See POH',
+        'Max Useful Load': 'See POH',
+        'Fuel Capacity': 'See POH',
+        'Usable Fuel': 'See POH',
+        'Cruise Fuel Burn': 'See POH Section 5',
+        'Oil Capacity': 'See POH (per engine)',
+        'Cruise Range (est.)': '~1,480 NM',
+        'Service Ceiling': '20,688 ft',
+        'Takeoff Ground Roll': 'See POH Section 5',
+        'Takeoff Over 50 ft Obstacle': 'See POH Section 5',
+        'Landing Ground Roll': 'See POH Section 5',
+        'Landing Over 50 ft Obstacle': 'See POH Section 5',
+        'Stall Speed (Clean)': '90 KIAS',
+        'Stall Speed (Landing Config)': '84 KIAS',
+      },
+    },
+    {
+      kind: 'keyval',
       title: 'Engine Failure — Immediate Action Memory Items',
       items: {
         'Step 1 — Identify': 'Dead foot = dead engine: rudder pressure identifies the failed engine (foot pushing on live side)',

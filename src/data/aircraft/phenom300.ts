@@ -56,6 +56,28 @@ export const phenom300: Aircraft = {
     },
     {
       kind: 'keyval',
+      title: 'Aircraft Quick Reference',
+      items: {
+        'Engines': 'Pratt & Whitney Canada PW535E1, 3,478 lbf thrust each (FADEC)',
+        'Max Takeoff Weight': 'See AFM',
+        'Standard Empty Weight': 'See AFM',
+        'Max Useful Load': 'See AFM',
+        'Fuel Capacity': 'See AFM',
+        'Usable Fuel': 'See AFM',
+        'Cruise Fuel Burn': 'See AFM',
+        'Oil Capacity': 'See AFM (per engine)',
+        'Cruise Range (est.)': '~2,010 NM',
+        'Service Ceiling': '45,000 ft',
+        'Takeoff Ground Roll': 'See AFM',
+        'Takeoff Over 50 ft Obstacle': 'See AFM',
+        'Landing Ground Roll': 'See AFM',
+        'Landing Over 50 ft Obstacle': 'See AFM',
+        'Stall Speed (Clean)': '106 KIAS',
+        'Stall Speed (Landing Config)': '92 KIAS',
+      },
+    },
+    {
+      kind: 'keyval',
       title: 'Engine Failure After V1',
       items: {
         'Above V1': 'Continue takeoff — do NOT abort',

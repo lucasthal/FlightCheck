@@ -46,6 +46,22 @@ export const robinsonR44: Aircraft = {
     },
     {
       kind: 'keyval',
+      title: 'Aircraft Quick Reference',
+      items: {
+        'Engine': 'Lycoming IO-540-AE1A5, 245 BHP',
+        'Max Takeoff Weight': '2,500 lbs',
+        'Standard Empty Weight': 'See POH',
+        'Max Useful Load': 'See POH',
+        'Fuel Capacity': 'See POH',
+        'Usable Fuel': 'See POH',
+        'Cruise Fuel Burn': 'See POH',
+        'Oil Capacity': 'See POH',
+        'Cruise Range (est.)': '~300 NM',
+        'Service Ceiling': '14,000 ft',
+      },
+    },
+    {
+      kind: 'keyval',
       title: 'Autorotation Procedure',
       items: {
         'Entry': 'Lower collective to min pitch; establish 70 KIAS; maintain Nr 90–107%',
