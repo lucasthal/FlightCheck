@@ -78,7 +78,7 @@ export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
       setDeleteError('Account deletion failed. Please try again or contact support@flightcheckapp.com.')
       return
     }
-    // Account is gone server-side; sign out locally (server signOut may 403 — ignore)
+    localStorage.removeItem('flightcheck-has-account')
     await signOut().catch(() => {})
   }
 

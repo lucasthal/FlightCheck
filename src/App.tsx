@@ -34,11 +34,23 @@ function Spinner() {
   )
 }
 
+const HAS_ACCOUNT_KEY = 'flightcheck-has-account'
+
 function AppInner() {
   const [selectedAircraft, setSelectedAircraft] = useState<Aircraft | null>(null)
   const [activePhaseName, setActivePhaseName] = useState<string | null>(null)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const { user, loading } = useAuth()
+
+  // Track whether this device has ever had a signed-in user.
+  // Returning users (signed out) see LoginScreen; brand-new users see Paywall.
+  const [hasAccount, setHasAccount] = useState(() => !!localStorage.getItem(HAS_ACCOUNT_KEY))
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem(HAS_ACCOUNT_KEY, '1')
+      setHasAccount(true)
+    }
+  }, [user])
 
   // On iOS, init RevenueCat anonymously when no user so the paywall can
   // appear without requiring login (Apple guideline 5.1.1(v)).
@@ -67,6 +79,9 @@ function AppInner() {
 
   // Web: RC SDK requires a user ID — login is still required
   if (!user && !isNative) return <LoginScreen />
+
+  // Native: returning user who signed out — go to login, not paywall
+  if (!user && isNative && hasAccount) return <LoginScreen />
 
   // Native without user: wait for anonymous RC init
   if (!user && !rcReady) return <Spinner />
