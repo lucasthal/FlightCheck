@@ -133,10 +133,13 @@ export function Paywall({ priceLabel, onPurchased, onSignIn }: Props) {
             {activating ? 'Activating subscription…' : submitting ? 'Opening checkout…' : 'Start free trial'}
           </button>
 
+          <p className="text-xs text-cockpit-text-dim mt-5 mb-2 text-center">
+            Already subscribed on this Apple ID?
+          </p>
           <button
             onClick={handleRestore}
             disabled={submitting || restoring}
-            className="w-full mt-3 py-2.5 rounded-xl bg-cockpit-card border border-cockpit-border
+            className="w-full py-2.5 rounded-xl bg-cockpit-card border border-cockpit-border
               text-cockpit-text-primary text-sm font-medium
               hover:border-cockpit-amber/40 transition-colors disabled:opacity-50 disabled:cursor-not-allowed
               flex items-center justify-center gap-2"
