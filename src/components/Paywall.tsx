@@ -10,10 +10,10 @@ const TERMS_URL = 'https://lucasthal.github.io/FlightCheck/terms.html'
 interface Props {
   priceLabel?: string
   onPurchased: (state: EntitlementState) => void
-  isGuest?: boolean
+  onSignIn?: () => void
 }
 
-export function Paywall({ priceLabel, onPurchased, isGuest }: Props) {
+export function Paywall({ priceLabel, onPurchased, onSignIn }: Props) {
   const { signOut } = useAuth()
   const [submitting, setSubmitting] = useState(false)
   const [activating, setActivating] = useState(false)
@@ -164,11 +164,13 @@ export function Paywall({ priceLabel, onPurchased, isGuest }: Props) {
           </div>
         </div>
 
-        {isGuest ? (
-          <p className="text-center text-xs text-cockpit-text-dim mt-4">
-            Payment is processed by Apple and tied to your Apple ID.
-            No account required.
-          </p>
+        {onSignIn ? (
+          <button
+            onClick={onSignIn}
+            className="w-full mt-4 text-center text-xs text-cockpit-amber hover:text-amber-400 transition-colors"
+          >
+            Already have an account? Sign in
+          </button>
         ) : (
           <button
             onClick={() => { signOut() }}

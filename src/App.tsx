@@ -63,10 +63,6 @@ function AppInner() {
   const [pendingEntitlement, setPendingEntitlement] = useState<EntitlementState | null>(null)
   const { isEntitled, isLoading: entLoading, apply } = useEntitlement(rcReady)
 
-  const handleGuestPurchased = (state: EntitlementState) => {
-    setPendingEntitlement(state)
-  }
-
   if (loading) return <Spinner />
 
   // Web: RC SDK requires a user ID — login is still required
@@ -75,16 +71,12 @@ function AppInner() {
   // Native without user: wait for anonymous RC init
   if (!user && !rcReady) return <Spinner />
 
-  // Guest completed purchase/restore — show welcome screen before entering app
+  // Just purchased/restored without an account — confirm and require sign-in
   if (!user && pendingEntitlement) {
     return (
       <WelcomeScreen
         isRestore={pendingEntitlement.source === 'apple'}
         onSignIn={() => {
-          apply(pendingEntitlement)
-          setShowLogin(true)
-        }}
-        onContinueAsGuest={() => {
           apply(pendingEntitlement)
           setPendingEntitlement(null)
         }}
@@ -92,15 +84,21 @@ function AppInner() {
     )
   }
 
-  // Guest requested sign-in from settings/profile menu or welcome screen
-  if (!user && showLogin) {
-    return <LoginScreen onBack={() => setShowLogin(false)} />
-  }
-
   if (entLoading) return <Spinner />
 
+  // Not entitled — show paywall (purchase doesn't require sign-in)
   if (!isEntitled) {
-    return <Paywall onPurchased={!user ? handleGuestPurchased : apply} isGuest={!user} />
+    return (
+      <Paywall
+        onPurchased={user ? apply : (state) => setPendingEntitlement(state)}
+        onSignIn={!user ? () => setShowLogin(true) : undefined}
+      />
+    )
+  }
+
+  // Entitled but not signed in — must sign in to use the app
+  if (!user || showLogin) {
+    return <LoginScreen />
   }
 
   const handleSelectAircraft = (aircraft: Aircraft) => {
@@ -113,8 +111,6 @@ function AppInner() {
     setActivePhaseName(null)
   }
 
-  const handleSignIn = () => setShowLogin(true)
-
   return (
     <>
       {selectedAircraft ? (
@@ -125,13 +121,12 @@ function AppInner() {
           onPhaseChange={setActivePhaseName}
         />
       ) : (
-        <AircraftSelector onSelect={handleSelectAircraft} onOpenSettings={() => setIsSettingsOpen(true)} onSignIn={!user ? handleSignIn : undefined} />
+        <AircraftSelector onSelect={handleSelectAircraft} onOpenSettings={() => setIsSettingsOpen(true)} />
       )}
 
       <SettingsSheet
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
-        onSignIn={!user ? handleSignIn : undefined}
       />
 
       {selectedAircraft && (

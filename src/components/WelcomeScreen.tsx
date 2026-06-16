@@ -1,10 +1,9 @@
 interface Props {
   isRestore: boolean
   onSignIn: () => void
-  onContinueAsGuest: () => void
 }
 
-export function WelcomeScreen({ isRestore, onSignIn, onContinueAsGuest }: Props) {
+export function WelcomeScreen({ isRestore, onSignIn }: Props) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-cockpit-bg px-4">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(245,158,11,0.06),transparent_60%)]" />
@@ -49,18 +48,10 @@ export function WelcomeScreen({ isRestore, onSignIn, onContinueAsGuest }: Props)
             Sign In or Create Account
           </button>
 
-          <button
-            onClick={onContinueAsGuest}
-            className="w-full mt-3 py-2.5 rounded-xl bg-cockpit-card border border-cockpit-border
-              text-cockpit-text-secondary text-sm font-medium
-              hover:border-cockpit-amber/40 transition-colors"
-          >
-            Continue without account
-          </button>
         </div>
 
         <p className="text-center text-xs text-cockpit-text-dim mt-4">
-          You can sign in anytime from Settings.
+          An account enables cross-device sync of your checklists, favorites, and preferences.
         </p>
       </div>
     </div>

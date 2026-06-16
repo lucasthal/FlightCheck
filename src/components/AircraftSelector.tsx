@@ -12,7 +12,6 @@ import { OfflineBanner } from './OfflineBanner'
 interface Props {
   onSelect: (aircraft: Aircraft) => void
   onOpenSettings: () => void
-  onSignIn?: () => void
 }
 
 const CATEGORIES: { key: AircraftCategory | 'All'; label: string }[] = [
@@ -114,7 +113,7 @@ const AIRCRAFT_SILHOUETTE: Record<string, ReactNode> = {
   'robinson-r44-raven-ii': (<svg viewBox="0 0 80 40" fill="currentColor" className="w-full h-full opacity-20"><rect x="18" y="18.5" width="36" height="3" rx="1.5"/><rect x="33.5" y="2" width="3" height="36" rx="1.5"/><ellipse cx="35" cy="20" rx="10" ry="7"/><rect x="44" y="18.5" width="28" height="3" rx="1"/><ellipse cx="72" cy="20" rx="2" ry="7"/></svg>),
 }
 
-export function AircraftSelector({ onSelect, onOpenSettings, onSignIn }: Props) {
+export function AircraftSelector({ onSelect, onOpenSettings }: Props) {
   const { user, signOut } = useAuth()
   const { favorites, toggle, isFavorite } = useFavorites()
   const { isOnline } = useNetworkStatus()
@@ -201,9 +200,7 @@ export function AircraftSelector({ onSelect, onOpenSettings, onSignIn }: Props) 
                 <div role="menu" aria-label="Profile menu" className="absolute right-0 top-full mt-1 w-48 bg-cockpit-panel border border-cockpit-border rounded-xl shadow-cockpit z-50 overflow-hidden">
                   <div className="px-3 py-2.5 border-b border-cockpit-border/50">
                     <p className="text-xs font-semibold text-cockpit-text-primary truncate">{displayName}</p>
-                    {user?.email && (
-                      <p className="text-xs text-cockpit-text-dim truncate">{user.email}</p>
-                    )}
+                    <p className="text-xs text-cockpit-text-dim truncate">{user?.email}</p>
                   </div>
                   <button
                     role="menuitem"
@@ -214,27 +211,15 @@ export function AircraftSelector({ onSelect, onOpenSettings, onSignIn }: Props) 
                     <Settings className="w-3.5 h-3.5" />
                     Settings
                   </button>
-                  {user ? (
-                    <button
-                      role="menuitem"
-                      onClick={() => { setProfileOpen(false); signOut() }}
-                      className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-cockpit-text-secondary
-                                 hover:bg-cockpit-card hover:text-cockpit-text-primary transition-colors"
-                    >
-                      <LogOut className="w-3.5 h-3.5" />
-                      Sign Out
-                    </button>
-                  ) : onSignIn ? (
-                    <button
-                      role="menuitem"
-                      onClick={() => { setProfileOpen(false); onSignIn() }}
-                      className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-cockpit-amber
-                                 hover:bg-cockpit-card transition-colors"
-                    >
-                      <LogOut className="w-3.5 h-3.5" />
-                      Sign In
-                    </button>
-                  ) : null}
+                  <button
+                    role="menuitem"
+                    onClick={() => { setProfileOpen(false); signOut() }}
+                    className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-cockpit-text-secondary
+                               hover:bg-cockpit-card hover:text-cockpit-text-primary transition-colors"
+                  >
+                    <LogOut className="w-3.5 h-3.5" />
+                    Sign Out
+                  </button>
                 </div>
               )}
             </div>
