@@ -102,7 +102,7 @@ function AppInner() {
   if (entLoading) return <Spinner />
 
   // User tapped "Sign in" from the paywall
-  if (showLogin) return <LoginScreen />
+  if (!user && showLogin) return <LoginScreen />
 
   // Not entitled — show paywall (purchase doesn't require sign-in)
   if (!isEntitled) {
