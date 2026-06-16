@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
 import { Capacitor } from '@capacitor/core'
 import type { Aircraft } from './types'
+import type { EntitlementState } from './lib/revenuecat'
 import { AircraftSelector } from './components/AircraftSelector'
 import { ChecklistView } from './components/ChecklistView'
 import { LoginScreen } from './components/LoginScreen'
 import { Paywall } from './components/Paywall'
+import { WelcomeScreen } from './components/WelcomeScreen'
 import { SettingsSheet } from './components/SettingsSheet'
 import { FeedbackButton } from './components/FeedbackButton'
 import { AuthProvider, useAuth } from './hooks/useAuth'
@@ -58,7 +60,12 @@ function AppInner() {
   }, [user, loading])
 
   const [showLogin, setShowLogin] = useState(false)
+  const [pendingEntitlement, setPendingEntitlement] = useState<EntitlementState | null>(null)
   const { isEntitled, isLoading: entLoading, apply } = useEntitlement(rcReady)
+
+  const handleGuestPurchased = (state: EntitlementState) => {
+    setPendingEntitlement(state)
+  }
 
   if (loading) return <Spinner />
 
@@ -68,7 +75,24 @@ function AppInner() {
   // Native without user: wait for anonymous RC init
   if (!user && !rcReady) return <Spinner />
 
-  // Guest requested sign-in from settings/profile menu
+  // Guest completed purchase/restore — show welcome screen before entering app
+  if (!user && pendingEntitlement) {
+    return (
+      <WelcomeScreen
+        isRestore={pendingEntitlement.source === 'apple'}
+        onSignIn={() => {
+          apply(pendingEntitlement)
+          setShowLogin(true)
+        }}
+        onContinueAsGuest={() => {
+          apply(pendingEntitlement)
+          setPendingEntitlement(null)
+        }}
+      />
+    )
+  }
+
+  // Guest requested sign-in from settings/profile menu or welcome screen
   if (!user && showLogin) {
     return <LoginScreen onBack={() => setShowLogin(false)} />
   }
@@ -76,7 +100,7 @@ function AppInner() {
   if (entLoading) return <Spinner />
 
   if (!isEntitled) {
-    return <Paywall onPurchased={apply} isGuest={!user} />
+    return <Paywall onPurchased={!user ? handleGuestPurchased : apply} isGuest={!user} />
   }
 
   const handleSelectAircraft = (aircraft: Aircraft) => {
