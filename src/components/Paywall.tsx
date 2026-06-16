@@ -1,22 +1,23 @@
 import { useState } from 'react'
 import { Capacitor } from '@capacitor/core'
 import { Loader2 } from 'lucide-react'
-import { startCheckout, waitForEntitlement, type EntitlementState } from '../lib/revenuecat'
+import { startCheckout, restorePurchases, waitForEntitlement, type EntitlementState } from '../lib/revenuecat'
 import { useAuth } from '../hooks/useAuth'
 
+const PRIVACY_URL = 'https://lucasthal.github.io/FlightCheck/privacy.html'
+const TERMS_URL = 'https://lucasthal.github.io/FlightCheck/terms.html'
+
 interface Props {
-  priceLabel?: string // e.g. "$4.99/mo" — falls back to generic copy if absent
+  priceLabel?: string
   onPurchased: (state: EntitlementState) => void
+  isGuest?: boolean
 }
 
-/**
- * Full-screen paywall. Rendered when the authenticated user has no active
- * entitlement. Single CTA initiates platform-appropriate checkout.
- */
-export function Paywall({ priceLabel, onPurchased }: Props) {
+export function Paywall({ priceLabel, onPurchased, isGuest }: Props) {
   const { signOut } = useAuth()
   const [submitting, setSubmitting] = useState(false)
   const [activating, setActivating] = useState(false)
+  const [restoring, setRestoring] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const handleSubscribe = async () => {
@@ -25,7 +26,6 @@ export function Paywall({ priceLabel, onPurchased }: Props) {
     try {
       let state = await startCheckout()
       if (!state.isEntitled) {
-        // Purchase completed but the entitlement hasn't propagated yet
         setActivating(true)
         state = await waitForEntitlement()
       }
@@ -41,8 +41,6 @@ export function Paywall({ priceLabel, onPurchased }: Props) {
       console.error('[Paywall] startCheckout failed', err)
       const msg = err instanceof Error ? err.message : 'Checkout failed'
       if (/already active/i.test(msg)) {
-        // The subscription exists server-side but customer info hasn't
-        // caught up yet — poll until it does, then unlock.
         setActivating(true)
         const state = await waitForEntitlement()
         if (state.isEntitled) {
@@ -54,13 +52,34 @@ export function Paywall({ priceLabel, onPurchased }: Props) {
           + 'or contact support@flightcheckapp.com.',
         )
       } else if (!/cancel/i.test(msg)) {
-        // User closing the checkout sheet is not an error worth surfacing
         setError(msg)
       }
     } finally {
       setSubmitting(false)
       setActivating(false)
     }
+  }
+
+  const handleRestore = async () => {
+    setError(null)
+    setRestoring(true)
+    try {
+      const state = await restorePurchases()
+      if (state.isEntitled) {
+        onPurchased(state)
+        return
+      }
+      setError('No active subscription found. If you believe this is an error, contact support@flightcheckapp.com.')
+    } catch (err) {
+      console.error('[Paywall] restore failed', err)
+      setError('Could not restore purchases. Please try again.')
+    } finally {
+      setRestoring(false)
+    }
+  }
+
+  const openLink = (url: string) => {
+    window.open(url, '_blank', 'noopener')
   }
 
   return (
@@ -83,11 +102,11 @@ export function Paywall({ priceLabel, onPurchased }: Props) {
 
         <div className="bg-cockpit-panel border border-cockpit-border rounded-2xl p-6 shadow-cockpit">
           <h2 className="text-lg font-semibold text-cockpit-text-primary mb-1 text-center">
-            Start your free trial
+            FlightCheck Pro
           </h2>
           <p className="text-sm text-cockpit-text-secondary mb-5 text-center">
-            7 days free, then {priceLabel ?? 'subscription pricing'}.
-            Cancel anytime before the trial ends.
+            7-day free trial, then {priceLabel ?? '$3.99/month'}.{' '}
+            Auto-renewable subscription. Cancel anytime.
           </p>
 
           <ul className="text-sm text-cockpit-text-secondary space-y-2 mb-6">
@@ -105,7 +124,7 @@ export function Paywall({ priceLabel, onPurchased }: Props) {
 
           <button
             onClick={handleSubscribe}
-            disabled={submitting}
+            disabled={submitting || restoring}
             className="w-full py-3 rounded-xl bg-cockpit-amber text-black font-semibold text-sm
               hover:bg-amber-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed
               flex items-center justify-center gap-2"
@@ -114,20 +133,50 @@ export function Paywall({ priceLabel, onPurchased }: Props) {
             {activating ? 'Activating subscription…' : submitting ? 'Opening checkout…' : 'Start free trial'}
           </button>
 
+          <button
+            onClick={handleRestore}
+            disabled={submitting || restoring}
+            className="w-full mt-3 py-2.5 rounded-xl bg-cockpit-card border border-cockpit-border
+              text-cockpit-text-primary text-sm font-medium
+              hover:border-cockpit-amber/40 transition-colors disabled:opacity-50 disabled:cursor-not-allowed
+              flex items-center justify-center gap-2"
+          >
+            {restoring && <Loader2 className="w-4 h-4 animate-spin" />}
+            {restoring ? 'Restoring…' : 'Restore Purchases'}
+          </button>
+
           {!Capacitor.isNativePlatform() && (
             <p className="text-center text-xs text-cockpit-text-dim mt-4">
               Already subscribed on iOS? Sign in with the same email
               and access unlocks automatically.
             </p>
           )}
+
+          {/* Legal links */}
+          <div className="flex items-center justify-center gap-3 mt-4 text-xs text-cockpit-text-dim">
+            <button onClick={() => openLink(TERMS_URL)} className="hover:text-cockpit-text-secondary transition-colors underline">
+              Terms of Use
+            </button>
+            <span>•</span>
+            <button onClick={() => openLink(PRIVACY_URL)} className="hover:text-cockpit-text-secondary transition-colors underline">
+              Privacy Policy
+            </button>
+          </div>
         </div>
 
-        <button
-          onClick={() => { signOut() }}
-          className="w-full mt-4 text-center text-xs text-cockpit-text-dim hover:text-cockpit-text-secondary transition-colors"
-        >
-          Sign out
-        </button>
+        {isGuest ? (
+          <p className="text-center text-xs text-cockpit-text-dim mt-4">
+            Payment is processed by Apple and tied to your Apple ID.
+            No account required.
+          </p>
+        ) : (
+          <button
+            onClick={() => { signOut() }}
+            className="w-full mt-4 text-center text-xs text-cockpit-text-dim hover:text-cockpit-text-secondary transition-colors"
+          >
+            Sign out
+          </button>
+        )}
 
         <p className="text-center text-xs text-cockpit-text-dim mt-3">
           For reference only — always verify against current POH/AFM

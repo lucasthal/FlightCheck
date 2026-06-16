@@ -4,7 +4,11 @@ import { useAuth } from '../hooks/useAuth'
 
 type Mode = 'signin' | 'signup' | 'reset'
 
-export function LoginScreen() {
+interface LoginScreenProps {
+  onBack?: () => void
+}
+
+export function LoginScreen({ onBack }: LoginScreenProps = {}) {
   const { signIn, signUp, signInWithGoogle, signInWithApple, resetPassword } = useAuth()
   const [mode, setMode] = useState<Mode>('signin')
   const [email, setEmail] = useState('')
@@ -247,6 +251,15 @@ export function LoginScreen() {
             )}
           </div>
         </div>
+
+        {onBack && (
+          <button
+            onClick={onBack}
+            className="w-full mt-4 text-center text-xs text-cockpit-text-dim hover:text-cockpit-text-secondary transition-colors"
+          >
+            Continue without account
+          </button>
+        )}
 
         <p className="text-center text-xs text-cockpit-text-dim mt-4">
           For reference only — always verify against current POH/AFM

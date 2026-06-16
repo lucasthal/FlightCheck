@@ -10,6 +10,7 @@ import { supabase } from '../lib/supabase'
 interface SettingsSheetProps {
   isOpen: boolean
   onClose: () => void
+  onSignIn?: () => void
 }
 
 const THEMES: { value: Theme; label: string }[] = [
@@ -25,7 +26,7 @@ const TEXT_SIZES: { value: TextSize; label: string }[] = [
   { value: 'xl', label: 'Xl' },
 ]
 
-export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
+export function SettingsSheet({ isOpen, onClose, onSignIn }: SettingsSheetProps) {
   const { user, signOut } = useAuth()
   const { preferences, updatePreference } = usePreferences()
   const { source, trialEndsAt, isEntitled } = useEntitlement()
@@ -128,7 +129,25 @@ export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
         </div>
 
         <div className="px-4 pb-8 space-y-6">
+          {/* Sign in prompt for guests */}
+          {!user && onSignIn && (
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-cockpit-text-primary">Account</p>
+              <p className="text-xs text-cockpit-text-secondary">
+                Sign in to sync your preferences, favorites, and checklist profiles across devices.
+              </p>
+              <button
+                onClick={() => { onClose(); onSignIn() }}
+                className="w-full py-2.5 rounded-xl bg-cockpit-amber text-black font-semibold text-sm
+                  hover:bg-amber-400 transition-colors"
+              >
+                Sign In or Create Account
+              </button>
+            </div>
+          )}
+
           {/* Display name */}
+          {user && (
           <div className="space-y-2">
             <p className="text-sm font-medium text-cockpit-text-primary">Display name</p>
             <div className="flex gap-2">
@@ -155,6 +174,7 @@ export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
               <p className="text-xs text-red-400">Could not save name. Please try again.</p>
             )}
           </div>
+          )}
 
           {/* Subscription */}
           {isEntitled && source && (
@@ -271,7 +291,8 @@ export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
             </button>
           </div>
 
-          {/* Default aircraft */}
+          {/* Default aircraft — only for signed-in users */}
+          {user && (
           <div className="space-y-2">
             <p className="text-sm font-medium text-cockpit-text-primary">Default aircraft</p>
             <select
@@ -285,8 +306,10 @@ export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
               ))}
             </select>
           </div>
+          )}
 
-          {/* Danger zone */}
+          {/* Danger zone — only for signed-in users */}
+          {user && (
           <div className="space-y-2 border-t border-cockpit-border pt-4">
             <p className="text-xs text-red-400 uppercase tracking-wide">Danger zone</p>
             {!confirmingDelete ? (
@@ -337,6 +360,7 @@ export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
               </div>
             )}
           </div>
+          )}
         </div>
       </div>
     </>

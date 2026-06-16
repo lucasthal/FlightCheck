@@ -2,6 +2,10 @@ import { Capacitor } from '@capacitor/core'
 
 let initialized = false
 
+export function isRevenueCatInitialized(): boolean {
+  return initialized
+}
+
 /**
  * Initialize RevenueCat with the current Supabase user_id. Idempotent: if
  * already initialized, switches identity to the new user_id.
@@ -30,6 +34,15 @@ export async function initRevenueCat(userId: string): Promise<void> {
       initialized = true
     }
   }
+}
+
+export async function initRevenueCatAnonymous(): Promise<void> {
+  if (!Capacitor.isNativePlatform() || initialized) return
+  const { Purchases } = await import('@revenuecat/purchases-capacitor')
+  await Purchases.configure({
+    apiKey: import.meta.env.VITE_REVENUECAT_IOS_KEY,
+  })
+  initialized = true
 }
 
 /**
@@ -115,6 +128,16 @@ export async function waitForEntitlement(
     const state = await getCurrentEntitlement()
     if (state.isEntitled || Date.now() >= deadline) return state
     await new Promise((resolve) => setTimeout(resolve, intervalMs))
+  }
+}
+
+export async function restorePurchases(): Promise<EntitlementState> {
+  if (Capacitor.isNativePlatform()) {
+    const { Purchases } = await import('@revenuecat/purchases-capacitor')
+    const info = await Purchases.restorePurchases()
+    return parseEntitlement(info.customerInfo)
+  } else {
+    return getCurrentEntitlement()
   }
 }
 
