@@ -9,11 +9,12 @@ const TERMS_URL = 'https://lucasthal.github.io/FlightCheck/terms.html'
 
 interface Props {
   priceLabel?: string
+  isReturningUser?: boolean
   onPurchased: (state: EntitlementState) => void
   onSignIn?: () => void
 }
 
-export function Paywall({ priceLabel, onPurchased, onSignIn }: Props) {
+export function Paywall({ priceLabel, isReturningUser, onPurchased, onSignIn }: Props) {
   const { signOut } = useAuth()
   const [submitting, setSubmitting] = useState(false)
   const [activating, setActivating] = useState(false)
@@ -105,8 +106,9 @@ export function Paywall({ priceLabel, onPurchased, onSignIn }: Props) {
             FlightCheck Pro
           </h2>
           <p className="text-sm text-cockpit-text-secondary mb-5 text-center">
-            7-day free trial, then {priceLabel ?? '$3.99/month'}.{' '}
-            Auto-renewable subscription. Cancel anytime.
+            {isReturningUser
+              ? `${priceLabel ?? '$3.99/month'}. Auto-renewable subscription. Cancel anytime.`
+              : `7-day free trial, then ${priceLabel ?? '$3.99/month'}. Auto-renewable subscription. Cancel anytime.`}
           </p>
 
           <ul className="text-sm text-cockpit-text-secondary space-y-2 mb-6">
@@ -130,7 +132,7 @@ export function Paywall({ priceLabel, onPurchased, onSignIn }: Props) {
               flex items-center justify-center gap-2"
           >
             {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
-            {activating ? 'Activating subscription…' : submitting ? 'Opening checkout…' : 'Start free trial'}
+            {activating ? 'Activating subscription…' : submitting ? 'Opening checkout…' : isReturningUser ? 'Subscribe' : 'Start free trial'}
           </button>
 
           <p className="text-xs text-cockpit-text-dim mt-5 mb-2 text-center">

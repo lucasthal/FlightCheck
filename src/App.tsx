@@ -113,6 +113,7 @@ function AppInner() {
   if (!isEntitled) {
     return (
       <Paywall
+        isReturningUser={hasAccount}
         onPurchased={user ? apply : (state) => setPendingEntitlement(state)}
         onSignIn={!user ? () => setShowLogin(true) : undefined}
       />
