@@ -13,6 +13,7 @@ import { AuthProvider, useAuth } from './hooks/useAuth'
 import { useEntitlement } from './hooks/useEntitlement'
 import { PreferencesProvider } from './hooks/usePreferences'
 import { initRevenueCat, initRevenueCatAnonymous } from './lib/revenuecat'
+import { hasSavedCredentials } from './lib/biometric'
 
 const isNative = Capacitor.isNativePlatform()
 
@@ -35,6 +36,19 @@ function Spinner() {
 }
 
 const HAS_ACCOUNT_KEY = 'flightcheck-has-account'
+
+function BiometricGate() {
+  const { signInWithBiometric, hasBiometric } = useAuth()
+  const [tried, setTried] = useState(false)
+
+  useEffect(() => {
+    if (!hasBiometric || !hasSavedCredentials() || tried) return
+    setTried(true)
+    signInWithBiometric().catch(() => {})
+  }, [hasBiometric, tried, signInWithBiometric])
+
+  return <LoginScreen />
+}
 
 function AppInner() {
   const [selectedAircraft, setSelectedAircraft] = useState<Aircraft | null>(null)
@@ -86,7 +100,7 @@ function AppInner() {
   if (!user && !isNative) return <LoginScreen />
 
   // Native: returning user who signed out — go to login, not paywall
-  if (!user && isNative && hasAccount) return <LoginScreen />
+  if (!user && isNative && hasAccount) return <BiometricGate />
 
   // Wait for RC init (identified or anonymous) before checking entitlement
   if (!rcReady) return <Spinner />
