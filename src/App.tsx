@@ -12,7 +12,7 @@ import { FeedbackButton } from './components/FeedbackButton'
 import { AuthProvider, useAuth } from './hooks/useAuth'
 import { useEntitlement } from './hooks/useEntitlement'
 import { PreferencesProvider } from './hooks/usePreferences'
-import { initRevenueCatAnonymous } from './lib/revenuecat'
+import { initRevenueCat, initRevenueCatAnonymous } from './lib/revenuecat'
 
 const isNative = Capacitor.isNativePlatform()
 
@@ -52,23 +52,28 @@ function AppInner() {
     }
   }, [user])
 
-  // On iOS, init RevenueCat anonymously when no user so the paywall can
-  // appear without requiring login (Apple guideline 5.1.1(v)).
+  // On iOS, init RevenueCat (identified or anonymous) before marking rcReady
+  // so getCurrentEntitlement() always runs after RC is initialized.
   const [rcReady, setRcReady] = useState(false)
   useEffect(() => {
     if (loading) return
+    let cancelled = false
     if (user) {
-      setRcReady(true)
-      return
-    }
-    if (isNative) {
+      initRevenueCat(user.id)
+        .then(() => { if (!cancelled) setRcReady(true) })
+        .catch((err) => {
+          console.error('[App] RC init failed', err)
+          if (!cancelled) setRcReady(true)
+        })
+    } else if (isNative) {
       initRevenueCatAnonymous()
-        .then(() => setRcReady(true))
+        .then(() => { if (!cancelled) setRcReady(true) })
         .catch((err) => {
           console.error('[App] anonymous RC init failed', err)
-          setRcReady(true)
+          if (!cancelled) setRcReady(true)
         })
     }
+    return () => { cancelled = true }
   }, [user, loading])
 
   const [showLogin, setShowLogin] = useState(false)
@@ -83,8 +88,8 @@ function AppInner() {
   // Native: returning user who signed out — go to login, not paywall
   if (!user && isNative && hasAccount) return <LoginScreen />
 
-  // Native without user: wait for anonymous RC init
-  if (!user && !rcReady) return <Spinner />
+  // Wait for RC init (identified or anonymous) before checking entitlement
+  if (!rcReady) return <Spinner />
 
   // Just purchased/restored without an account — confirm and require sign-in
   if (!user && pendingEntitlement) {
