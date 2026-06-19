@@ -55,12 +55,7 @@ export function useEntitlement(rcReady = true): UseEntitlementResult {
   }
 
   useEffect(() => {
-    if (authLoading) return
-    if (!user && !rcReady) {
-      setState(INITIAL)
-      setIsLoading(false)
-      return
-    }
+    if (authLoading || !rcReady) return
     setIsLoading(true)
     refresh()
     // eslint-disable-next-line react-hooks/exhaustive-deps
