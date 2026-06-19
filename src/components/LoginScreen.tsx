@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { AlertCircle } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
+import { hasSavedCredentials } from '../lib/biometric'
 
 type Mode = 'signin' | 'signup' | 'reset'
 
 export function LoginScreen() {
-  const { signIn, signUp, signInWithGoogle, signInWithApple, resetPassword } = useAuth()
+  const { signIn, signUp, signInWithGoogle, signInWithApple, signInWithBiometric, resetPassword, hasBiometric } = useAuth()
   const [mode, setMode] = useState<Mode>('signin')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -130,6 +131,26 @@ export function LoginScreen() {
           {/* Social OAuth — sign in / sign up only */}
           {mode !== 'reset' && (
             <>
+              {hasBiometric && hasSavedCredentials() && mode === 'signin' && (
+                <button
+                  onClick={async () => {
+                    setError(null)
+                    setSubmitting(true)
+                    const err = await signInWithBiometric()
+                    setSubmitting(false)
+                    if (err) setError(err.message)
+                  }}
+                  disabled={submitting}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl
+                    bg-cockpit-amber text-black text-sm font-semibold
+                    hover:bg-amber-400 transition-all duration-150 mb-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5 flex-shrink-0">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                  </svg>
+                  {submitting ? 'Please wait…' : 'Sign in with Face ID'}
+                </button>
+              )}
               <button
                 onClick={async () => {
                   setError(null)
