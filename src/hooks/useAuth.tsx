@@ -5,6 +5,7 @@ import { App } from '@capacitor/app'
 import { Browser } from '@capacitor/browser'
 import { supabase } from '../lib/supabase'
 import { initRevenueCat, logOutRevenueCat } from '../lib/revenuecat'
+import { isBiometricAvailable, saveCredentials, getCredentials, deleteCredentials } from '../lib/biometric'
 
 const isNative = Capacitor.isNativePlatform()
 const NATIVE_REDIRECT_URL = 'com.flightcheck.app://auth-callback'
@@ -17,11 +18,13 @@ interface SignUpResult {
 interface AuthContextValue {
   user: User | null
   loading: boolean
+  hasBiometric: boolean
   signIn: (email: string, password: string) => Promise<AuthError | null>
   signUp: (email: string, password: string, displayName: string) => Promise<SignUpResult>
   signOut: () => Promise<void>
   signInWithGoogle: () => Promise<AuthError | null>
   signInWithApple: () => Promise<AuthError | null>
+  signInWithBiometric: () => Promise<AuthError | null>
   resetPassword: (email: string) => Promise<AuthError | null>
 }
 
@@ -30,6 +33,11 @@ const AuthContext = createContext<AuthContextValue | null>(null)
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
+  const [hasBiometric, setHasBiometric] = useState(false)
+
+  useEffect(() => {
+    isBiometricAvailable().then(setHasBiometric)
+  }, [])
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -74,6 +82,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = async (email: string, password: string): Promise<AuthError | null> => {
     const { error } = await supabase.auth.signInWithPassword({ email, password })
+    if (!error && hasBiometric) {
+      saveCredentials(email, password).catch(err =>
+        console.error('[Auth] failed to save biometric credentials', err),
+      )
+    }
+    return error
+  }
+
+  const signInWithBiometric = async (): Promise<AuthError | null> => {
+    const creds = await getCredentials()
+    if (!creds) return { name: 'AuthApiError', message: 'Biometric authentication cancelled' } as AuthError
+    const { error } = await supabase.auth.signInWithPassword({
+      email: creds.email,
+      password: creds.password,
+    })
     return error
   }
 
@@ -92,6 +115,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     await logOutRevenueCat().catch(err => console.error('[RC] logout failed', err))
+    await deleteCredentials().catch(err => console.error('[Auth] failed to delete biometric credentials', err))
     await supabase.auth.signOut()
   }
 
@@ -164,7 +188,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut, signInWithGoogle, signInWithApple, resetPassword }}>
+    <AuthContext.Provider value={{ user, loading, hasBiometric, signIn, signUp, signOut, signInWithGoogle, signInWithApple, signInWithBiometric, resetPassword }}>
       {children}
     </AuthContext.Provider>
   )
