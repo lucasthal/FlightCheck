@@ -22,7 +22,7 @@ export function ReferenceTab({ sections }: Props) {
       {sections.map((section, i) => {
         if (section.kind === 'speeds') return <SpeedsCard key={i} title={section.title} items={section.items} />
         if (section.kind === 'maneuver') return <ManeuverCard key={i} title={section.title} steps={section.steps} standards={section.standards} />
-        if (section.kind === 'table') return <TableCard key={i} title={section.title} columns={section.columns} rows={section.rows} notes={section.notes} />
+        if (section.kind === 'table') return <TableCard key={i} title={section.title} columns={section.columns} rows={section.rows} notes={section.notes} extrapolatedRows={section.extrapolatedRows} />
         if (section.kind === 'keyval') return <KeyValCard key={i} title={section.title} items={section.items} />
         return null
       })}

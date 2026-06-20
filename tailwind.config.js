@@ -14,6 +14,7 @@ export default {
           'amber-dim':     'rgb(var(--c-amber-dim)       / <alpha-value>)',
           green:           'rgb(var(--c-green)           / <alpha-value>)',
           red:             'rgb(var(--c-red)             / <alpha-value>)',
+          extrapolated:    'rgb(var(--c-extrapolated)    / <alpha-value>)',
           blue:            '#3b82f6',
           'text-primary':  'rgb(var(--c-text-primary)    / <alpha-value>)',
           'text-secondary':'rgb(var(--c-text-secondary)  / <alpha-value>)',

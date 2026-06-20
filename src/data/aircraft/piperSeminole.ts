@@ -118,11 +118,16 @@ export const piperSeminole: Aircraft = {
       columns: ['PA (ft)', 'AEI ROC (FPM)', 'OEI ROC (FPM)', 'OEI Airspeed'],
       rows: [
         ['S.L.', 1290, 217, '88 KIAS (Vyse)'],
+        [1000, 1215, 179, '88 KIAS (Vyse)'],
         [2000, 1140, 140, '88 KIAS (Vyse)'],
+        [3000, 1065, 102, '88 KIAS (Vyse)'],
         [4000, 990, 63, '88 KIAS (Vyse)'],
+        [5000, 915, 32, '88 KIAS (Vyse)'],
         [6000, 840, 0, '88 KIAS (Vyse)'],
+        [7000, 765, '-30 (descent)', '88 KIAS (Vyse)'],
         [8000, 690, '-60 (descent)', '88 KIAS (Vyse)'],
       ],
+      extrapolatedRows: [1, 3, 5, 7],
       notes: [
         'AEI = All Engines Inoperative (normal ops); OEI = One Engine Inoperative (failed engine feathered)',
         'OEI performance degrades rapidly with altitude — single-engine service ceiling approx. 3900 ft DA at MGTOW',

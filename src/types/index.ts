@@ -35,7 +35,7 @@ export type AircraftCategory = 'SEP' | 'MEP' | 'Turboprop' | 'Jet' | 'Helicopter
 export type ReferenceSection =
   | { kind: 'speeds';   title: string; items: Record<string, string> }
   | { kind: 'maneuver'; title: string; steps: string[]; standards?: string[] }
-  | { kind: 'table';    title: string; columns: string[]; rows: (string | number)[][]; notes?: string[] }
+  | { kind: 'table';    title: string; columns: string[]; rows: (string | number)[][]; notes?: string[]; extrapolatedRows?: number[] }
   | { kind: 'keyval';   title: string; items: Record<string, string> }
 
 export interface Aircraft {

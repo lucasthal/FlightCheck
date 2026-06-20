@@ -15,6 +15,7 @@
   --c-amber-dim:      180 83 9;
   --c-green:          34 197 94;
   --c-red:            239 68 68;
+  --c-extrapolated:   100 175 225;
   --text-scale:       1;
 }
 
@@ -30,6 +31,7 @@
   --c-amber-dim:      122 34 0;
   --c-green:          153 68 0;
   --c-red:            187 0 0;
+  --c-extrapolated:   150 60 5;
 }
 
 .theme-day {
@@ -44,6 +46,7 @@
   --c-amber-dim:      146 64 14;
   --c-green:          21 128 61;
   --c-red:            220 38 38;
+  --c-extrapolated:   29 100 190;
 }
 
 @layer base {
