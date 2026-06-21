@@ -107,8 +107,8 @@ export function Paywall({ priceLabel, isReturningUser, onPurchased, onSignIn }: 
           </h2>
           <p className="text-sm text-cockpit-text-secondary mb-5 text-center">
             {isReturningUser
-              ? `${priceLabel ?? '$3.99/month'}. Auto-renewable subscription. Cancel anytime.`
-              : `7-day free trial, then ${priceLabel ?? '$3.99/month'}. Auto-renewable subscription. Cancel anytime.`}
+              ? `${priceLabel ?? '$5.99/month or $49.99/year'}. Auto-renewable subscription. Cancel anytime.`
+              : `7-day free trial, then ${priceLabel ?? '$5.99/month or $49.99/year'}. Auto-renewable subscription. Cancel anytime.`}
           </p>
 
           <ul className="text-sm text-cockpit-text-secondary space-y-2 mb-6">
