@@ -10,7 +10,7 @@ export function hasSavedCredentials(): boolean {
 export async function isBiometricAvailable(): Promise<boolean> {
   if (!Capacitor.isNativePlatform()) return false
   try {
-    const { NativeBiometric } = await import('capacitor-native-biometric')
+    const { NativeBiometric } = await import('@capgo/capacitor-native-biometric')
     const result = await NativeBiometric.isAvailable()
     return result.isAvailable
   } catch {
@@ -19,7 +19,7 @@ export async function isBiometricAvailable(): Promise<boolean> {
 }
 
 export async function saveToken(refreshToken: string): Promise<void> {
-  const { NativeBiometric } = await import('capacitor-native-biometric')
+  const { NativeBiometric } = await import('@capgo/capacitor-native-biometric')
   await NativeBiometric.setCredentials({
     username: 'session',
     password: refreshToken,
@@ -30,7 +30,7 @@ export async function saveToken(refreshToken: string): Promise<void> {
 
 export async function getToken(): Promise<string | null> {
   try {
-    const { NativeBiometric } = await import('capacitor-native-biometric')
+    const { NativeBiometric } = await import('@capgo/capacitor-native-biometric')
     await NativeBiometric.verifyIdentity({
       reason: 'Sign in to FlightCheck',
       title: 'FlightCheck',
@@ -44,7 +44,7 @@ export async function getToken(): Promise<string | null> {
 
 export async function deleteCredentials(): Promise<void> {
   try {
-    const { NativeBiometric } = await import('capacitor-native-biometric')
+    const { NativeBiometric } = await import('@capgo/capacitor-native-biometric')
     await NativeBiometric.deleteCredentials({ server: SERVER })
   } catch {
     // credentials may not exist yet — safe to ignore
