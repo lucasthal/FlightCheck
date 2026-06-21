@@ -144,10 +144,14 @@ export function LoginScreen() {
           {/* Social OAuth — sign in / sign up only */}
           {mode !== 'reset' && (
             <>
-              {hasBiometric && hasSavedCredentials() && mode === 'signin' && (
+              {hasBiometric && mode === 'signin' && (
                 <button
                   onClick={async () => {
                     setError(null)
+                    if (!hasSavedCredentials()) {
+                      setError('Sign in once with Apple, Google, or email — Face ID will be available for quick sign-in next time.')
+                      return
+                    }
                     setSubmitting(true)
                     const err = await signInWithBiometric()
                     setSubmitting(false)
