@@ -18,17 +18,17 @@ export async function isBiometricAvailable(): Promise<boolean> {
   }
 }
 
-export async function saveCredentials(email: string, password: string): Promise<void> {
+export async function saveToken(refreshToken: string): Promise<void> {
   const { NativeBiometric } = await import('capacitor-native-biometric')
   await NativeBiometric.setCredentials({
-    username: email,
-    password,
+    username: 'session',
+    password: refreshToken,
     server: SERVER,
   })
   localStorage.setItem(HAS_CREDS_KEY, '1')
 }
 
-export async function getCredentials(): Promise<{ email: string; password: string } | null> {
+export async function getToken(): Promise<string | null> {
   try {
     const { NativeBiometric } = await import('capacitor-native-biometric')
     await NativeBiometric.verifyIdentity({
@@ -36,7 +36,7 @@ export async function getCredentials(): Promise<{ email: string; password: strin
       title: 'FlightCheck',
     })
     const creds = await NativeBiometric.getCredentials({ server: SERVER })
-    return { email: creds.username, password: creds.password }
+    return creds.password
   } catch {
     return null
   }

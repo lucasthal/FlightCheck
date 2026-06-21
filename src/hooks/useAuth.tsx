@@ -5,7 +5,7 @@ import { App } from '@capacitor/app'
 import { Browser } from '@capacitor/browser'
 import { supabase } from '../lib/supabase'
 import { initRevenueCat, logOutRevenueCat } from '../lib/revenuecat'
-import { isBiometricAvailable, saveCredentials, getCredentials, deleteCredentials } from '../lib/biometric'
+import { isBiometricAvailable, saveToken, getToken, deleteCredentials } from '../lib/biometric'
 
 const isNative = Capacitor.isNativePlatform()
 const NATIVE_REDIRECT_URL = 'com.flightcheck.app://auth-callback'
@@ -40,12 +40,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null)
       if (session?.user) {
         initRevenueCat(session.user.id).catch(err =>
           console.error('[RC] init failed', err),
         )
+        if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session.refresh_token) {
+          isBiometricAvailable().then(available => {
+            if (available) saveToken(session.refresh_token).catch(err =>
+              console.error('[Auth] failed to save biometric token', err),
+            )
+          })
+        }
       }
       setLoading(false)
     })
@@ -82,21 +89,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = async (email: string, password: string): Promise<AuthError | null> => {
     const { error } = await supabase.auth.signInWithPassword({ email, password })
-    if (!error && hasBiometric) {
-      saveCredentials(email, password).catch(err =>
-        console.error('[Auth] failed to save biometric credentials', err),
-      )
-    }
     return error
   }
 
   const signInWithBiometric = async (): Promise<AuthError | null> => {
-    const creds = await getCredentials()
-    if (!creds) return { name: 'AuthApiError', message: 'Biometric authentication cancelled' } as AuthError
-    const { error } = await supabase.auth.signInWithPassword({
-      email: creds.email,
-      password: creds.password,
-    })
+    const token = await getToken()
+    if (!token) return { name: 'AuthApiError', message: 'Biometric authentication cancelled' } as AuthError
+    const { error } = await supabase.auth.refreshSession({ refresh_token: token })
+    if (error) {
+      deleteCredentials().catch(err =>
+        console.error('[Auth] failed to clear stale biometric token', err),
+      )
+    }
     return error
   }
 
