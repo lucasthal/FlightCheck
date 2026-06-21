@@ -148,6 +148,33 @@ export const cessna172: Aircraft = {
     },
     {
       kind: 'table',
+      title: 'Maximum Rate of Climb — 2550 lbs, Flaps Up, Full Throttle',
+      columns: ['PA (ft)', 'Climb (KIAS)', 'ROC -20°C', 'ROC 0°C', 'ROC 20°C', 'ROC 40°C'],
+      rows: [
+        ['S.L.', 74, 855, 785, 710, 645],
+        [1000, 74, 808, 740, 668, 603],
+        [2000, 73, 760, 695, 625, 560],
+        [3000, 73, 723, 658, 590, 528],
+        [4000, 73, 685, 620, 555, 495],
+        [5000, 73, 630, 568, 503, 443],
+        [6000, 73, 575, 515, 450, 390],
+        [7000, 73, 520, 460, 398, 338],
+        [8000, 72, 465, 405, 345, 285],
+        [9000, 72, 413, 353, 293, 233],
+        [10000, 72, 360, 300, 240, 180],
+        [11000, 72, 308, 248, 188, '---'],
+        [12000, 72, 255, 195, 135, '---'],
+      ],
+      extrapolatedRows: [1, 3, 5, 7, 9, 11],
+      notes: [
+        'Rate of climb in FPM at indicated OAT; columns are ISA -20°C, 0°C (standard), +20°C, +40°C',
+        '--- indicates performance insufficient at that altitude/temperature combination',
+        'Mixture leaned above 3000 ft for maximum RPM',
+        'POH Section 5, Figure 5-6',
+      ],
+    },
+    {
+      kind: 'table',
       title: 'Time, Fuel, Distance to Climb — 2550 lbs, Flaps Up, Full Throttle, Standard Temperature, from S.L.',
       columns: ['PA (ft)', 'Climb (KIAS)', 'Rate (FPM)', 'Time (min)', 'Fuel (gal)', 'Dist (NM)'],
       rows: [
