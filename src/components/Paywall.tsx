@@ -152,7 +152,16 @@ export function Paywall({ priceLabel, isReturningUser, onPurchased, onSignIn }: 
 
           {Capacitor.isNativePlatform() && (
             <button
-              onClick={() => presentRedemptionSheet()}
+              onClick={async () => {
+                await presentRedemptionSheet()
+                setActivating(true)
+                const state = await waitForEntitlement(30_000, 1_500)
+                if (state.isEntitled) {
+                  onPurchased(state)
+                } else {
+                  setActivating(false)
+                }
+              }}
               disabled={submitting || restoring}
               className="w-full mt-3 py-2.5 rounded-xl bg-cockpit-card border border-cockpit-border
                 text-cockpit-text-secondary text-sm
