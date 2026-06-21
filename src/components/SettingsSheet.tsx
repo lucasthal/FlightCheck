@@ -6,6 +6,7 @@ import type { Theme, TextSize } from '../types'
 import { useAuth } from '../hooks/useAuth'
 import { useEntitlement } from '../hooks/useEntitlement'
 import { supabase } from '../lib/supabase'
+import { deleteCredentials } from '../lib/biometric'
 
 interface SettingsSheetProps {
   isOpen: boolean
@@ -80,6 +81,7 @@ export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
     }
     localStorage.removeItem('flightcheck-has-account')
     localStorage.setItem('flightcheck-account-deleted', '1')
+    await deleteCredentials().catch(() => {})
     await signOut().catch(() => {})
   }
 
