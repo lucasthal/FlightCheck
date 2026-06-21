@@ -117,7 +117,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     await logOutRevenueCat().catch(err => console.error('[RC] logout failed', err))
-    await supabase.auth.signOut()
+    await supabase.auth.signOut({ scope: 'local' })
   }
 
   const signInWithGoogle = async (): Promise<AuthError | null> => {
