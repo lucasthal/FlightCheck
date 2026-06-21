@@ -46,12 +46,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         initRevenueCat(session.user.id).catch(err =>
           console.error('[RC] init failed', err),
         )
-        if ((event === 'INITIAL_SESSION' || event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session.refresh_token) {
-          isBiometricAvailable().then(available => {
-            if (available) saveToken(session.refresh_token).catch(err =>
-              console.error('[Auth] failed to save biometric token', err),
-            )
-          })
+        if ((event === 'INITIAL_SESSION' || event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session.refresh_token && isNative) {
+          saveToken(session.refresh_token).catch(err =>
+            console.error('[Auth] failed to save biometric token', err),
+          )
         }
       }
       setLoading(false)
@@ -156,12 +154,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           nonce: hashedNonce,
         })
 
-        const { error } = await supabase.auth.signInWithIdToken({
+        const { data, error } = await supabase.auth.signInWithIdToken({
           provider: 'apple',
           token: result.response.identityToken,
           nonce: rawNonce,
         })
         if (error) return error
+
+        if (data.session?.refresh_token) {
+          saveToken(data.session.refresh_token).catch(err =>
+            console.error('[Auth] failed to save biometric token after Apple sign-in', err),
+          )
+        }
 
         // Apple only provides the name on FIRST authorization — persist it
         if (result.response.givenName) {

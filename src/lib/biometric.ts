@@ -19,13 +19,13 @@ export async function isBiometricAvailable(): Promise<boolean> {
 }
 
 export async function saveToken(refreshToken: string): Promise<void> {
+  localStorage.setItem(HAS_CREDS_KEY, '1')
   const { NativeBiometric } = await import('@capgo/capacitor-native-biometric')
   await NativeBiometric.setCredentials({
     username: 'session',
     password: refreshToken,
     server: SERVER,
   })
-  localStorage.setItem(HAS_CREDS_KEY, '1')
 }
 
 export async function getToken(): Promise<string | null> {
