@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Capacitor } from '@capacitor/core'
 import { Loader2 } from 'lucide-react'
-import { startCheckout, restorePurchases, waitForEntitlement, type EntitlementState } from '../lib/revenuecat'
+import { startCheckout, restorePurchases, presentRedemptionSheet, waitForEntitlement, type EntitlementState } from '../lib/revenuecat'
 import { useAuth } from '../hooks/useAuth'
 
 const PRIVACY_URL = 'https://lucasthal.github.io/FlightCheck/privacy.html'
@@ -149,6 +149,18 @@ export function Paywall({ priceLabel, isReturningUser, onPurchased, onSignIn }: 
             {restoring && <Loader2 className="w-4 h-4 animate-spin" />}
             {restoring ? 'Restoring…' : 'Restore Purchases'}
           </button>
+
+          {Capacitor.isNativePlatform() && (
+            <button
+              onClick={() => presentRedemptionSheet()}
+              disabled={submitting || restoring}
+              className="w-full mt-3 py-2.5 rounded-xl bg-cockpit-card border border-cockpit-border
+                text-cockpit-text-secondary text-sm
+                hover:border-cockpit-amber/40 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Redeem Code
+            </button>
+          )}
 
           {!Capacitor.isNativePlatform() && (
             <p className="text-center text-xs text-cockpit-text-dim mt-4">

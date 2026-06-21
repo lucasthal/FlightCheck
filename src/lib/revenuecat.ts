@@ -131,6 +131,12 @@ export async function waitForEntitlement(
   }
 }
 
+export async function presentRedemptionSheet(): Promise<void> {
+  if (!Capacitor.isNativePlatform()) return
+  const { Purchases } = await import('@revenuecat/purchases-capacitor')
+  await Purchases.presentCodeRedemptionSheet()
+}
+
 export async function restorePurchases(): Promise<EntitlementState> {
   if (Capacitor.isNativePlatform()) {
     const { Purchases } = await import('@revenuecat/purchases-capacitor')
