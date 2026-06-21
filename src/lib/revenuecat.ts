@@ -128,6 +128,10 @@ export async function waitForEntitlement(
     const state = await getCurrentEntitlement()
     if (state.isEntitled || Date.now() >= deadline) return state
     await new Promise((resolve) => setTimeout(resolve, intervalMs))
+    // Force a server sync — getCustomerInfo may return cached data
+    const synced = await restorePurchases()
+    if (synced.isEntitled || Date.now() >= deadline) return synced
+    await new Promise((resolve) => setTimeout(resolve, intervalMs))
   }
 }
 

@@ -79,6 +79,7 @@ export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
       return
     }
     localStorage.removeItem('flightcheck-has-account')
+    localStorage.setItem('flightcheck-account-deleted', '1')
     await signOut().catch(() => {})
   }
 
