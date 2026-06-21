@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Capacitor } from '@capacitor/core'
 import { Loader2 } from 'lucide-react'
-import { startCheckout, restorePurchases, presentRedemptionSheet, waitForEntitlement, type EntitlementState } from '../lib/revenuecat'
+import { startCheckout, restorePurchases, presentRedemptionSheet, onEntitlementActivated, waitForEntitlement, type EntitlementState } from '../lib/revenuecat'
 import { useAuth } from '../hooks/useAuth'
 
 const PRIVACY_URL = 'https://lucasthal.github.io/FlightCheck/privacy.html'
@@ -153,14 +153,11 @@ export function Paywall({ priceLabel, isReturningUser, onPurchased, onSignIn }: 
           {Capacitor.isNativePlatform() && (
             <button
               onClick={async () => {
-                await presentRedemptionSheet()
-                setActivating(true)
-                const state = await waitForEntitlement(30_000, 1_500)
-                if (state.isEntitled) {
+                const removeListener = await onEntitlementActivated((state) => {
+                  removeListener()
                   onPurchased(state)
-                } else {
-                  setActivating(false)
-                }
+                })
+                await presentRedemptionSheet()
               }}
               disabled={submitting || restoring}
               className="w-full mt-3 py-2.5 rounded-xl bg-cockpit-card border border-cockpit-border

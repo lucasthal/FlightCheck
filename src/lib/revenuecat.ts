@@ -137,6 +137,18 @@ export async function presentRedemptionSheet(): Promise<void> {
   await Purchases.presentCodeRedemptionSheet()
 }
 
+export async function onEntitlementActivated(
+  callback: (state: EntitlementState) => void,
+): Promise<() => Promise<void>> {
+  if (!Capacitor.isNativePlatform()) return async () => {}
+  const { Purchases } = await import('@revenuecat/purchases-capacitor')
+  const callbackId = await Purchases.addCustomerInfoUpdateListener((customerInfo) => {
+    const state = parseEntitlement(customerInfo)
+    if (state.isEntitled) callback(state)
+  })
+  return async () => { await Purchases.removeCustomerInfoUpdateListener({ listenerToRemove: callbackId }) }
+}
+
 export async function restorePurchases(): Promise<EntitlementState> {
   if (Capacitor.isNativePlatform()) {
     const { Purchases } = await import('@revenuecat/purchases-capacitor')
