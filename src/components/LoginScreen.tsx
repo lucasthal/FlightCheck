@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { AlertCircle } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
-import { hasSavedCredentials } from '../lib/biometric'
+import { hasSavedCredentials, getBiometricDebugLog, clearBiometricDebugLog } from '../lib/biometric'
 
 type Mode = 'signin' | 'signup' | 'reset'
 
@@ -289,6 +289,20 @@ export function LoginScreen() {
         <p className="text-center text-xs text-cockpit-text-dim mt-4">
           For reference only — always verify against current POH/AFM
         </p>
+
+        {/* Temporary biometric debug panel */}
+        <details className="mt-4 text-xs text-cockpit-text-dim">
+          <summary className="cursor-pointer hover:text-cockpit-text-secondary">Biometric Debug Log</summary>
+          <pre className="mt-2 p-2 bg-cockpit-card border border-cockpit-border rounded text-[10px] whitespace-pre-wrap max-h-48 overflow-y-auto">
+            {getBiometricDebugLog() || '(no logs yet)'}
+          </pre>
+          <button
+            onClick={() => { clearBiometricDebugLog(); window.location.reload() }}
+            className="mt-1 text-cockpit-amber hover:text-amber-400"
+          >
+            Clear log
+          </button>
+        </details>
       </div>
     </div>
   )

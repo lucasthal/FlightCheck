@@ -5,7 +5,7 @@ import { App } from '@capacitor/app'
 import { Browser } from '@capacitor/browser'
 import { supabase } from '../lib/supabase'
 import { initRevenueCat, logOutRevenueCat } from '../lib/revenuecat'
-import { isBiometricAvailable, saveToken, getToken, deleteCredentials } from '../lib/biometric'
+import { isBiometricAvailable, saveToken, getToken, deleteCredentials, getBiometricDebugLog, clearBiometricDebugLog } from '../lib/biometric'
 
 const isNative = Capacitor.isNativePlatform()
 const NATIVE_REDIRECT_URL = 'com.flightcheck.app://auth-callback'
@@ -91,13 +91,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const signInWithBiometric = async (): Promise<AuthError | null> => {
+    const log = (msg: string) => {
+      const prev = localStorage.getItem('flightcheck-biometric-debug') ?? ''
+      const ts = new Date().toLocaleTimeString()
+      localStorage.setItem('flightcheck-biometric-debug', (prev ? prev + '\n' : '') + `[${ts}] signIn: ${msg}`)
+    }
     const token = await getToken()
-    if (!token) return { name: 'AuthApiError', message: 'Biometric authentication cancelled' } as AuthError
-    const { error } = await supabase.auth.refreshSession({ refresh_token: token })
+    if (!token) {
+      log('getToken returned null — cancelled or no creds')
+      return { name: 'AuthApiError', message: 'Biometric authentication cancelled' } as AuthError
+    }
+    log(`calling refreshSession with token (${token.substring(0, 8)}...)`)
+    const { data, error } = await supabase.auth.refreshSession({ refresh_token: token })
     if (error) {
+      log(`refreshSession FAILED: ${error.message} (status: ${error.status})`)
       deleteCredentials().catch(err =>
         console.error('[Auth] failed to clear stale biometric token', err),
       )
+    } else {
+      log(`refreshSession OK — user: ${data.user?.email ?? data.user?.id ?? 'unknown'}`)
     }
     return error
   }
