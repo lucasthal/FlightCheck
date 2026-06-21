@@ -46,7 +46,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         initRevenueCat(session.user.id).catch(err =>
           console.error('[RC] init failed', err),
         )
-        if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session.refresh_token) {
+        if ((event === 'INITIAL_SESSION' || event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session.refresh_token) {
           isBiometricAvailable().then(available => {
             if (available) saveToken(session.refresh_token).catch(err =>
               console.error('[Auth] failed to save biometric token', err),
