@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Capacitor } from '@capacitor/core'
 import { Loader2 } from 'lucide-react'
-import { startCheckout, restorePurchases, presentRedemptionSheet, onEntitlementActivated, waitForEntitlement, type EntitlementState } from '../lib/revenuecat'
+import { startCheckout, restorePurchases, presentRedemptionSheet, onEntitlementActivated, getCurrentEntitlement, waitForEntitlement, type EntitlementState } from '../lib/revenuecat'
 import { useAuth } from '../hooks/useAuth'
 
 const PRIVACY_URL = 'https://lucasthal.github.io/FlightCheck/privacy.html'
@@ -20,6 +20,7 @@ export function Paywall({ priceLabel, isReturningUser, onPurchased, onSignIn }: 
   const [activating, setActivating] = useState(false)
   const [restoring, setRestoring] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const redeemCancelRef = useRef<(() => void) | null>(null)
 
   const handleSubscribe = async () => {
     setError(null)
@@ -131,9 +132,18 @@ export function Paywall({ priceLabel, isReturningUser, onPurchased, onSignIn }: 
               hover:bg-amber-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed
               flex items-center justify-center gap-2"
           >
-            {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
+            {(submitting || activating) && <Loader2 className="w-4 h-4 animate-spin" />}
             {activating ? 'Activating subscription…' : submitting ? 'Opening checkout…' : isReturningUser ? 'Subscribe' : 'Start free trial'}
           </button>
+
+          {activating && redeemCancelRef.current && (
+            <button
+              onClick={() => redeemCancelRef.current?.()}
+              className="w-full mt-2 text-center text-xs text-cockpit-text-dim hover:text-cockpit-text-secondary transition-colors"
+            >
+              Cancel
+            </button>
+          )}
 
           <p className="text-xs text-cockpit-text-dim mt-5 mb-2 text-center">
             Already subscribed on this Apple ID?
@@ -153,11 +163,35 @@ export function Paywall({ priceLabel, isReturningUser, onPurchased, onSignIn }: 
           {Capacitor.isNativePlatform() && (
             <button
               onClick={async () => {
+                let resolved = false
+                const baseline = await getCurrentEntitlement()
                 const removeListener = await onEntitlementActivated((state) => {
+                  if (resolved || baseline.isEntitled) return
+                  resolved = true
                   removeListener()
+                  setActivating(false)
                   onPurchased(state)
                 })
                 await presentRedemptionSheet()
+                setActivating(true)
+                redeemCancelRef.current = () => {
+                  resolved = true
+                  removeListener()
+                  setActivating(false)
+                  redeemCancelRef.current = null
+                }
+                const state = await waitForEntitlement(90_000, 2_000)
+                if (!resolved) {
+                  resolved = true
+                  await removeListener()
+                  redeemCancelRef.current = null
+                  if (state.isEntitled) {
+                    onPurchased(state)
+                  } else {
+                    setActivating(false)
+                    setError('No subscription activated. If you redeemed a code, try Restore Purchases.')
+                  }
+                }
               }}
               disabled={submitting || restoring}
               className="w-full mt-3 py-2.5 rounded-xl bg-cockpit-card border border-cockpit-border
