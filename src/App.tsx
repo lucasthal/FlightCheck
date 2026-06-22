@@ -38,15 +38,6 @@ function Spinner() {
 const HAS_ACCOUNT_KEY = 'flightcheck-has-account'
 
 function LockScreen() {
-  const { unlock, hasBiometric } = useAuth()
-  const [tried, setTried] = useState(false)
-
-  useEffect(() => {
-    if (!hasBiometric || tried) return
-    setTried(true)
-    unlock().catch(() => {})
-  }, [hasBiometric, tried, unlock])
-
   return <LoginScreen />
 }
 
