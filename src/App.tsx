@@ -37,6 +37,19 @@ function Spinner() {
 
 const HAS_ACCOUNT_KEY = 'flightcheck-has-account'
 
+function LockScreen() {
+  const { unlock, hasBiometric } = useAuth()
+  const [tried, setTried] = useState(false)
+
+  useEffect(() => {
+    if (!hasBiometric || tried) return
+    setTried(true)
+    unlock().catch(() => {})
+  }, [hasBiometric, tried, unlock])
+
+  return <LoginScreen />
+}
+
 function BiometricGate() {
   const { signInWithBiometric, hasBiometric } = useAuth()
   const [tried, setTried] = useState(false)
@@ -54,7 +67,7 @@ function AppInner() {
   const [selectedAircraft, setSelectedAircraft] = useState<Aircraft | null>(null)
   const [activePhaseName, setActivePhaseName] = useState<string | null>(null)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
-  const { user, loading } = useAuth()
+  const { user, loading, locked } = useAuth()
 
   // Track whether this device has ever had a signed-in user.
   // Returning users (signed out) see LoginScreen; brand-new users see Paywall.
@@ -96,10 +109,13 @@ function AppInner() {
 
   if (loading) return <Spinner />
 
+  // Native: user tapped "Sign out" — session alive but locked behind Face ID
+  if (locked && user && isNative) return <LockScreen />
+
   // Web: RC SDK requires a user ID — login is still required
   if (!user && !isNative) return <LoginScreen />
 
-  // Native: returning user who signed out — go to login, not paywall
+  // Native: returning user who signed out fully — go to login, not paywall
   if (!user && isNative && hasAccount) return <BiometricGate />
 
   // Wait for RC init (identified or anonymous) before checking entitlement

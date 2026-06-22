@@ -15,7 +15,7 @@ interface Props {
 }
 
 export function Paywall({ priceLabel, isReturningUser, onPurchased, onSignIn }: Props) {
-  const { signOut } = useAuth()
+  const { fullSignOut } = useAuth()
   const [submitting, setSubmitting] = useState(false)
   const [activating, setActivating] = useState(false)
   const [restoring, setRestoring] = useState(false)
@@ -230,7 +230,7 @@ export function Paywall({ priceLabel, isReturningUser, onPurchased, onSignIn }: 
           </button>
         ) : (
           <button
-            onClick={() => { signOut() }}
+            onClick={() => { fullSignOut() }}
             className="w-full mt-4 text-center text-xs text-cockpit-text-dim hover:text-cockpit-text-secondary transition-colors"
           >
             Sign out

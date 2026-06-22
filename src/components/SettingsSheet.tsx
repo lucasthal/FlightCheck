@@ -27,7 +27,7 @@ const TEXT_SIZES: { value: TextSize; label: string }[] = [
 ]
 
 export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
-  const { user, signOut } = useAuth()
+  const { user, signOut, fullSignOut } = useAuth()
   const { preferences, updatePreference } = usePreferences()
   const { source, trialEndsAt, isEntitled } = useEntitlement()
   const [profileList, setProfileList] = useState<{ id: string; name: string }[]>([])
@@ -81,8 +81,7 @@ export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
     }
     localStorage.removeItem('flightcheck-has-account')
     localStorage.setItem('flightcheck-account-deleted', '1')
-    await deleteCredentials().catch(() => {})
-    await signOut().catch(() => {})
+    await fullSignOut().catch(() => {})
   }
 
   useEffect(() => {

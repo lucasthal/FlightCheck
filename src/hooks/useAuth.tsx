@@ -5,23 +5,27 @@ import { App } from '@capacitor/app'
 import { Browser } from '@capacitor/browser'
 import { supabase } from '../lib/supabase'
 import { initRevenueCat, logOutRevenueCat } from '../lib/revenuecat'
-import { isBiometricAvailable, saveToken, getToken, deleteCredentials, getBiometricDebugLog, clearBiometricDebugLog } from '../lib/biometric'
+import { isBiometricAvailable, saveToken, getToken, deleteCredentials } from '../lib/biometric'
 
 const isNative = Capacitor.isNativePlatform()
 const NATIVE_REDIRECT_URL = 'com.flightcheck.app://auth-callback'
+const LOCKED_KEY = 'flightcheck-locked'
 
 interface SignUpResult {
   error: AuthError | null
-  needsConfirmation: boolean  // true = email sent, user must confirm before signing in
+  needsConfirmation: boolean
 }
 
 interface AuthContextValue {
   user: User | null
   loading: boolean
+  locked: boolean
   hasBiometric: boolean
   signIn: (email: string, password: string) => Promise<AuthError | null>
   signUp: (email: string, password: string, displayName: string) => Promise<SignUpResult>
   signOut: () => Promise<void>
+  fullSignOut: () => Promise<void>
+  unlock: () => Promise<AuthError | null>
   signInWithGoogle: () => Promise<AuthError | null>
   signInWithApple: () => Promise<AuthError | null>
   signInWithBiometric: () => Promise<AuthError | null>
@@ -34,6 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [hasBiometric, setHasBiometric] = useState(false)
+  const [locked, setLocked] = useState(() => localStorage.getItem(LOCKED_KEY) === '1')
 
   useEffect(() => {
     isBiometricAvailable().then(setHasBiometric)
@@ -51,6 +56,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             console.error('[Auth] failed to save biometric token', err),
           )
         }
+        if (event === 'SIGNED_IN') {
+          setLocked(false)
+          localStorage.removeItem(LOCKED_KEY)
+        }
       }
       setLoading(false)
     })
@@ -63,7 +72,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const handlePromise = App.addListener('appUrlOpen', async ({ url }) => {
       if (!url.startsWith(NATIVE_REDIRECT_URL)) return
 
-      // Supabase OAuth can return either PKCE (?code=) or implicit (#access_token=)
       const queryString = url.split('?')[1]?.split('#')[0] ?? ''
       const fragment = url.split('#')[1] ?? ''
       const queryParams = new URLSearchParams(queryString)
@@ -90,26 +98,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return error
   }
 
-  const signInWithBiometric = async (): Promise<AuthError | null> => {
-    const log = (msg: string) => {
-      const prev = localStorage.getItem('flightcheck-biometric-debug') ?? ''
-      const ts = new Date().toLocaleTimeString()
-      localStorage.setItem('flightcheck-biometric-debug', (prev ? prev + '\n' : '') + `[${ts}] signIn: ${msg}`)
-    }
+  const unlock = async (): Promise<AuthError | null> => {
     const token = await getToken()
-    if (!token) {
-      log('getToken returned null — cancelled or no creds')
-      return { name: 'AuthApiError', message: 'Biometric authentication cancelled' } as AuthError
-    }
-    log(`calling refreshSession with token (${token.substring(0, 8)}...)`)
-    const { data, error } = await supabase.auth.refreshSession({ refresh_token: token })
+    if (!token) return { name: 'AuthApiError', message: 'Biometric authentication cancelled' } as AuthError
+    setLocked(false)
+    localStorage.removeItem(LOCKED_KEY)
+    return null
+  }
+
+  const signInWithBiometric = async (): Promise<AuthError | null> => {
+    const token = await getToken()
+    if (!token) return { name: 'AuthApiError', message: 'Biometric authentication cancelled' } as AuthError
+    const { error } = await supabase.auth.refreshSession({ refresh_token: token })
     if (error) {
-      log(`refreshSession FAILED: ${error.message} (status: ${error.status})`)
       deleteCredentials().catch(err =>
         console.error('[Auth] failed to clear stale biometric token', err),
       )
-    } else {
-      log(`refreshSession OK — user: ${data.user?.email ?? data.user?.id ?? 'unknown'}`)
     }
     return error
   }
@@ -123,13 +127,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         emailRedirectTo: window.location.origin,
       },
     })
-    // session is null when email confirmation is required; non-null means auto-confirm is on
     return { error, needsConfirmation: !error && !data.session }
   }
 
   const signOut = async () => {
     await logOutRevenueCat().catch(err => console.error('[RC] logout failed', err))
-    await supabase.auth.signOut({ scope: 'local' })
+    if (isNative && hasBiometric) {
+      setLocked(true)
+      localStorage.setItem(LOCKED_KEY, '1')
+    } else {
+      await deleteCredentials().catch(() => {})
+      await supabase.auth.signOut()
+    }
+  }
+
+  const fullSignOut = async () => {
+    await logOutRevenueCat().catch(err => console.error('[RC] logout failed', err))
+    await deleteCredentials().catch(() => {})
+    setLocked(false)
+    localStorage.removeItem(LOCKED_KEY)
+    await supabase.auth.signOut()
   }
 
   const signInWithGoogle = async (): Promise<AuthError | null> => {
@@ -149,8 +166,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signInWithApple = async (): Promise<AuthError | null> => {
     if (isNative) {
       try {
-        // Apple requires the nonce in the request to be the SHA-256 hash of
-        // the nonce Supabase verifies against the identity token.
         const rawNonce = crypto.randomUUID() + crypto.randomUUID()
         const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(rawNonce))
         const hashedNonce = Array.from(new Uint8Array(digest))
@@ -178,7 +193,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           )
         }
 
-        // Apple only provides the name on FIRST authorization — persist it
         if (result.response.givenName) {
           const fullName = [result.response.givenName, result.response.familyName]
             .filter(Boolean)
@@ -187,7 +201,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
         return null
       } catch (err) {
-        // Native sheet dismissed by the user — not an error
         if (err instanceof Error && /cancel/i.test(err.message)) return null
         return { name: 'AuthApiError', message: 'Apple sign-in failed' } as AuthError
       }
@@ -207,7 +220,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, hasBiometric, signIn, signUp, signOut, signInWithGoogle, signInWithApple, signInWithBiometric, resetPassword }}>
+    <AuthContext.Provider value={{ user, loading, locked, hasBiometric, signIn, signUp, signOut, fullSignOut, unlock, signInWithGoogle, signInWithApple, signInWithBiometric, resetPassword }}>
       {children}
     </AuthContext.Provider>
   )

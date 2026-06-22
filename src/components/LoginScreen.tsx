@@ -6,7 +6,7 @@ import { hasSavedCredentials, getBiometricDebugLog, clearBiometricDebugLog } fro
 type Mode = 'signin' | 'signup' | 'reset'
 
 export function LoginScreen() {
-  const { signIn, signUp, signInWithGoogle, signInWithApple, signInWithBiometric, resetPassword, hasBiometric } = useAuth()
+  const { signIn, signUp, signInWithGoogle, signInWithApple, signInWithBiometric, unlock, fullSignOut, resetPassword, hasBiometric, locked } = useAuth()
   const [mode, setMode] = useState<Mode>('signin')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -148,6 +148,13 @@ export function LoginScreen() {
                 <button
                   onClick={async () => {
                     setError(null)
+                    if (locked) {
+                      setSubmitting(true)
+                      const err = await unlock()
+                      setSubmitting(false)
+                      if (err) setError(err.message)
+                      return
+                    }
                     if (!hasSavedCredentials()) {
                       setError('Sign in once with Apple, Google, or email — Face ID will be available for quick sign-in next time.')
                       return
@@ -285,6 +292,15 @@ export function LoginScreen() {
             )}
           </div>
         </div>
+
+        {locked && (
+          <button
+            onClick={() => { fullSignOut() }}
+            className="w-full mt-4 text-center text-xs text-cockpit-text-dim hover:text-cockpit-text-secondary transition-colors"
+          >
+            Switch account / sign out completely
+          </button>
+        )}
 
         <p className="text-center text-xs text-cockpit-text-dim mt-4">
           For reference only — always verify against current POH/AFM
