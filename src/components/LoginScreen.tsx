@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { AlertCircle } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
-import { hasSavedCredentials, getBiometricDebugLog, clearBiometricDebugLog } from '../lib/biometric'
+import { hasSavedCredentials } from '../lib/biometric'
 
 type Mode = 'signin' | 'signup' | 'reset'
 
@@ -144,37 +144,6 @@ export function LoginScreen() {
           {/* Social OAuth — sign in / sign up only */}
           {mode !== 'reset' && (
             <>
-              {hasBiometric && mode === 'signin' && (
-                <button
-                  onClick={async () => {
-                    setError(null)
-                    if (locked) {
-                      setSubmitting(true)
-                      const err = await unlock()
-                      setSubmitting(false)
-                      if (err) setError(err.message)
-                      return
-                    }
-                    if (!hasSavedCredentials()) {
-                      setError('Sign in once with Apple, Google, or email — Face ID will be available for quick sign-in next time.')
-                      return
-                    }
-                    setSubmitting(true)
-                    const err = await signInWithBiometric()
-                    setSubmitting(false)
-                    if (err) setError(err.message)
-                  }}
-                  disabled={submitting}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl
-                    bg-cockpit-amber text-black text-sm font-semibold
-                    hover:bg-amber-400 transition-all duration-150 mb-3 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5 flex-shrink-0">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                  </svg>
-                  {submitting ? 'Please wait…' : 'Sign in with Face ID'}
-                </button>
-              )}
               <button
                 onClick={async () => {
                   setError(null)
@@ -269,6 +238,43 @@ export function LoginScreen() {
             </button>
           </form>
 
+          {hasBiometric && mode === 'signin' && (
+            <button
+              onClick={async () => {
+                setError(null)
+                if (locked) {
+                  setSubmitting(true)
+                  const err = await unlock()
+                  setSubmitting(false)
+                  if (err) setError(err.message)
+                  return
+                }
+                if (!hasSavedCredentials()) {
+                  setError('Sign in once with Apple, Google, or email — Face ID will be available for quick sign-in next time.')
+                  return
+                }
+                setSubmitting(true)
+                const err = await signInWithBiometric()
+                setSubmitting(false)
+                if (err) setError(err.message)
+              }}
+              disabled={submitting}
+              className="mx-auto mt-4 flex items-center justify-center w-14 h-14 rounded-2xl
+                bg-cockpit-amber/15 border-2 border-cockpit-amber/50
+                hover:bg-cockpit-amber/25 hover:border-cockpit-amber transition-all duration-150
+                disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label="Sign in with Face ID"
+            >
+              <svg viewBox="0 0 24 24" fill="none" className="w-8 h-8 text-cockpit-amber">
+                {/* Face ID icon */}
+                <path d="M7 3H5a2 2 0 00-2 2v2M17 3h2a2 2 0 012 2v2M7 21H5a2 2 0 01-2-2v-2M17 21h2a2 2 0 002-2v-2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                <path d="M8.5 9v1.5M15.5 9v1.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                <path d="M9 15.5c.83.67 1.67 1 3 1s2.17-.33 3-1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                <path d="M12 9v4.5h-1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+          )}
+
           <div className="mt-4 flex items-center justify-between text-xs text-cockpit-text-dim">
             {mode === 'signin' && (
               <>
@@ -306,19 +312,6 @@ export function LoginScreen() {
           For reference only — always verify against current POH/AFM
         </p>
 
-        {/* Temporary biometric debug panel */}
-        <details className="mt-4 text-xs text-cockpit-text-dim">
-          <summary className="cursor-pointer hover:text-cockpit-text-secondary">Biometric Debug Log</summary>
-          <pre className="mt-2 p-2 bg-cockpit-card border border-cockpit-border rounded text-[10px] whitespace-pre-wrap max-h-48 overflow-y-auto">
-            {getBiometricDebugLog() || '(no logs yet)'}
-          </pre>
-          <button
-            onClick={() => { clearBiometricDebugLog(); window.location.reload() }}
-            className="mt-1 text-cockpit-amber hover:text-amber-400"
-          >
-            Clear log
-          </button>
-        </details>
       </div>
     </div>
   )
