@@ -200,7 +200,6 @@ export function AircraftSelector({ onSelect, onOpenSettings }: Props) {
                 <div role="menu" aria-label="Profile menu" className="absolute right-0 top-full mt-1 w-48 bg-cockpit-panel border border-cockpit-border rounded-xl shadow-cockpit z-50 overflow-hidden">
                   <div className="px-3 py-2.5 border-b border-cockpit-border/50">
                     <p className="text-xs font-semibold text-cockpit-text-primary truncate">{displayName}</p>
-                    <p className="text-xs text-cockpit-text-dim truncate">{user?.email}</p>
                   </div>
                   <button
                     role="menuitem"
@@ -242,7 +241,7 @@ export function AircraftSelector({ onSelect, onOpenSettings }: Props) {
               if (count === 0) return null
               return (
                 <div key={cat.key} className="flex items-center gap-1.5 text-xs">
-                  <span className={`font-semibold ${CATEGORY_TEXT[cat.key]}`}>{count}</span>
+                  <span className="font-semibold text-cockpit-text-primary">{count}</span>
                   <span className="text-cockpit-text-dim">{cat.label}</span>
                 </div>
               )

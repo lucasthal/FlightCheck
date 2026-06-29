@@ -7,6 +7,7 @@ import { useAuth } from '../hooks/useAuth'
 import { useWakeLock } from '../hooks/useWakeLock'
 import { usePreferences } from '../hooks/usePreferences'
 import { useNetworkStatus } from '../hooks/useNetworkStatus'
+import { tapFeedback } from '../lib/haptics'
 import { PhaseNav } from './PhaseNav'
 import { ChecklistItems } from './ChecklistItems'
 import { EmergencyPanel } from './EmergencyPanel'
@@ -294,8 +295,9 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings, onPhaseChange 
         container.scrollTo({ top, behavior: 'smooth' })
       }
     }
+    if (preferences.haptic_feedback) tapFeedback()
     toggleItem(id)
-  }, [toggleItem, isItemChecked, activePhase, preferences.autoscroll])
+  }, [toggleItem, isItemChecked, activePhase, preferences.autoscroll, preferences.haptic_feedback])
 
   const handleCompletePhase = () => {
     completePhase(activePhaseId)

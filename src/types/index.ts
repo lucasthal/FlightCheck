@@ -101,14 +101,14 @@ export interface UserPreferences {
   theme:               Theme
   text_size:           TextSize
   keep_screen_awake:   boolean
-  default_aircraft_id: string | null
   autoscroll:          boolean
+  haptic_feedback:     boolean
 }
 
 export const DEFAULT_PREFERENCES: UserPreferences = {
   theme:               'dark',
   text_size:           'md',
   keep_screen_awake:   false,
-  default_aircraft_id: null,
   autoscroll:          true,
+  haptic_feedback:     true,
 }

@@ -73,8 +73,8 @@ function useProvidePreferences(user: User | null): UsePreferencesResult {
             theme:               data.theme               ?? DEFAULT_PREFERENCES.theme,
             text_size:           data.text_size           ?? DEFAULT_PREFERENCES.text_size,
             keep_screen_awake:   data.keep_screen_awake   ?? DEFAULT_PREFERENCES.keep_screen_awake,
-            default_aircraft_id: data.default_aircraft_id ?? DEFAULT_PREFERENCES.default_aircraft_id,
             autoscroll:          data.autoscroll          ?? DEFAULT_PREFERENCES.autoscroll,
+            haptic_feedback:     data.haptic_feedback     ?? DEFAULT_PREFERENCES.haptic_feedback,
           }
           setPreferences(loaded)
           writeLocalPreferences(loaded)

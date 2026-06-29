@@ -30,7 +30,6 @@ export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
   const { user, signOut, fullSignOut } = useAuth()
   const { preferences, updatePreference } = usePreferences()
   const { source, trialEndsAt, isEntitled } = useEntitlement()
-  const [profileList, setProfileList] = useState<{ id: string; name: string }[]>([])
 
   const handleManageStripe = async () => {
     try {
@@ -83,18 +82,6 @@ export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
     localStorage.setItem('flightcheck-account-deleted', '1')
     await fullSignOut().catch(() => {})
   }
-
-  useEffect(() => {
-    if (!user) return
-    supabase
-      .from('checklist_profiles')
-      .select('id, name')
-      .eq('user_id', user.id)
-      .order('created_at')
-      .then(({ data, error }) => {
-        if (!error && data) setProfileList(data as { id: string; name: string }[])
-      })
-  }, [user?.id])
 
   return (
     <>
@@ -273,19 +260,22 @@ export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
             </button>
           </div>
 
-          {/* Default aircraft */}
-          <div className="space-y-2">
-            <p className="text-sm font-medium text-cockpit-text-primary">Default aircraft</p>
-            <select
-              value={preferences.default_aircraft_id ?? ''}
-              onChange={e => updatePreference('default_aircraft_id', e.target.value || null)}
-              className="w-full bg-cockpit-card border border-cockpit-border rounded-lg px-3 py-2 text-cockpit-text-primary text-sm"
+          {/* Haptic feedback */}
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-medium text-cockpit-text-primary">Haptic feedback</p>
+            <button
+              onClick={() => updatePreference('haptic_feedback', !preferences.haptic_feedback)}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                preferences.haptic_feedback ? 'bg-cockpit-amber' : 'bg-cockpit-border'
+              }`}
+              aria-label="Toggle haptic feedback"
             >
-              <option value="">None</option>
-              {profileList.map(p => (
-                <option key={p.id} value={p.id}>{p.name}</option>
-              ))}
-            </select>
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  preferences.haptic_feedback ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
           </div>
 
           {/* Danger zone */}
