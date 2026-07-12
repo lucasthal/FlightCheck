@@ -101,10 +101,17 @@ When Mode = Night, the Color row stays enabled (choice persists and applies on l
 
 Selected-state styling in Settings (currently `bg-cockpit-amber text-black`) becomes `bg-cockpit-accent text-cockpit-on-accent`, so the sheet itself reflects the chosen palette.
 
-## Special cases
+## App icon & promo art
 
-- **Paywall logo gradient** `from-cockpit-amber to-orange-500`: becomes `from-cockpit-accent to-cockpit-accent-dim`.
-- **App icon & promo art** (`assets/`): out of scope; stays amber until a separate icon-refresh task (App Store asset).
+Both current assets are the retired amber identity and ship in the same release so the home screen, App Store listing, and in-app UI change together.
+
+**App icon** (`assets/icon-source.png`, 2048×2048): keep the white check-plane mark exactly as-is; replace the amber→orange gradient background with a Glass Cockpit gradient — cyan `#22D3EE` (top-left) → deep teal `#0E7490` (bottom-right). White-on-cyan chosen over cyan-on-black: it stays visible against dark wallpapers, mirrors the current design language (white mark on colored gradient), and is a minimal-risk swap. Regenerated derivatives follow the same pipeline used when the icon was first added (iOS AppIcon set in `ios/App/App/Assets.xcassets`).
+
+**IAP promo image** (`assets/iap-promo-1024.png`, via `assets/generate_promo.py`): regenerate with the glass palette — background `#0A0C10`, card `#171D26`, checked boxes `#22D3EE` with `#000` checks, line placeholders `#8B98A9`/`#5A6575`, silhouette accents unchanged in shape. Uploaded to App Store Connect with the same submission.
+
+**In-app logo gradient** (Paywall/Login/Welcome `from-cockpit-amber to-orange-500`): becomes `from-cockpit-accent to-cockpit-accent-dim`, so it tracks the selected palette rather than being fixed to glass.
+
+## Special cases
 - **Autofill/caret CSS** in index.css uses text tokens only — no change.
 - **`cockpit-blue`** (hardcoded `#3b82f6` in Tailwind): left as-is; audit later if it clashes with flightdeck accent.
 
@@ -117,4 +124,5 @@ Selected-state styling in Settings (currently `bg-cockpit-amber text-black`) bec
 
 - Build + typecheck; grep proves zero remaining `cockpit-amber`/`amber-400`/`orange-500` in `src/`.
 - Manual: cycle all 5 palettes × 3 modes; verify night mode is byte-identical red regardless of palette; verify caution stripes stay amber in every palette; verify Settings chips, toggles, Paywall CTA, checklist active item, progress bar all follow accent.
+- Assets: view regenerated icon at home-screen size (60 pt) on light and dark wallpaper; confirm promo image renders correctly at 1024×1024.
 - Contrast spot-checks: accent-on-bg and on-accent-on-accent pairs listed above.
