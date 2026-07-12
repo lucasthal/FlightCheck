@@ -47,7 +47,7 @@ function ChecklistItemRow({ item, index, checked, onToggle }: RowProps) {
         ${checked
           ? 'border-cockpit-green/20 bg-cockpit-green/5'
           : isWarning
-          ? 'border-cockpit-amber/30 bg-cockpit-amber/5'
+          ? 'border-cockpit-caution/30 bg-cockpit-caution/5'
           : isCaution
           ? 'border-yellow-500/20 bg-yellow-500/5'
           : isSetup
@@ -58,7 +58,7 @@ function ChecklistItemRow({ item, index, checked, onToggle }: RowProps) {
     >
       {/* Left severity stripe */}
       {(isWarning || isCaution || isSetup) && !checked && (
-        <div className={`absolute left-0 top-0 bottom-0 w-0.5 ${isWarning ? 'bg-cockpit-amber' : isCaution ? 'bg-yellow-500' : 'bg-cockpit-blue'}`} />
+        <div className={`absolute left-0 top-0 bottom-0 w-0.5 ${isWarning ? 'bg-cockpit-caution' : isCaution ? 'bg-yellow-500' : 'bg-cockpit-blue'}`} />
       )}
 
       <button
@@ -72,7 +72,7 @@ function ChecklistItemRow({ item, index, checked, onToggle }: RowProps) {
           ${checked
             ? 'border-cockpit-green bg-cockpit-green shadow-green-glow'
             : isWarning
-            ? 'border-cockpit-amber/60'
+            ? 'border-cockpit-caution/60'
             : 'border-cockpit-border'
           }
         `}>
@@ -105,7 +105,7 @@ function ChecklistItemRow({ item, index, checked, onToggle }: RowProps) {
 
             {/* Severity icon */}
             {(isWarning || isCaution) && !checked && (
-              <AlertTriangle className={`w-3.5 h-3.5 flex-shrink-0 mt-0.5 ${isWarning ? 'text-cockpit-amber' : 'text-yellow-500'}`} />
+              <AlertTriangle className={`w-3.5 h-3.5 flex-shrink-0 mt-0.5 ${isWarning ? 'text-cockpit-caution' : 'text-yellow-500'}`} />
             )}
           </div>
 
@@ -115,7 +115,7 @@ function ChecklistItemRow({ item, index, checked, onToggle }: RowProps) {
               <span className="text-xs text-cockpit-text-dim flex-shrink-0 font-mono mt-0.5">→</span>
               <span
                 className={`text-sm font-mono font-semibold tracking-tight ${
-                  checked ? 'text-cockpit-green/70' : 'text-cockpit-amber'
+                  checked ? 'text-cockpit-green/70' : 'text-cockpit-accent'
                 }`}
                 style={{ fontSize: 'calc(0.75rem * var(--text-scale))' }}
               >
@@ -126,7 +126,7 @@ function ChecklistItemRow({ item, index, checked, onToggle }: RowProps) {
 
           {/* Severity label */}
           {isWarning && !checked && (
-            <div className="mt-1.5 inline-flex items-center gap-1 text-xs text-cockpit-amber font-semibold uppercase tracking-wide">
+            <div className="mt-1.5 inline-flex items-center gap-1 text-xs text-cockpit-caution font-semibold uppercase tracking-wide">
               <AlertTriangle className="w-3 h-3" />
               WARNING
             </div>

@@ -136,7 +136,7 @@ export function FeedbackModal({ isOpen, onClose, aircraft, phaseName }: Props) {
               required
               className="w-full px-3 py-2.5 rounded-xl bg-cockpit-bg border border-cockpit-border
                          text-cockpit-text-primary text-sm
-                         focus:outline-none focus:border-cockpit-amber/50 focus:ring-2 focus:ring-cockpit-amber/10
+                         focus:outline-none focus:border-cockpit-accent/50 focus:ring-2 focus:ring-cockpit-accent/10
                          transition-all duration-150"
             />
           </div>
@@ -172,7 +172,7 @@ export function FeedbackModal({ isOpen, onClose, aircraft, phaseName }: Props) {
               placeholder="What's on your mind?"
               className="w-full px-3 py-2.5 rounded-xl bg-cockpit-bg border border-cockpit-border
                          text-cockpit-text-primary text-sm placeholder-cockpit-text-dim resize-none
-                         focus:outline-none focus:border-cockpit-amber/50 focus:ring-2 focus:ring-cockpit-amber/10
+                         focus:outline-none focus:border-cockpit-accent/50 focus:ring-2 focus:ring-cockpit-accent/10
                          transition-all duration-150"
             />
           </div>
@@ -210,7 +210,7 @@ export function FeedbackModal({ isOpen, onClose, aircraft, phaseName }: Props) {
               className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 cursor-pointer disabled:opacity-50
                 ${success
                   ? 'bg-cockpit-green/20 text-cockpit-green border border-cockpit-green/30'
-                  : 'bg-cockpit-amber text-cockpit-bg hover:opacity-90'
+                  : 'bg-cockpit-accent text-cockpit-on-accent hover:opacity-90'
                 }`}
             >
               {submitting ? (

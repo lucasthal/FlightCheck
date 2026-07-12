@@ -58,7 +58,7 @@ export function LoginScreen() {
 
   const inputClass = `w-full px-3 py-2.5 rounded-xl bg-cockpit-bg border border-cockpit-border
     text-cockpit-text-primary text-sm placeholder-cockpit-text-dim
-    focus:outline-none focus:border-cockpit-amber/50 focus:ring-2 focus:ring-cockpit-amber/10
+    focus:outline-none focus:border-cockpit-accent/50 focus:ring-2 focus:ring-cockpit-accent/10
     transition-all duration-150`
 
   if (signUpEmail) {
@@ -67,19 +67,19 @@ export function LoginScreen() {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(245,158,11,0.06),transparent_60%)]" />
         <div className="relative w-full max-w-sm">
           <div className="flex items-center gap-3 mb-8 justify-center">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-cockpit-amber to-orange-500 flex items-center justify-center shadow-amber-glow">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-cockpit-accent to-cockpit-accent-dim flex items-center justify-center shadow-accent-glow">
               <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6">
                 <path d="M 3.5 13 Q 5.5 15 8.5 18 Q 9.5 18 14.5 12" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
                 <path transform="translate(17.5 8) rotate(-50)" d="M2.5 0 L1.2 -0.45 L1.2 -2.2 L-0.2 -2.2 L-0.2 -0.45 L-2 -0.45 L-2.5 0 L-2 0.45 L-0.2 0.45 L-0.2 2.2 L1.2 2.2 L1.2 0.45 Z" fill="white"/>
               </svg>
             </div>
             <h1 className="text-2xl font-bold text-cockpit-text-primary tracking-tight">
-              Flight<span className="text-cockpit-amber">Check</span>
+              Flight<span className="text-cockpit-accent">Check</span>
             </h1>
           </div>
           <div className="bg-cockpit-panel border border-cockpit-border rounded-2xl p-6 shadow-cockpit text-center">
-            <div className="w-12 h-12 rounded-full bg-cockpit-amber/10 border border-cockpit-amber/30 flex items-center justify-center mx-auto mb-4">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-6 h-6 text-cockpit-amber">
+            <div className="w-12 h-12 rounded-full bg-cockpit-accent/10 border border-cockpit-accent/30 flex items-center justify-center mx-auto mb-4">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-6 h-6 text-cockpit-accent">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
             </div>
@@ -87,14 +87,14 @@ export function LoginScreen() {
             <p className="text-sm text-cockpit-text-secondary mb-1">
               We sent a confirmation link to
             </p>
-            <p className="text-sm font-medium text-cockpit-amber mb-4">{signUpEmail}</p>
+            <p className="text-sm font-medium text-cockpit-accent mb-4">{signUpEmail}</p>
             <p className="text-xs text-cockpit-text-dim mb-5">
               Click the link in the email to activate your account, then return here to sign in.
             </p>
             <button
               onClick={() => { setSignUpEmail(null); switchMode('signin') }}
-              className="w-full py-2.5 rounded-xl bg-cockpit-amber text-black font-semibold text-sm
-                hover:bg-amber-400 transition-colors"
+              className="w-full py-2.5 rounded-xl bg-cockpit-accent text-cockpit-on-accent font-semibold text-sm
+                hover:bg-cockpit-accent-bright transition-colors"
             >
               Back to Sign In
             </button>
@@ -111,14 +111,14 @@ export function LoginScreen() {
       <div className="relative w-full max-w-sm">
         {/* Logo */}
         <div className="flex items-center gap-3 mb-8 justify-center">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-cockpit-amber to-orange-500 flex items-center justify-center shadow-amber-glow">
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-cockpit-accent to-cockpit-accent-dim flex items-center justify-center shadow-accent-glow">
             <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6">
               <path d="M 3.5 13 Q 5.5 15 8.5 18 Q 9.5 18 14.5 12" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
               <path transform="translate(17.5 8) rotate(-50)" d="M2.5 0 L1.2 -0.45 L1.2 -2.2 L-0.2 -2.2 L-0.2 -0.45 L-2 -0.45 L-2.5 0 L-2 0.45 L-0.2 0.45 L-0.2 2.2 L1.2 2.2 L1.2 0.45 Z" fill="white"/>
             </svg>
           </div>
           <h1 className="text-2xl font-bold text-cockpit-text-primary tracking-tight">
-            Flight<span className="text-cockpit-amber">Check</span>
+            Flight<span className="text-cockpit-accent">Check</span>
           </h1>
         </div>
 
@@ -173,7 +173,7 @@ export function LoginScreen() {
                 disabled={submitting}
                 className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl
                   bg-cockpit-card border border-cockpit-border text-cockpit-text-primary text-sm
-                  hover:border-cockpit-amber/40 transition-all duration-150 mb-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                  hover:border-cockpit-accent/40 transition-all duration-150 mb-4 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <svg viewBox="0 0 24 24" className="w-4 h-4 flex-shrink-0">
                   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -227,8 +227,8 @@ export function LoginScreen() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full py-2.5 rounded-xl bg-cockpit-amber text-black font-semibold text-sm
-                hover:bg-amber-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-1"
+              className="w-full py-2.5 rounded-xl bg-cockpit-accent text-cockpit-on-accent font-semibold text-sm
+                hover:bg-cockpit-accent-bright transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-1"
             >
               {submitting
                 ? 'Please wait…'
@@ -260,12 +260,12 @@ export function LoginScreen() {
               }}
               disabled={submitting}
               className="mx-auto mt-4 flex items-center justify-center w-14 h-14 rounded-2xl
-                bg-cockpit-amber/15 border-2 border-cockpit-amber/50
-                hover:bg-cockpit-amber/25 hover:border-cockpit-amber transition-all duration-150
+                bg-cockpit-accent/15 border-2 border-cockpit-accent/50
+                hover:bg-cockpit-accent/25 hover:border-cockpit-accent transition-all duration-150
                 disabled:opacity-50 disabled:cursor-not-allowed"
               aria-label="Sign in with Face ID"
             >
-              <svg viewBox="0 0 24 24" fill="none" className="w-8 h-8 text-cockpit-amber">
+              <svg viewBox="0 0 24 24" fill="none" className="w-8 h-8 text-cockpit-accent">
                 {/* Face ID icon */}
                 <path d="M7 3H5a2 2 0 00-2 2v2M17 3h2a2 2 0 012 2v2M7 21H5a2 2 0 01-2-2v-2M17 21h2a2 2 0 002-2v-2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
                 <path d="M8.5 9v1.5M15.5 9v1.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>

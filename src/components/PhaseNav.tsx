@@ -47,7 +47,7 @@ export function PhaseNav({ phase, isActive, isComplete, progress, onClick }: Pro
 
       {/* Progress underline */}
       {!isComplete && pct > 0 && (
-        <div className="absolute bottom-0 left-0 h-0.5 bg-cockpit-amber/40 transition-all duration-300 rounded-full"
+        <div className="absolute bottom-0 left-0 h-0.5 bg-cockpit-accent/40 transition-all duration-300 rounded-full"
           style={{ width: `${pct}%` }} />
       )}
     </button>

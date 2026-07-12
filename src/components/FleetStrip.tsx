@@ -31,7 +31,7 @@ export function FleetStrip({ favorites, onSelect }: Props) {
 
   return (
     <div className="mb-4">
-      <p className="text-xs font-semibold text-cockpit-amber uppercase tracking-wider mb-2">
+      <p className="text-xs font-semibold text-cockpit-accent uppercase tracking-wider mb-2">
         ★ My Fleet
       </p>
       <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
@@ -40,8 +40,8 @@ export function FleetStrip({ favorites, onSelect }: Props) {
             key={aircraft.id}
             onClick={() => onSelect(aircraft)}
             className="flex-shrink-0 flex flex-col items-start gap-0.5 px-3 py-2
-                       bg-cockpit-card border border-cockpit-amber/20 rounded-xl
-                       hover:border-cockpit-amber/50 transition-all duration-150 min-w-[80px]"
+                       bg-cockpit-card border border-cockpit-accent/20 rounded-xl
+                       hover:border-cockpit-accent/50 transition-all duration-150 min-w-[80px]"
           >
             <span className={`text-xs font-bold leading-tight ${CATEGORY_TEXT[aircraft.category]}`}>
               {aircraft.model}

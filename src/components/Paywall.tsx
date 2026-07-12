@@ -91,14 +91,14 @@ export function Paywall({ priceLabel, isReturningUser, onPurchased, onSignIn }: 
       <div className="relative w-full max-w-sm">
         {/* Logo */}
         <div className="flex items-center gap-3 mb-8 justify-center">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-cockpit-amber to-orange-500 flex items-center justify-center shadow-amber-glow">
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-cockpit-accent to-cockpit-accent-dim flex items-center justify-center shadow-accent-glow">
             <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6">
               <path d="M 3.5 13 Q 5.5 15 8.5 18 Q 9.5 18 14.5 12" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
               <path transform="translate(17.5 8) rotate(-50)" d="M2.5 0 L1.2 -0.45 L1.2 -2.2 L-0.2 -2.2 L-0.2 -0.45 L-2 -0.45 L-2.5 0 L-2 0.45 L-0.2 0.45 L-0.2 2.2 L1.2 2.2 L1.2 0.45 Z" fill="white"/>
             </svg>
           </div>
           <h1 className="text-2xl font-bold text-cockpit-text-primary tracking-tight">
-            Flight<span className="text-cockpit-amber">Check</span>
+            Flight<span className="text-cockpit-accent">Check</span>
           </h1>
         </div>
 
@@ -128,8 +128,8 @@ export function Paywall({ priceLabel, isReturningUser, onPurchased, onSignIn }: 
           <button
             onClick={handleSubscribe}
             disabled={submitting || restoring}
-            className="w-full py-3 rounded-xl bg-cockpit-amber text-black font-semibold text-sm
-              hover:bg-amber-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed
+            className="w-full py-3 rounded-xl bg-cockpit-accent text-cockpit-on-accent font-semibold text-sm
+              hover:bg-cockpit-accent-bright transition-colors disabled:opacity-50 disabled:cursor-not-allowed
               flex items-center justify-center gap-2"
           >
             {(submitting || activating) && <Loader2 className="w-4 h-4 animate-spin" />}
@@ -153,7 +153,7 @@ export function Paywall({ priceLabel, isReturningUser, onPurchased, onSignIn }: 
             disabled={submitting || restoring}
             className="w-full py-2.5 rounded-xl bg-cockpit-card border border-cockpit-border
               text-cockpit-text-primary text-sm font-medium
-              hover:border-cockpit-amber/40 transition-colors disabled:opacity-50 disabled:cursor-not-allowed
+              hover:border-cockpit-accent/40 transition-colors disabled:opacity-50 disabled:cursor-not-allowed
               flex items-center justify-center gap-2"
           >
             {restoring && <Loader2 className="w-4 h-4 animate-spin" />}
@@ -196,7 +196,7 @@ export function Paywall({ priceLabel, isReturningUser, onPurchased, onSignIn }: 
               disabled={submitting || restoring}
               className="w-full mt-3 py-2.5 rounded-xl bg-cockpit-card border border-cockpit-border
                 text-cockpit-text-secondary text-sm
-                hover:border-cockpit-amber/40 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                hover:border-cockpit-accent/40 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Redeem Code
             </button>
@@ -224,7 +224,7 @@ export function Paywall({ priceLabel, isReturningUser, onPurchased, onSignIn }: 
         {onSignIn ? (
           <button
             onClick={onSignIn}
-            className="w-full mt-4 text-center text-xs text-cockpit-amber hover:text-amber-400 transition-colors"
+            className="w-full mt-4 text-center text-xs text-cockpit-accent hover:text-cockpit-accent-bright transition-colors"
           >
             Already have an account? Sign in
           </button>

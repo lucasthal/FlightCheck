@@ -152,14 +152,14 @@ export function AircraftSelector({ onSelect, onOpenSettings }: Props) {
     <div className="min-h-screen flex flex-col bg-cockpit-bg">
       <OfflineBanner visible={!isOnline} />
       <header className="relative overflow-hidden border-b border-cockpit-border/40">
-        <div className="absolute inset-0 bg-gradient-to-b from-cockpit-amber/5 via-cockpit-panel to-cockpit-bg" />
+        <div className="absolute inset-0 bg-gradient-to-b from-cockpit-accent/5 via-cockpit-panel to-cockpit-bg" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(245,158,11,0.08),transparent_70%)]" />
 
         <div className="relative max-w-5xl mx-auto px-4 pt-8 pb-6 safe-top">
           {/* Logo row + profile */}
           <div className="flex items-center justify-between gap-3 mb-1">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-cockpit-amber to-orange-500 flex items-center justify-center shadow-amber-glow">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-cockpit-accent to-cockpit-accent-dim flex items-center justify-center shadow-accent-glow">
                 <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6">
                   <path d="M 3.5 13 Q 5.5 15 8.5 18 Q 9.5 18 14.5 12" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
                   <path transform="translate(17.5 8) rotate(-50)" d="M2.5 0 L1.2 -0.45 L1.2 -2.2 L-0.2 -2.2 L-0.2 -0.45 L-2 -0.45 L-2.5 0 L-2 0.45 L-0.2 0.45 L-0.2 2.2 L1.2 2.2 L1.2 0.45 Z" fill="white"/>
@@ -167,7 +167,7 @@ export function AircraftSelector({ onSelect, onOpenSettings }: Props) {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-cockpit-text-primary tracking-tight">
-                  Flight<span className="text-cockpit-amber">Check</span>
+                  Flight<span className="text-cockpit-accent">Check</span>
                 </h1>
                 <p className="text-xs text-cockpit-text-dim">Best in class Pilot's checklist</p>
               </div>
@@ -181,12 +181,12 @@ export function AircraftSelector({ onSelect, onOpenSettings }: Props) {
                 aria-haspopup="menu"
                 aria-expanded={profileOpen}
                 className="flex items-center gap-2 px-2 py-1.5 rounded-xl border border-cockpit-border/50
-                           bg-cockpit-card/50 hover:border-cockpit-amber/30 transition-all duration-150"
+                           bg-cockpit-card/50 hover:border-cockpit-accent/30 transition-all duration-150"
               >
                 {avatarUrl ? (
                   <img src={avatarUrl} alt={displayName} className="w-6 h-6 rounded-full object-cover" />
                 ) : (
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-cockpit-amber to-orange-500 flex items-center justify-center text-black text-xs font-bold">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-cockpit-accent to-cockpit-accent-dim flex items-center justify-center text-cockpit-on-accent text-xs font-bold">
                     {initials}
                   </div>
                 )}
@@ -261,7 +261,7 @@ export function AircraftSelector({ onSelect, onOpenSettings }: Props) {
               onChange={e => setSearch(e.target.value)}
               className="w-full pl-10 pr-4 py-3 rounded-xl bg-cockpit-card border border-cockpit-border
                          text-cockpit-text-primary placeholder-cockpit-text-dim text-sm
-                         focus:outline-none focus:border-cockpit-amber/50 focus:ring-2 focus:ring-cockpit-amber/10
+                         focus:outline-none focus:border-cockpit-accent/50 focus:ring-2 focus:ring-cockpit-accent/10
                          transition-all duration-150"
             />
           </div>
@@ -353,7 +353,7 @@ const AircraftCard = memo(function AircraftCard({ aircraft, onSelect, isFavorite
       >
         <Star
           className={`w-4 h-4 transition-colors ${
-            isFavorite ? 'text-cockpit-amber fill-cockpit-amber' : 'text-cockpit-text-dim'
+            isFavorite ? 'text-cockpit-accent fill-cockpit-accent' : 'text-cockpit-text-dim'
           }`}
         />
       </button>

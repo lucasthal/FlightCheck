@@ -69,13 +69,13 @@ export function ChecklistEditorView({ editor, profileName, onSave, onSaveAs, onD
   return (
     <div className="max-w-2xl mx-auto px-4 py-5 pb-40 lg:pb-10">
       {/* Toolbar */}
-      <div className="flex items-center justify-between mb-5 px-3 py-2.5 bg-cockpit-amber/5
-                      border border-cockpit-amber/20 rounded-xl">
+      <div className="flex items-center justify-between mb-5 px-3 py-2.5 bg-cockpit-accent/5
+                      border border-cockpit-accent/20 rounded-xl">
         <div>
-          <p className="text-xs font-semibold text-cockpit-amber">Edit Mode</p>
+          <p className="text-xs font-semibold text-cockpit-accent">Edit Mode</p>
           <p className="text-xs text-cockpit-text-dim truncate max-w-[160px]">{profileName}</p>
           {!isOnline && (
-            <p className="text-xs text-amber-400/70 mt-0.5">No connection — changes cannot be saved</p>
+            <p className="text-xs text-cockpit-caution/70 mt-0.5">No connection — changes cannot be saved</p>
           )}
         </div>
         <div className="flex items-center gap-2">
@@ -100,8 +100,8 @@ export function ChecklistEditorView({ editor, profileName, onSave, onSaveAs, onD
             onClick={onSave}
             disabled={saving || !isOnline}
             title={!isOnline ? 'No connection — changes cannot be saved' : undefined}
-            className="px-3 py-1.5 rounded-lg bg-cockpit-amber/15 border border-cockpit-amber/40
-                       text-cockpit-amber text-xs font-semibold hover:bg-cockpit-amber/25
+            className="px-3 py-1.5 rounded-lg bg-cockpit-accent/15 border border-cockpit-accent/40
+                       text-cockpit-accent text-xs font-semibold hover:bg-cockpit-accent/25
                        disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             {saving ? 'Saving…' : 'Save'}
@@ -120,7 +120,7 @@ export function ChecklistEditorView({ editor, profileName, onSave, onSaveAs, onD
 
       {/* Add phase */}
       {addingPhase ? (
-        <div className="mt-4 p-3 bg-cockpit-card border border-cockpit-amber/20 rounded-xl space-y-2">
+        <div className="mt-4 p-3 bg-cockpit-card border border-cockpit-accent/20 rounded-xl space-y-2">
           <input
             type="text"
             placeholder="Phase name (e.g. Cruise)"
@@ -129,13 +129,13 @@ export function ChecklistEditorView({ editor, profileName, onSave, onSaveAs, onD
             autoFocus
             className="w-full px-3 py-2 rounded-lg bg-cockpit-bg border border-cockpit-border
                        text-cockpit-text-primary text-sm placeholder-cockpit-text-dim
-                       focus:outline-none focus:border-cockpit-amber/50 transition-all"
+                       focus:outline-none focus:border-cockpit-accent/50 transition-all"
           />
           <select
             value={newPhaseCategory}
             onChange={e => setNewPhaseCategory(e.target.value as PhaseCategory)}
             className="w-full px-3 py-2 rounded-lg bg-cockpit-bg border border-cockpit-border
-                       text-cockpit-text-secondary text-sm focus:outline-none focus:border-cockpit-amber/50"
+                       text-cockpit-text-secondary text-sm focus:outline-none focus:border-cockpit-accent/50"
           >
             {PHASE_CATEGORIES.map(c => (
               <option key={c} value={c}>{c.charAt(0).toUpperCase() + c.slice(1)}</option>
@@ -151,8 +151,8 @@ export function ChecklistEditorView({ editor, profileName, onSave, onSaveAs, onD
             <button
               onClick={handleAddPhase}
               disabled={!newPhaseTitle.trim()}
-              className="flex-1 py-2 rounded-lg bg-cockpit-amber/15 border border-cockpit-amber/40
-                         text-cockpit-amber text-xs font-semibold disabled:opacity-40"
+              className="flex-1 py-2 rounded-lg bg-cockpit-accent/15 border border-cockpit-accent/40
+                         text-cockpit-accent text-xs font-semibold disabled:opacity-40"
             >
               Add Phase
             </button>
@@ -163,7 +163,7 @@ export function ChecklistEditorView({ editor, profileName, onSave, onSaveAs, onD
           onClick={() => setAddingPhase(true)}
           className="mt-4 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl
                      border border-dashed border-cockpit-border text-xs text-cockpit-text-dim
-                     hover:border-cockpit-amber/30 hover:text-cockpit-text-secondary transition-colors"
+                     hover:border-cockpit-accent/30 hover:text-cockpit-text-secondary transition-colors"
         >
           <Plus className="w-3.5 h-3.5" />
           Add Phase
@@ -222,7 +222,7 @@ function SortablePhaseSection({ phase, editor }: { phase: ProfilePhase; editor: 
             onBlur={commitTitle}
             onKeyDown={e => { if (e.key === 'Enter') commitTitle(); if (e.key === 'Escape') { setTitleDraft(phase.title); setEditingTitle(false) } }}
             autoFocus
-            className="flex-1 px-2 py-1 rounded-lg bg-cockpit-bg border border-cockpit-amber/50
+            className="flex-1 px-2 py-1 rounded-lg bg-cockpit-bg border border-cockpit-accent/50
                        text-cockpit-text-primary text-sm font-semibold focus:outline-none"
           />
         ) : (
@@ -239,7 +239,7 @@ function SortablePhaseSection({ phase, editor }: { phase: ProfilePhase; editor: 
         <button
           onClick={() => { setTitleDraft(phase.title); setEditingTitle(true) }}
           aria-label={`Rename phase ${phase.title}`}
-          className="p-1 rounded-lg text-cockpit-text-dim hover:text-cockpit-amber hover:bg-cockpit-card transition-colors"
+          className="p-1 rounded-lg text-cockpit-text-dim hover:text-cockpit-accent hover:bg-cockpit-card transition-colors"
         >
           <Pencil className="w-3.5 h-3.5" />
         </button>
@@ -339,10 +339,10 @@ function SortableItemRow({ item, index, phaseId, editor }: { item: ProfileItem; 
               onBlur={commitEdit}
               onKeyDown={e => { if (e.key === 'Enter') commitEdit(); if (e.key === 'Escape') { setDraft(item.action); setEditing(false) } }}
               autoFocus
-              className="flex-1 px-2 py-0.5 rounded-lg bg-cockpit-bg border border-cockpit-amber/50
+              className="flex-1 px-2 py-0.5 rounded-lg bg-cockpit-bg border border-cockpit-accent/50
                          text-cockpit-text-primary text-sm focus:outline-none"
             />
-            <button onClick={commitEdit} aria-label="Confirm edit" className="p-1 text-cockpit-amber">
+            <button onClick={commitEdit} aria-label="Confirm edit" className="p-1 text-cockpit-accent">
               <Check className="w-3.5 h-3.5" />
             </button>
             <button onClick={() => { setDraft(item.action); setEditing(false) }} aria-label="Cancel edit" className="p-1 text-cockpit-text-dim">
@@ -379,7 +379,7 @@ function SortableItemRow({ item, index, phaseId, editor }: { item: ProfileItem; 
             <button
               onClick={() => { setDraft(item.action); setEditing(true) }}
               aria-label={`Edit item ${item.action}`}
-              className="p-1 rounded-lg text-cockpit-text-dim hover:text-cockpit-amber hover:bg-cockpit-bg transition-colors flex-shrink-0"
+              className="p-1 rounded-lg text-cockpit-text-dim hover:text-cockpit-accent hover:bg-cockpit-bg transition-colors flex-shrink-0"
             >
               <Pencil className="w-3.5 h-3.5" />
             </button>

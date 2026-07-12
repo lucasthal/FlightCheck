@@ -380,7 +380,7 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings, onPhaseChange 
             <button
               onClick={enterEditMode}
               title="Edit checklist"
-              className="p-2 rounded-xl hover:bg-white/5 text-cockpit-text-dim hover:text-cockpit-amber transition-colors"
+              className="p-2 rounded-xl hover:bg-white/5 text-cockpit-text-dim hover:text-cockpit-accent transition-colors"
             >
               <Pencil className="w-4 h-4" />
             </button>
@@ -583,7 +583,7 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings, onPhaseChange 
           title="Reset to Original?"
           body={`This will permanently delete the "${profiles.activeProfile.name}" profile and revert to the POH checklist.`}
           confirmLabel="Reset to Original"
-          confirmClass="text-cockpit-amber border-cockpit-amber/40 bg-cockpit-amber/15 hover:bg-cockpit-amber/25"
+          confirmClass="text-cockpit-caution border-cockpit-caution/40 bg-cockpit-caution/15 hover:bg-cockpit-caution/25"
           onConfirm={async () => {
             if (profiles.activeProfile) await profiles.deleteProfile(profiles.activeProfile.id)
             setShowResetProfileConfirm(false)
@@ -623,7 +623,7 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings, onPhaseChange 
           title="Save Failed"
           body={saveError}
           confirmLabel="OK"
-          confirmClass="text-cockpit-amber border-cockpit-amber/40 bg-cockpit-amber/15 hover:bg-cockpit-amber/25"
+          confirmClass="text-cockpit-caution border-cockpit-caution/40 bg-cockpit-caution/15 hover:bg-cockpit-caution/25"
           onConfirm={() => setSaveError(null)}
           onCancel={() => setSaveError(null)}
         />
@@ -650,7 +650,7 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings, onPhaseChange 
       {creating && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
           <div className="flex flex-col items-center gap-3 bg-cockpit-panel border border-cockpit-border rounded-2xl px-8 py-6 shadow-cockpit">
-            <div className="w-8 h-8 border-2 border-cockpit-amber/30 border-t-cockpit-amber rounded-full animate-spin" />
+            <div className="w-8 h-8 border-2 border-cockpit-accent/30 border-t-cockpit-accent rounded-full animate-spin" />
             <p className="text-sm text-cockpit-text-secondary">Creating profile…</p>
           </div>
         </div>
@@ -767,8 +767,8 @@ function ResetFlightModal({ aircraftName, onConfirm, onCancel }: {
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
       <div className="bg-cockpit-panel border border-cockpit-border rounded-2xl p-6 max-w-sm w-full shadow-cockpit animate-slide-up">
         <div className="flex items-center gap-3 mb-3">
-          <div className="p-2.5 rounded-xl bg-cockpit-amber/10 border border-cockpit-amber/20">
-            <RotateCcw className="w-5 h-5 text-cockpit-amber" />
+          <div className="p-2.5 rounded-xl bg-cockpit-caution/10 border border-cockpit-caution/20">
+            <RotateCcw className="w-5 h-5 text-cockpit-caution" />
           </div>
           <div>
             <h3 className="font-bold text-cockpit-text-primary">Start New Flight?</h3>
@@ -780,7 +780,7 @@ function ResetFlightModal({ aircraftName, onConfirm, onCancel }: {
         </p>
         <div className="flex gap-3">
           <button onClick={onCancel} className="flex-1 py-3 rounded-xl border border-cockpit-border text-cockpit-text-secondary text-sm font-medium hover:bg-white/5 transition-colors">Cancel</button>
-          <button onClick={onConfirm} className="flex-1 py-3 rounded-xl bg-cockpit-amber/15 border border-cockpit-amber/40 text-cockpit-amber text-sm font-semibold hover:bg-cockpit-amber/25 transition-colors">Reset</button>
+          <button onClick={onConfirm} className="flex-1 py-3 rounded-xl bg-cockpit-caution/15 border border-cockpit-caution/40 text-cockpit-caution text-sm font-semibold hover:bg-cockpit-caution/25 transition-colors">Reset</button>
         </div>
       </div>
     </div>

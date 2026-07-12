@@ -30,7 +30,7 @@ export default function App() {
 function Spinner() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-cockpit-bg">
-      <div className="w-8 h-8 rounded-full border-2 border-cockpit-amber/30 border-t-cockpit-amber animate-spin" />
+      <div className="w-8 h-8 rounded-full border-2 border-cockpit-accent/30 border-t-cockpit-accent animate-spin" />
     </div>
   )
 }

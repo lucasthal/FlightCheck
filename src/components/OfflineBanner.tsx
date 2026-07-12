@@ -15,8 +15,8 @@ export function OfflineBanner({ visible }: Props) {
         visible ? 'max-h-10 opacity-100' : 'max-h-0 opacity-0',
       ].join(' ')}
     >
-      <div className="py-1.5 px-4 bg-amber-500/15 border-b border-amber-500/30">
-        <p className="text-sm text-center font-medium text-cockpit-amber">
+      <div className="py-1.5 px-4 bg-cockpit-caution/15 border-b border-cockpit-caution/30">
+        <p className="text-sm text-center font-medium text-cockpit-caution">
           Flying offline — showing last synced data
         </p>
       </div>

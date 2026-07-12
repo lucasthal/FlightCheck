@@ -34,7 +34,7 @@ export function ProfilePicker({ profiles, activeProfile, onSelect, onSaveAs, onR
         disabled={disabled}
         className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-cockpit-border/50
                    bg-cockpit-card/50 text-xs text-cockpit-text-secondary
-                   hover:border-cockpit-amber/30 hover:text-cockpit-text-primary
+                   hover:border-cockpit-accent/30 hover:text-cockpit-text-primary
                    disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-150"
       >
         <span className="max-w-[120px] truncate">{label}</span>
@@ -61,7 +61,7 @@ export function ProfilePicker({ profiles, activeProfile, onSelect, onSaveAs, onR
                        hover:bg-cockpit-card transition-colors"
           >
             {!activeProfile
-              ? <Check className="w-3.5 h-3.5 text-cockpit-amber flex-shrink-0" />
+              ? <Check className="w-3.5 h-3.5 text-cockpit-accent flex-shrink-0" />
               : <span className="w-3.5 h-3.5 flex-shrink-0" />
             }
             <span className={!activeProfile ? 'text-cockpit-text-primary font-medium' : 'text-cockpit-text-secondary'}>
@@ -80,7 +80,7 @@ export function ProfilePicker({ profiles, activeProfile, onSelect, onSaveAs, onR
                          hover:bg-cockpit-card transition-colors"
             >
               {p.is_active
-                ? <Check className="w-3.5 h-3.5 text-cockpit-amber flex-shrink-0" />
+                ? <Check className="w-3.5 h-3.5 text-cockpit-accent flex-shrink-0" />
                 : <span className="w-3.5 h-3.5 flex-shrink-0" />
               }
               <span className={p.is_active ? 'text-cockpit-text-primary font-medium' : 'text-cockpit-text-secondary'}>

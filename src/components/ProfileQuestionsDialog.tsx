@@ -68,8 +68,8 @@ export function ProfileQuestionsDialog({ onConfirm, onCancel }: Props) {
           </button>
           <button
             onClick={() => onConfirm(enabled)}
-            className="flex-1 py-3 rounded-xl bg-cockpit-amber/15 border border-cockpit-amber/40
-                       text-cockpit-amber text-sm font-semibold hover:bg-cockpit-amber/25 transition-colors"
+            className="flex-1 py-3 rounded-xl bg-cockpit-accent/15 border border-cockpit-accent/40
+                       text-cockpit-accent text-sm font-semibold hover:bg-cockpit-accent/25 transition-colors"
           >
             Create Profile
           </button>

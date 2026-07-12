@@ -54,7 +54,7 @@ export function SaveAsDialog({ sourceProfileName, existingNames, onSave, onCance
             maxLength={60}
             className="w-full px-3 py-2.5 rounded-xl bg-cockpit-bg border border-cockpit-border
                        text-cockpit-text-primary text-sm placeholder-cockpit-text-dim
-                       focus:outline-none focus:border-cockpit-amber/50 focus:ring-2 focus:ring-cockpit-amber/10
+                       focus:outline-none focus:border-cockpit-accent/50 focus:ring-2 focus:ring-cockpit-accent/10
                        transition-all duration-150 mb-1"
           />
           <p className="text-xs text-red-400 mb-3 min-h-[1rem]">
@@ -73,8 +73,8 @@ export function SaveAsDialog({ sourceProfileName, existingNames, onSave, onCance
             <button
               type="submit"
               disabled={empty || duplicate}
-              className="flex-1 py-3 rounded-xl bg-cockpit-amber/15 border border-cockpit-amber/40
-                         text-cockpit-amber text-sm font-semibold hover:bg-cockpit-amber/25
+              className="flex-1 py-3 rounded-xl bg-cockpit-accent/15 border border-cockpit-accent/40
+                         text-cockpit-accent text-sm font-semibold hover:bg-cockpit-accent/25
                          disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               Save Profile

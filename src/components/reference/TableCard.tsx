@@ -117,7 +117,7 @@ function renderGroupedRows(
       <tr key={`hdr-${group.startIndex}`}>
         <td
           colSpan={columns.length - 1}
-          className="pt-3 pb-1 px-2 font-bold text-cockpit-amber text-[11px] uppercase tracking-wide border-b border-cockpit-border/40"
+          className="pt-3 pb-1 px-2 font-bold text-cockpit-accent text-[11px] uppercase tracking-wide border-b border-cockpit-border/40"
         >
           {columns[0]} {group.label}
         </td>

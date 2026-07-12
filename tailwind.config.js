@@ -16,9 +16,6 @@ export default {
           'on-accent':     'rgb(var(--c-on-accent)       / <alpha-value>)',
           caution:         'rgb(var(--c-caution)         / <alpha-value>)',
           'caution-dim':   'rgb(var(--c-caution-dim)     / <alpha-value>)',
-          /* deprecated aliases — removed in the sweep task */
-          amber:           'rgb(var(--c-caution)         / <alpha-value>)',
-          'amber-dim':     'rgb(var(--c-caution-dim)     / <alpha-value>)',
           green:           'rgb(var(--c-green)           / <alpha-value>)',
           red:             'rgb(var(--c-red)             / <alpha-value>)',
           extrapolated:    'rgb(var(--c-extrapolated)    / <alpha-value>)',
@@ -65,7 +62,6 @@ export default {
       boxShadow: {
         'cockpit': '0 4px 24px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05)',
         'accent-glow': '0 0 12px rgb(var(--c-accent) / 0.3)',
-        'amber-glow': '0 0 12px rgb(var(--c-accent) / 0.3)',  /* deprecated alias */
         'green-glow': '0 0 12px rgba(34,197,94,0.3)',
         'red-glow': '0 0 20px rgba(239,68,68,0.4)',
       }

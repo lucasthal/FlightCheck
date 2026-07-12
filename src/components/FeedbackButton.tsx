@@ -19,7 +19,7 @@ export function FeedbackButton({ aircraft, phaseName }: Props) {
         className="fixed bottom-44 right-6 lg:bottom-6 z-40 w-11 h-11 flex items-center justify-center rounded-full
                    bg-[var(--cockpit-card)] border border-[var(--cockpit-border)]
                    text-cockpit-text-secondary hover:text-cockpit-text-primary
-                   hover:border-cockpit-amber/60 hover:shadow-[0_0_12px_rgba(245,158,11,0.25)]
+                   hover:border-cockpit-accent/60 hover:shadow-accent-glow
                    transition-all duration-200 cursor-pointer"
       >
         <MessageSquare className="w-5 h-5" />

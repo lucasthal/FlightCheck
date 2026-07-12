@@ -132,7 +132,7 @@ export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
               <button
                 onClick={handleSaveName}
                 disabled={savingName || !nameInput.trim() || nameInput.trim() === currentName}
-                className="rounded-lg bg-cockpit-amber px-4 py-2 text-sm font-medium text-black transition-colors hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="rounded-lg bg-cockpit-accent px-4 py-2 text-sm font-medium text-cockpit-on-accent transition-colors hover:bg-cockpit-accent-bright disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {savingName ? 'Saving…' : 'Save'}
               </button>
@@ -169,7 +169,7 @@ export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
                   ) : (
                     <button
                       onClick={handleManageStripe}
-                      className="text-xs text-cockpit-amber hover:underline"
+                      className="text-xs text-cockpit-accent hover:underline"
                     >
                       Manage subscription →
                     </button>
@@ -177,7 +177,7 @@ export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
                 </>
               )}
               {trialEndsAt && (
-                <p className="text-xs text-cockpit-amber">
+                <p className="text-xs text-cockpit-caution">
                   Trial ends {trialEndsAt.toLocaleDateString()}
                 </p>
               )}
@@ -194,7 +194,7 @@ export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
                   onClick={() => updatePreference('theme', value)}
                   className={`flex-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                     preferences.theme === value
-                      ? 'bg-cockpit-amber text-black'
+                      ? 'bg-cockpit-accent text-cockpit-on-accent'
                       : 'bg-cockpit-card text-cockpit-text-primary border border-cockpit-border'
                   }`}
                 >
@@ -214,7 +214,7 @@ export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
                   onClick={() => updatePreference('text_size', value)}
                   className={`flex-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                     preferences.text_size === value
-                      ? 'bg-cockpit-amber text-black'
+                      ? 'bg-cockpit-accent text-cockpit-on-accent'
                       : 'bg-cockpit-card text-cockpit-text-primary border border-cockpit-border'
                   }`}
                 >
@@ -230,7 +230,7 @@ export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
             <button
               onClick={() => updatePreference('keep_screen_awake', !preferences.keep_screen_awake)}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                preferences.keep_screen_awake ? 'bg-cockpit-amber' : 'bg-cockpit-border'
+                preferences.keep_screen_awake ? 'bg-cockpit-accent' : 'bg-cockpit-border'
               }`}
               aria-label="Toggle keep screen awake"
             >
@@ -248,7 +248,7 @@ export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
             <button
               onClick={() => updatePreference('autoscroll', !preferences.autoscroll)}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                preferences.autoscroll ? 'bg-cockpit-amber' : 'bg-cockpit-border'
+                preferences.autoscroll ? 'bg-cockpit-accent' : 'bg-cockpit-border'
               }`}
               aria-label="Toggle auto-scroll to next item"
             >
@@ -266,7 +266,7 @@ export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
             <button
               onClick={() => updatePreference('haptic_feedback', !preferences.haptic_feedback)}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                preferences.haptic_feedback ? 'bg-cockpit-amber' : 'bg-cockpit-border'
+                preferences.haptic_feedback ? 'bg-cockpit-accent' : 'bg-cockpit-border'
               }`}
               aria-label="Toggle haptic feedback"
             >
@@ -303,7 +303,7 @@ export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
                   </p>
                 )}
                 {isEntitled && source === 'apple' && (
-                  <p className="text-xs text-cockpit-amber">
+                  <p className="text-xs text-cockpit-caution">
                     Your App Store subscription is billed by Apple and will not stop
                     when your account is deleted — cancel it in Settings → Apple ID →
                     Subscriptions.
