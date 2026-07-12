@@ -1,7 +1,7 @@
 // src/components/PhaseBanner.tsx
 import { CheckCircle2 } from 'lucide-react'
 import type { AircraftCategory, ChecklistPhase } from '../types'
-import { PHASE_ICONS, ACCENT_HEX } from './phaseConstants'
+import { PHASE_ICONS, ACCENT_VAR } from './phaseConstants'
 
 interface Props {
   phase: ChecklistPhase
@@ -24,7 +24,8 @@ export function PhaseBanner({
   isPhaseComplete,
   category,
 }: Props) {
-  const hex = ACCENT_HEX[category]
+  const accentVar = ACCENT_VAR[category]
+  const accent = `rgb(var(${accentVar}))`
   const pct = total > 0 ? Math.round((checked / total) * 100) : 0
   const icon = PHASE_ICONS[phase.category]
 
@@ -34,17 +35,17 @@ export function PhaseBanner({
       <div
         className="rounded-r-xl px-3 py-3 flex items-center gap-3 relative overflow-hidden"
         style={{
-          border: '1px solid #1e3a5f',
-          borderLeft: `3px solid ${hex}`,
-          background: `linear-gradient(90deg, ${hex}0f 0%, transparent 70%)`,
+          border: '1px solid rgb(var(--c-border))',
+          borderLeft: `3px solid ${accent}`,
+          background: `linear-gradient(90deg, rgb(var(${accentVar}) / 0.06) 0%, transparent 70%)`,
         }}
       >
         {/* Phase icon */}
         <div
           className="w-10 h-10 rounded-lg flex items-center justify-center text-xl flex-shrink-0"
           style={{
-            border: `1px solid ${hex}4d`,
-            background: `${hex}14`,
+            border: `1px solid rgb(var(${accentVar}) / 0.3)`,
+            background: `rgb(var(${accentVar}) / 0.08)`,
           }}
         >
           {icon}
@@ -78,7 +79,7 @@ export function PhaseBanner({
         {/* Percentage / complete mark */}
         <div
           className="font-mono font-bold text-2xl flex-shrink-0 tabular-nums"
-          style={{ color: isComplete ? '#34d399' : hex, fontSize: 'calc(1.5rem * var(--text-scale))' }}
+          style={{ color: isComplete ? 'rgb(var(--c-green))' : accent, fontSize: 'calc(1.5rem * var(--text-scale))' }}
         >
           {isComplete ? '✓' : `${pct}%`}
         </div>
@@ -94,7 +95,7 @@ export function PhaseBanner({
               key={p.id}
               className="flex-1 h-[3px] rounded-full transition-all duration-500"
               style={{
-                background: complete ? '#34d399' : active ? hex : '#1a2535',
+                background: complete ? 'rgb(var(--c-green))' : active ? accent : 'rgb(var(--c-card))',
               }}
             />
           )

@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react'
 import { AlertTriangle, RotateCcw } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import type { AircraftCategory, ChecklistPhase } from '../types'
-import { PHASE_ICONS, ACCENT_HEX } from './phaseConstants'
+import { PHASE_ICONS, ACCENT_VAR } from './phaseConstants'
 
 interface Props {
   normalPhases: ChecklistPhase[]
@@ -26,7 +26,8 @@ export function PhaseStrip({
   onReset,
   category,
 }: Props) {
-  const hex = ACCENT_HEX[category]
+  const accentVar = ACCENT_VAR[category]
+  const accent = `rgb(var(${accentVar}))`
   const stripRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -79,22 +80,22 @@ export function PhaseStrip({
               className="relative flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-1.5 md:py-2.5 rounded-full flex-shrink-0 text-[calc(0.75rem*var(--text-scale))] md:text-[calc(0.875rem*var(--text-scale))] font-medium border transition-colors duration-200 active:scale-95 touch-target"
               style={
                 active
-                  ? { borderColor: `${hex}59`, color: hex }
+                  ? { borderColor: `rgb(var(${accentVar}) / 0.35)`, color: accent }
                   : complete
-                  ? { borderColor: '#34d39933', color: '#34d399' }
-                  : { borderColor: '#1e3a5f', color: '#475569' }
+                  ? { borderColor: 'rgb(var(--c-green) / 0.2)', color: 'rgb(var(--c-green))' }
+                  : { borderColor: 'rgb(var(--c-border))', color: 'rgb(var(--c-text-dim))' }
               }
             >
               {active && (
                 <motion.span
                   layoutId="phase-pill-bg"
                   className="absolute inset-0 rounded-full"
-                  style={{ background: `${hex}1a` }}
+                  style={{ background: `rgb(var(${accentVar}) / 0.1)` }}
                   transition={{ type: 'spring', bounce: 0.2, duration: 0.4 }}
                 />
               )}
               {complete && !active && (
-                <span className="absolute inset-0 rounded-full" style={{ background: '#34d39912' }} />
+                <span className="absolute inset-0 rounded-full" style={{ background: 'rgb(var(--c-green) / 0.07)' }} />
               )}
               <span className="relative text-[calc(0.875rem*var(--text-scale))] md:text-[calc(1rem*var(--text-scale))] leading-none">{icon}</span>
               <span className="relative">{complete ? `✓ ${phase.name}` : phase.name}</span>

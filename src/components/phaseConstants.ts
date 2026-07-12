@@ -16,10 +16,10 @@ export const PHASE_ICONS: Record<PhaseCategory, string> = {
   emergency: '',
 }
 
-export const ACCENT_HEX: Record<AircraftCategory, string> = {
-  SEP:        '#60a5fa',
-  MEP:        '#c084fc',
-  Turboprop:  '#fb923c',
-  Jet:        '#fb7185',
-  Helicopter: '#34d399',
+export const ACCENT_VAR: Record<AircraftCategory, string> = {
+  SEP:        '--c-cat-sep',
+  MEP:        '--c-cat-mep',
+  Turboprop:  '--c-cat-tp',
+  Jet:        '--c-cat-jet',
+  Helicopter: '--c-cat-heli',
 }
