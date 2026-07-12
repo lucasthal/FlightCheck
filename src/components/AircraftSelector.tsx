@@ -387,7 +387,7 @@ const AircraftCard = memo(function AircraftCard({ aircraft, onSelect, isFavorite
           </span>
           {emergencyPhases.length > 0 && (
             <span className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
+              <span className="w-1.5 h-1.5 rounded-full bg-cockpit-red" />
               {emergencyPhases.length} emergency
             </span>
           )}

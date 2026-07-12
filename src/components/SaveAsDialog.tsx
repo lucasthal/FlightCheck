@@ -57,7 +57,7 @@ export function SaveAsDialog({ sourceProfileName, existingNames, onSave, onCance
                        focus:outline-none focus:border-cockpit-accent/50 focus:ring-2 focus:ring-cockpit-accent/10
                        transition-all duration-150 mb-1"
           />
-          <p className="text-xs text-red-400 mb-3 min-h-[1rem]">
+          <p className="text-xs text-cockpit-red mb-3 min-h-[1rem]">
             {duplicate ? 'A profile with this name already exists.' : ''}
           </p>
 

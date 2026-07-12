@@ -611,7 +611,7 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings, onPhaseChange 
           title="Discard Changes?"
           body="You have unsaved edits. Discard them?"
           confirmLabel="Discard"
-          confirmClass="text-red-400 border-red-500/30 bg-red-500/10 hover:bg-red-500/20"
+          confirmClass="text-cockpit-red border-cockpit-red/30 bg-cockpit-red/10 hover:bg-cockpit-red/20"
           onConfirm={handleDiscardConfirm}
           onCancel={() => { setShowDiscardConfirm(false); setPendingBack(false); setPendingProfileId(undefined) }}
         />
@@ -710,8 +710,8 @@ function PhaseNavContent({
           <button
             onClick={onEmergency}
             className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold
-                       text-red-400 border border-red-500/20 bg-red-500/5
-                       hover:bg-red-500/10 hover:border-red-500/30 transition-all"
+                       text-cockpit-red border border-cockpit-red/20 bg-cockpit-red/5
+                       hover:bg-cockpit-red/10 hover:border-cockpit-red/30 transition-all"
           >
             <AlertTriangle className="w-4 h-4" />
             Emergency Procedures

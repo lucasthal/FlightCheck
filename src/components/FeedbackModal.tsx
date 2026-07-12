@@ -189,7 +189,7 @@ export function FeedbackModal({ isOpen, onClose, aircraft, phaseName }: Props) {
 
           {/* Error — always rendered so aria-live announces changes */}
           <div aria-live="polite" aria-atomic="true">
-            {error && <p className="text-xs text-red-400">{error}</p>}
+            {error && <p className="text-xs text-cockpit-red">{error}</p>}
           </div>
 
           {/* Footer */}

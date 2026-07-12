@@ -146,10 +146,10 @@ export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
               </button>
             </div>
             {nameStatus === 'saved' && (
-              <p className="text-xs text-green-400">Name updated</p>
+              <p className="text-xs text-cockpit-green">Name updated</p>
             )}
             {nameStatus === 'error' && (
-              <p className="text-xs text-red-400">Could not save name. Please try again.</p>
+              <p className="text-xs text-cockpit-red">Could not save name. Please try again.</p>
             )}
           </div>
 
@@ -315,16 +315,16 @@ export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
 
           {/* Danger zone */}
           <div className="space-y-2 border-t border-cockpit-border pt-4">
-            <p className="text-xs text-red-400 uppercase tracking-wide">Danger zone</p>
+            <p className="text-xs text-cockpit-red uppercase tracking-wide">Danger zone</p>
             {!confirmingDelete ? (
               <button
                 onClick={() => setConfirmingDelete(true)}
-                className="text-sm text-red-400 hover:text-red-300 transition-colors"
+                className="text-sm text-cockpit-red hover:text-cockpit-red/80 transition-colors"
               >
                 Delete account
               </button>
             ) : (
-              <div className="space-y-3 rounded-xl border border-red-500/30 bg-red-500/5 p-4">
+              <div className="space-y-3 rounded-xl border border-cockpit-red/30 bg-cockpit-red/5 p-4">
                 <p className="text-sm font-medium text-cockpit-text-primary">
                   Permanently delete your account?
                 </p>
@@ -344,7 +344,7 @@ export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
                     Subscriptions.
                   </p>
                 )}
-                {deleteError && <p className="text-xs text-red-400">{deleteError}</p>}
+                {deleteError && <p className="text-xs text-cockpit-red">{deleteError}</p>}
                 <div className="flex gap-2">
                   <button
                     onClick={() => { setConfirmingDelete(false); setDeleteError(null) }}
@@ -356,7 +356,7 @@ export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
                   <button
                     onClick={handleDeleteAccount}
                     disabled={deleting}
-                    className="flex-1 rounded-lg bg-red-500 px-3 py-2 text-sm font-semibold text-white hover:bg-red-600 transition-colors disabled:opacity-50"
+                    className="flex-1 rounded-lg bg-cockpit-red px-3 py-2 text-sm font-semibold text-white hover:bg-cockpit-red/90 transition-colors disabled:opacity-50"
                   >
                     {deleting ? 'Deleting…' : 'Permanently delete'}
                   </button>

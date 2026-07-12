@@ -19,7 +19,7 @@ export function ProfileQuestionsDialog({ onConfirm, onCancel }: Props) {
       <div className="bg-cockpit-panel border border-cockpit-border rounded-2xl p-6 max-w-sm w-full shadow-cockpit animate-slide-up">
         <div className="flex items-start justify-between mb-1">
           <h3 className="font-bold text-cockpit-text-primary flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-cockpit-blue" />
+            <Sparkles className="w-4 h-4 text-cockpit-info" />
             Customize Checklist
           </h3>
           <button onClick={onCancel} className="p-1.5 rounded-lg hover:bg-white/5 text-cockpit-text-dim">
@@ -37,12 +37,12 @@ export function ProfileQuestionsDialog({ onConfirm, onCancel }: Props) {
               onClick={() => toggle(q.id)}
               className={`w-full flex items-start gap-3 p-3 rounded-xl border text-left transition-all duration-150
                 ${enabled[q.id]
-                  ? 'border-cockpit-blue/40 bg-cockpit-blue/10'
+                  ? 'border-cockpit-info/40 bg-cockpit-info/10'
                   : 'border-cockpit-border bg-cockpit-card/30 opacity-50'
                 }`}
             >
               <div className={`flex-shrink-0 mt-0.5 w-5 h-5 rounded border-2 flex items-center justify-center transition-all
-                ${enabled[q.id] ? 'border-cockpit-blue bg-cockpit-blue' : 'border-cockpit-border'}`}
+                ${enabled[q.id] ? 'border-cockpit-info bg-cockpit-info' : 'border-cockpit-border'}`}
               >
                 {enabled[q.id] && (
                   <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 12 12" stroke="currentColor" strokeWidth={2.5}>

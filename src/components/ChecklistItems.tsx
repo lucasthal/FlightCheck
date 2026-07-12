@@ -51,14 +51,14 @@ function ChecklistItemRow({ item, index, checked, onToggle }: RowProps) {
           : isCaution
           ? 'border-cockpit-caution-soft/20 bg-cockpit-caution-soft/5'
           : isSetup
-          ? 'border-cockpit-blue/25 bg-cockpit-blue/5'
+          ? 'border-cockpit-info/25 bg-cockpit-info/5'
           : 'border-cockpit-border bg-cockpit-card/50 hover:border-cockpit-border hover:bg-cockpit-card'
         }
       `}
     >
       {/* Left severity stripe */}
       {(isWarning || isCaution || isSetup) && !checked && (
-        <div className={`absolute left-0 top-0 bottom-0 w-0.5 ${isWarning ? 'bg-cockpit-caution' : isCaution ? 'bg-cockpit-caution-soft' : 'bg-cockpit-blue'}`} />
+        <div className={`absolute left-0 top-0 bottom-0 w-0.5 ${isWarning ? 'bg-cockpit-caution' : isCaution ? 'bg-cockpit-caution-soft' : 'bg-cockpit-info'}`} />
       )}
 
       <button
@@ -99,7 +99,7 @@ function ChecklistItemRow({ item, index, checked, onToggle }: RowProps) {
                 {item.action}
               </span>
               {isSetup && !checked && (
-                <span title="Added by setup wizard"><Sparkles className="w-3 h-3 text-cockpit-blue flex-shrink-0 self-center" /></span>
+                <span title="Added by setup wizard"><Sparkles className="w-3 h-3 text-cockpit-info flex-shrink-0 self-center" /></span>
               )}
             </div>
 
@@ -144,7 +144,7 @@ function ChecklistItemRow({ item, index, checked, onToggle }: RowProps) {
               onClick={e => { e.stopPropagation(); setNoteOpen(v => !v) }}
               className={`mt-2 flex items-center gap-1 text-xs font-medium transition-colors
                 ${noteOpen
-                  ? isCaution ? 'text-cockpit-caution-soft' : 'text-cockpit-blue'
+                  ? isCaution ? 'text-cockpit-caution-soft' : 'text-cockpit-info'
                   : 'text-cockpit-text-dim hover:text-cockpit-text-secondary'}`}
             >
               <Info className="w-3.5 h-3.5" />
@@ -158,7 +158,7 @@ function ChecklistItemRow({ item, index, checked, onToggle }: RowProps) {
             <div className={`mt-2 px-3 py-2 rounded-lg text-xs leading-relaxed animate-fade-in
               ${isCaution
                 ? 'bg-cockpit-caution-soft/10 border border-cockpit-caution-soft/20 text-cockpit-caution-soft'
-                : 'bg-cockpit-blue/10 border border-cockpit-blue/20 text-cockpit-text-secondary'}`}>
+                : 'bg-cockpit-info/10 border border-cockpit-info/20 text-cockpit-text-secondary'}`}>
               {item.note}
             </div>
           )}

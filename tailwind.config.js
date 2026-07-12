@@ -30,7 +30,7 @@ export default {
           'cat-jet-deep':  'rgb(var(--c-cat-jet-deep)    / <alpha-value>)',
           'cat-heli':      'rgb(var(--c-cat-heli)        / <alpha-value>)',
           'cat-heli-deep': 'rgb(var(--c-cat-heli-deep)   / <alpha-value>)',
-          blue:            '#3b82f6',
+          info:            'rgb(var(--c-info)            / <alpha-value>)',
           'text-primary':  'rgb(var(--c-text-primary)    / <alpha-value>)',
           'text-secondary':'rgb(var(--c-text-secondary)  / <alpha-value>)',
           'text-dim':      'rgb(var(--c-text-dim)        / <alpha-value>)',

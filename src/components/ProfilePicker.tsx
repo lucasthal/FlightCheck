@@ -102,7 +102,7 @@ export function ProfilePicker({ profiles, activeProfile, onSelect, onSaveAs, onR
               <button
                 onClick={() => { onResetToOriginal(); setOpen(false) }}
                 className="w-full flex items-center gap-2 px-3 py-2 text-xs text-cockpit-text-dim
-                           hover:bg-cockpit-card hover:text-red-400 rounded-lg transition-colors"
+                           hover:bg-cockpit-card hover:text-cockpit-red rounded-lg transition-colors"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 Reset to original…

@@ -7,33 +7,34 @@
    .theme-day overrides neutrals; .palette-X.theme-day overrides accent.
    .theme-night is declared LAST and wins over any palette. */
 :root {
-  --c-bg:             10 12 16;
-  --c-panel:          16 20 27;
-  --c-card:           23 29 38;
-  --c-border:         40 49 62;
-  --c-text-primary:   230 237 243;
-  --c-text-secondary: 139 152 169;
-  --c-text-dim:       90 101 117;
+  --c-bg:             7 9 13;
+  --c-panel:          14 20 28;
+  --c-card:           21 29 40;
+  --c-border:         42 54 70;
+  --c-text-primary:   232 240 247;
+  --c-text-secondary: 148 163 180;
+  --c-text-dim:       96 108 124;
   --c-accent:         34 211 238;
   --c-accent-dim:     14 116 144;
   --c-accent-bright:  103 232 249;
   --c-on-accent:      0 0 0;
-  --c-caution:        251 191 36;
+  --c-caution:        255 197 61;
   --c-caution-dim:    202 138 4;
-  --c-caution-soft:   250 204 21;
-  --c-green:          52 211 153;
-  --c-red:            239 68 68;
+  --c-caution-soft:   255 216 77;
+  --c-green:          53 224 140;
+  --c-red:            255 82 82;
   --c-extrapolated:   167 139 250;
-  --c-cat-sep:        96 165 250;
-  --c-cat-sep-deep:   37 99 235;
-  --c-cat-mep:        192 132 252;
-  --c-cat-mep-deep:   147 51 234;
-  --c-cat-tp:         251 146 60;
-  --c-cat-tp-deep:    234 88 12;
-  --c-cat-jet:        251 113 133;
+  --c-info:           77 159 255;
+  --c-cat-sep:        77 159 255;
+  --c-cat-sep-deep:   29 100 224;
+  --c-cat-mep:        176 124 255;
+  --c-cat-mep-deep:   124 58 237;
+  --c-cat-tp:         255 150 64;
+  --c-cat-tp-deep:    224 100 16;
+  --c-cat-jet:        255 107 133;
   --c-cat-jet-deep:   225 29 72;
-  --c-cat-heli:       52 211 153;
-  --c-cat-heli-deep:  5 150 105;
+  --c-cat-heli:       61 220 151;
+  --c-cat-heli-deep:  9 163 102;
   --text-scale:       1;
 }
 
@@ -55,16 +56,17 @@
   --c-accent-dim:     36 86 179;
   --c-accent-bright:  147 190 255;
   --c-extrapolated:   100 175 225;
-  --c-green:          74 222 128;
-  --c-cat-sep:        56 189 248;
-  --c-cat-sep-deep:   2 132 199;
-  --c-cat-mep:        167 139 250;
+  --c-info:           102 178 255;
+  --c-green:          62 224 127;
+  --c-cat-sep:        61 208 255;
+  --c-cat-sep-deep:   8 145 199;
+  --c-cat-mep:        178 141 255;
   --c-cat-mep-deep:   124 58 237;
-  --c-cat-tp:         251 191 36;
+  --c-cat-tp:         255 197 61;
   --c-cat-tp-deep:    217 119 6;
-  --c-cat-jet:        248 113 113;
+  --c-cat-jet:        255 107 107;
   --c-cat-jet-deep:   220 38 38;
-  --c-cat-heli:       74 222 128;
+  --c-cat-heli:       62 224 127;
   --c-cat-heli-deep:  22 163 74;
 }
 
@@ -80,19 +82,20 @@
   --c-accent-dim:     4 120 87;
   --c-accent-bright:  110 231 183;
   --c-extrapolated:   100 175 225;
-  --c-green:          163 230 53;
-  --c-caution:        245 158 11;
+  --c-info:           96 165 250;
+  --c-green:          168 226 46;
+  --c-caution:        255 176 32;
   --c-caution-dim:    180 83 9;
-  --c-caution-soft:   234 179 8;
+  --c-caution-soft:   242 206 43;
   --c-cat-sep:        96 165 250;
   --c-cat-sep-deep:   37 99 235;
-  --c-cat-mep:        232 121 249;
+  --c-cat-mep:        240 128 255;
   --c-cat-mep-deep:   192 38 211;
-  --c-cat-tp:         251 146 60;
+  --c-cat-tp:         255 150 64;
   --c-cat-tp-deep:    194 65 12;
-  --c-cat-jet:        248 113 113;
+  --c-cat-jet:        255 107 107;
   --c-cat-jet-deep:   185 28 28;
-  --c-cat-heli:       45 212 191;
+  --c-cat-heli:       45 224 191;
   --c-cat-heli-deep:  13 148 136;
 }
 
@@ -108,16 +111,17 @@
   --c-accent-dim:     79 70 229;
   --c-accent-bright:  179 184 251;
   --c-extrapolated:   100 175 225;
-  --c-green:          74 222 128;
-  --c-cat-sep:        56 189 248;
+  --c-info:           61 208 255;
+  --c-green:          62 224 127;
+  --c-cat-sep:        61 208 255;
   --c-cat-sep-deep:   2 132 199;
-  --c-cat-mep:        232 121 249;
+  --c-cat-mep:        240 128 255;
   --c-cat-mep-deep:   192 38 211;
-  --c-cat-tp:         251 191 36;
+  --c-cat-tp:         255 197 61;
   --c-cat-tp-deep:    217 119 6;
-  --c-cat-jet:        251 113 133;
+  --c-cat-jet:        255 107 133;
   --c-cat-jet-deep:   225 29 72;
-  --c-cat-heli:       52 211 153;
+  --c-cat-heli:       61 220 151;
   --c-cat-heli-deep:  5 150 105;
 }
 
@@ -138,6 +142,7 @@
   --c-green:          21 128 61;
   --c-red:            220 38 38;
   --c-extrapolated:   29 100 190;
+  --c-info:           29 78 216;
   --c-caution-soft:   202 138 4;
   --c-cat-sep:        2 132 199;
   --c-cat-sep-deep:   2 105 160;
@@ -175,6 +180,7 @@
   --c-green:          153 68 0;
   --c-red:            187 0 0;
   --c-extrapolated:   150 60 5;
+  --c-info:           204 58 0;
   --c-caution-soft:   204 58 0;
   --c-cat-sep:        204 58 0;
   --c-cat-sep-deep:   150 40 0;
@@ -251,9 +257,9 @@
   /* ─── Emergency button ───────────────────────────────────────── */
   .emergency-btn {
     @apply flex items-center gap-1.5 px-3 py-2 rounded-xl
-           bg-red-500/10 border border-red-500/30
-           text-red-400 font-semibold text-xs
-           hover:bg-red-500/20 hover:border-red-500/40
+           bg-cockpit-red/10 border border-cockpit-red/30
+           text-cockpit-red font-semibold text-xs
+           hover:bg-cockpit-red/20 hover:border-cockpit-red/40
            active:scale-95 transition-all duration-150;
   }
 

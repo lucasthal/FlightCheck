@@ -118,7 +118,7 @@ export function Paywall({ priceLabel, isReturningUser, onPurchased, onSignIn }: 
           </ul>
 
           {error && (
-            <div className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2 mb-3">
+            <div className="text-xs text-cockpit-red bg-cockpit-red/10 border border-cockpit-red/20 rounded-lg px-3 py-2 mb-3">
               {error}
             </div>
           )}

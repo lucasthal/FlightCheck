@@ -246,7 +246,7 @@ function SortablePhaseSection({ phase, editor }: { phase: ProfilePhase; editor: 
         <button
           onClick={() => editor.deletePhase(phase.id)}
           aria-label={`Delete phase ${phase.title}`}
-          className="p-1 rounded-lg text-cockpit-text-dim hover:text-red-400 hover:bg-cockpit-card transition-colors"
+          className="p-1 rounded-lg text-cockpit-text-dim hover:text-cockpit-red hover:bg-cockpit-card transition-colors"
         >
           <Trash2 className="w-3.5 h-3.5" />
         </button>
@@ -355,7 +355,7 @@ function SortableItemRow({ item, index, phaseId, editor }: { item: ProfileItem; 
               {item.action}
             </span>
             {item.severity === 'setup' && (
-              <span title="Added by setup wizard"><Sparkles className="w-3.5 h-3.5 text-cockpit-blue flex-shrink-0" /></span>
+              <span title="Added by setup wizard"><Sparkles className="w-3.5 h-3.5 text-cockpit-info flex-shrink-0" /></span>
             )}
             {!noteOpen && (item.note ? (
               <button
@@ -386,7 +386,7 @@ function SortableItemRow({ item, index, phaseId, editor }: { item: ProfileItem; 
             <button
               onClick={() => editor.deleteItem(phaseId, item.id)}
               aria-label={`Delete item ${item.action}`}
-              className="p-1 rounded-lg text-cockpit-text-dim hover:text-red-400 hover:bg-cockpit-bg transition-colors flex-shrink-0"
+              className="p-1 rounded-lg text-cockpit-text-dim hover:text-cockpit-red hover:bg-cockpit-bg transition-colors flex-shrink-0"
             >
               <Trash2 className="w-3.5 h-3.5" />
             </button>
@@ -440,7 +440,7 @@ function SortableItemRow({ item, index, phaseId, editor }: { item: ProfileItem; 
                 note: undefined,
                 ...(item.severity === 'caution' ? { severity: undefined } : {}),
               })}
-              className="mt-1.5 text-[11px] text-cockpit-text-dim hover:text-red-400 transition-colors"
+              className="mt-1.5 text-[11px] text-cockpit-text-dim hover:text-cockpit-red transition-colors"
             >
               ✕ Remove note
             </button>
