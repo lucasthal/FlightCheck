@@ -10,8 +10,15 @@ export default {
           panel:           'rgb(var(--c-panel)           / <alpha-value>)',
           card:            'rgb(var(--c-card)            / <alpha-value>)',
           border:          'rgb(var(--c-border)          / <alpha-value>)',
-          amber:           'rgb(var(--c-amber)           / <alpha-value>)',
-          'amber-dim':     'rgb(var(--c-amber-dim)       / <alpha-value>)',
+          accent:          'rgb(var(--c-accent)          / <alpha-value>)',
+          'accent-dim':    'rgb(var(--c-accent-dim)      / <alpha-value>)',
+          'accent-bright': 'rgb(var(--c-accent-bright)   / <alpha-value>)',
+          'on-accent':     'rgb(var(--c-on-accent)       / <alpha-value>)',
+          caution:         'rgb(var(--c-caution)         / <alpha-value>)',
+          'caution-dim':   'rgb(var(--c-caution-dim)     / <alpha-value>)',
+          /* deprecated aliases — removed in the sweep task */
+          amber:           'rgb(var(--c-caution)         / <alpha-value>)',
+          'amber-dim':     'rgb(var(--c-caution-dim)     / <alpha-value>)',
           green:           'rgb(var(--c-green)           / <alpha-value>)',
           red:             'rgb(var(--c-red)             / <alpha-value>)',
           extrapolated:    'rgb(var(--c-extrapolated)    / <alpha-value>)',
@@ -26,14 +33,14 @@ export default {
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
       animation: {
-        'pulse-amber': 'pulse-amber 2s ease-in-out infinite',
+        'pulse-accent': 'pulse-accent 2s ease-in-out infinite',
         'fade-in': 'fade-in 0.3s ease-out',
         'slide-up': 'slide-up 0.3s ease-out',
         'slide-in-right': 'slide-in-right 0.3s ease-out',
         'check-bounce': 'check-bounce 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97)',
       },
       keyframes: {
-        'pulse-amber': {
+        'pulse-accent': {
           '0%, 100%': { opacity: '1' },
           '50%': { opacity: '0.5' },
         },
@@ -57,7 +64,8 @@ export default {
       },
       boxShadow: {
         'cockpit': '0 4px 24px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05)',
-        'amber-glow': '0 0 12px rgba(245,158,11,0.3)',
+        'accent-glow': '0 0 12px rgb(var(--c-accent) / 0.3)',
+        'amber-glow': '0 0 12px rgb(var(--c-accent) / 0.3)',  /* deprecated alias */
         'green-glow': '0 0 12px rgba(34,197,94,0.3)',
         'red-glow': '0 0 20px rgba(239,68,68,0.4)',
       }

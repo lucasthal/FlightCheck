@@ -3,35 +3,75 @@
 @tailwind utilities;
 
 /* ─── Theme color variables ────────────────────────────────────── */
+/* Default = dark mode, glass palette. .palette-* overrides neutrals+accent.
+   .theme-day overrides neutrals; .palette-X.theme-day overrides accent.
+   .theme-night is declared LAST and wins over any palette. */
 :root {
-  --c-bg:             10 14 26;
-  --c-panel:          15 23 42;
-  --c-card:           30 41 59;
-  --c-border:         51 65 85;
-  --c-text-primary:   226 232 240;
-  --c-text-secondary: 148 163 184;
-  --c-text-dim:       71 85 105;
-  --c-amber:          245 158 11;
-  --c-amber-dim:      180 83 9;
+  --c-bg:             10 12 16;
+  --c-panel:          16 20 27;
+  --c-card:           23 29 38;
+  --c-border:         40 49 62;
+  --c-text-primary:   230 237 243;
+  --c-text-secondary: 139 152 169;
+  --c-text-dim:       90 101 117;
+  --c-accent:         34 211 238;
+  --c-accent-dim:     14 116 144;
+  --c-accent-bright:  103 232 249;
+  --c-on-accent:      0 0 0;
+  --c-caution:        245 158 11;
+  --c-caution-dim:    180 83 9;
   --c-green:          34 197 94;
   --c-red:            239 68 68;
-  --c-extrapolated:   100 175 225;
+  --c-extrapolated:   167 139 250;
   --text-scale:       1;
 }
 
-.theme-night {
-  --c-bg:             4 1 0;
-  --c-panel:          8 2 0;
-  --c-card:           16 4 0;
-  --c-border:         45 12 0;
-  --c-text-primary:   204 58 0;
-  --c-text-secondary: 122 34 0;
-  --c-text-dim:       61 16 0;
-  --c-amber:          204 58 0;
-  --c-amber-dim:      122 34 0;
-  --c-green:          153 68 0;
-  --c-red:            187 0 0;
-  --c-extrapolated:   150 60 5;
+.palette-teal {
+  --c-accent:         43 200 217;
+  --c-accent-dim:     15 118 110;
+  --c-accent-bright:  94 234 212;
+}
+
+.palette-flightdeck {
+  --c-bg:             11 18 32;
+  --c-panel:          17 28 49;
+  --c-card:           24 38 68;
+  --c-border:         43 61 99;
+  --c-text-primary:   227 233 244;
+  --c-text-secondary: 147 163 189;
+  --c-text-dim:       95 110 133;
+  --c-accent:         91 155 255;
+  --c-accent-dim:     36 86 179;
+  --c-accent-bright:  147 190 255;
+  --c-extrapolated:   100 175 225;
+}
+
+.palette-titanium {
+  --c-bg:             15 14 12;
+  --c-panel:          23 22 20;
+  --c-card:           32 30 27;
+  --c-border:         56 53 47;
+  --c-text-primary:   234 232 228;
+  --c-text-secondary: 160 155 147;
+  --c-text-dim:       107 102 89;
+  --c-accent:         45 212 143;
+  --c-accent-dim:     4 120 87;
+  --c-accent-bright:  110 231 183;
+  --c-extrapolated:   100 175 225;
+}
+
+.palette-indigo {
+  --c-bg:             14 15 30;
+  --c-panel:          20 22 43;
+  --c-card:           28 31 58;
+  --c-border:         50 55 100;
+  --c-text-primary:   228 230 245;
+  --c-text-secondary: 154 160 196;
+  --c-text-dim:       102 108 148;
+  --c-accent:         139 147 248;
+  --c-accent-dim:     79 70 229;
+  --c-accent-bright:  179 184 251;
+  --c-extrapolated:   100 175 225;
 }
 
 .theme-day {
@@ -42,11 +82,40 @@
   --c-text-primary:   15 23 42;
   --c-text-secondary: 55 65 81;
   --c-text-dim:       107 114 128;
-  --c-amber:          217 119 6;
-  --c-amber-dim:      146 64 14;
+  --c-accent:         8 145 178;
+  --c-accent-dim:     21 94 117;
+  --c-accent-bright:  6 166 206;
+  --c-on-accent:      255 255 255;
+  --c-caution:        217 119 6;
+  --c-caution-dim:    146 64 14;
   --c-green:          21 128 61;
   --c-red:            220 38 38;
   --c-extrapolated:   29 100 190;
+}
+.palette-teal.theme-day       { --c-accent: 13 148 136; --c-accent-dim: 17 94 89;  --c-accent-bright: 15 176 159; }
+.palette-flightdeck.theme-day { --c-accent: 37 99 235;  --c-accent-dim: 30 64 175; --c-accent-bright: 59 118 246; --c-extrapolated: 29 100 190; }
+.palette-titanium.theme-day   { --c-accent: 5 150 105;  --c-accent-dim: 6 95 70;   --c-accent-bright: 8 178 126;  --c-extrapolated: 29 100 190; }
+.palette-indigo.theme-day     { --c-accent: 79 70 229;  --c-accent-dim: 55 48 163; --c-accent-bright: 97 89 240;  --c-extrapolated: 29 100 190; }
+
+/* Night vision: always wins — declared after all palette blocks, and
+   accent/caution collapse to the same red-orange as everything else. */
+.theme-night {
+  --c-bg:             4 1 0;
+  --c-panel:          8 2 0;
+  --c-card:           16 4 0;
+  --c-border:         45 12 0;
+  --c-text-primary:   204 58 0;
+  --c-text-secondary: 122 34 0;
+  --c-text-dim:       61 16 0;
+  --c-accent:         204 58 0;
+  --c-accent-dim:     122 34 0;
+  --c-accent-bright:  204 58 0;
+  --c-on-accent:      0 0 0;
+  --c-caution:        204 58 0;
+  --c-caution-dim:    122 34 0;
+  --c-green:          153 68 0;
+  --c-red:            187 0 0;
+  --c-extrapolated:   150 60 5;
 }
 
 @layer base {
@@ -90,8 +159,8 @@
            transition-all duration-200;
   }
   .aircraft-card:hover {
-    @apply border-cockpit-amber/30 -translate-y-0.5;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(245,158,11,0.1);
+    @apply border-cockpit-accent/30 -translate-y-0.5;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgb(var(--c-accent) / 0.1);
   }
   .aircraft-card:active { @apply scale-[0.98]; }
 
@@ -102,8 +171,8 @@
            hover:text-cockpit-text-primary hover:bg-white/5;
   }
   .phase-nav-btn.active {
-    @apply bg-cockpit-amber/10 text-cockpit-amber;
-    box-shadow: inset 0 0 0 1px rgba(245,158,11,0.2);
+    @apply bg-cockpit-accent/10 text-cockpit-accent;
+    box-shadow: inset 0 0 0 1px rgb(var(--c-accent) / 0.2);
   }
   .phase-nav-btn.completed {
     @apply text-cockpit-green;
@@ -129,7 +198,7 @@
     @apply border-cockpit-green/15 bg-cockpit-green/[0.04];
   }
   .check-item.severity-warning {
-    @apply border-l-2 border-l-cockpit-amber;
+    @apply border-l-2 border-l-cockpit-caution;
   }
 
   /* ─── Glass panel ────────────────────────────────────────────── */
