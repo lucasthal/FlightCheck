@@ -6,6 +6,7 @@ import {
   type UserPreferences,
   type Theme,
   DEFAULT_PREFERENCES,
+  COLOR_PALETTES,
 } from '../types'
 
 const LS_KEY = 'flightcheck-preferences'
@@ -75,6 +76,7 @@ function useProvidePreferences(user: User | null): UsePreferencesResult {
             keep_screen_awake:   data.keep_screen_awake   ?? DEFAULT_PREFERENCES.keep_screen_awake,
             autoscroll:          data.autoscroll          ?? DEFAULT_PREFERENCES.autoscroll,
             haptic_feedback:     data.haptic_feedback     ?? DEFAULT_PREFERENCES.haptic_feedback,
+            color_palette:       COLOR_PALETTES.includes(data.color_palette) ? data.color_palette : DEFAULT_PREFERENCES.color_palette,
           }
           setPreferences(loaded)
           writeLocalPreferences(loaded)
@@ -110,12 +112,14 @@ function useProvidePreferences(user: User | null): UsePreferencesResult {
   useEffect(() => {
     const root = document.documentElement
     root.classList.remove('dark', 'theme-night', 'theme-day')
+    COLOR_PALETTES.forEach(p => root.classList.remove(`palette-${p}`))
     if (preferences.theme === 'dark' || preferences.theme === 'night') {
       root.classList.add('dark')
     }
     if (preferences.theme === 'night') root.classList.add('theme-night')
     if (preferences.theme === 'day')   root.classList.add('theme-day')
-  }, [preferences.theme])
+    root.classList.add(`palette-${preferences.color_palette}`)
+  }, [preferences.theme, preferences.color_palette])
 
   // ── Side effects: text size ─────────────────────────────────────
   useEffect(() => {

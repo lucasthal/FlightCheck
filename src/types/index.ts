@@ -96,6 +96,8 @@ export type ViewMode = 'home' | 'checklist' | 'emergency'
 // ── User Preferences ─────────────────────────────────────────────
 export type Theme    = 'dark' | 'night' | 'day'
 export type TextSize = 'sm' | 'md' | 'lg' | 'xl'
+export type ColorPalette = 'glass' | 'teal' | 'flightdeck' | 'titanium' | 'indigo'
+export const COLOR_PALETTES: ColorPalette[] = ['glass', 'teal', 'flightdeck', 'titanium', 'indigo']
 
 export interface UserPreferences {
   theme:               Theme
@@ -103,6 +105,7 @@ export interface UserPreferences {
   keep_screen_awake:   boolean
   autoscroll:          boolean
   haptic_feedback:     boolean
+  color_palette:       ColorPalette
 }
 
 export const DEFAULT_PREFERENCES: UserPreferences = {
@@ -111,4 +114,5 @@ export const DEFAULT_PREFERENCES: UserPreferences = {
   keep_screen_awake:   false,
   autoscroll:          true,
   haptic_feedback:     true,
+  color_palette:       'glass',
 }
