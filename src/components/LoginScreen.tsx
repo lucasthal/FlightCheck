@@ -64,7 +64,7 @@ export function LoginScreen() {
   if (signUpEmail) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-cockpit-bg px-4">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(245,158,11,0.06),transparent_60%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgb(var(--c-accent)/0.06),transparent_60%)]" />
         <div className="relative w-full max-w-sm">
           <div className="flex items-center gap-3 mb-8 justify-center">
             <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-cockpit-accent to-cockpit-accent-dim flex items-center justify-center shadow-accent-glow">
@@ -106,7 +106,7 @@ export function LoginScreen() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-cockpit-bg px-4">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(245,158,11,0.06),transparent_60%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgb(var(--c-accent)/0.06),transparent_60%)]" />
 
       <div className="relative w-full max-w-sm">
         {/* Logo */}

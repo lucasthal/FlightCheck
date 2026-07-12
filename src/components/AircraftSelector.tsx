@@ -153,7 +153,7 @@ export function AircraftSelector({ onSelect, onOpenSettings }: Props) {
       <OfflineBanner visible={!isOnline} />
       <header className="relative overflow-hidden border-b border-cockpit-border/40">
         <div className="absolute inset-0 bg-gradient-to-b from-cockpit-accent/5 via-cockpit-panel to-cockpit-bg" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(245,158,11,0.08),transparent_70%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgb(var(--c-accent)/0.08),transparent_70%)]" />
 
         <div className="relative max-w-5xl mx-auto px-4 pt-8 pb-6 safe-top">
           {/* Logo row + profile */}
