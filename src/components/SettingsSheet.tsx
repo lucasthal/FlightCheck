@@ -38,6 +38,15 @@ export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
   const { user, signOut, fullSignOut } = useAuth()
   const { preferences, updatePreference } = usePreferences()
   const { source, trialEndsAt, isEntitled } = useEntitlement()
+  const [appInfo, setAppInfo] = useState<{ version: string; build: string } | null>(null)
+
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return
+    import('@capacitor/app')
+      .then(({ App }) => App.getInfo())
+      .then(info => setAppInfo({ version: info.version, build: info.build }))
+      .catch(() => {})
+  }, [])
 
   const handleManageStripe = async () => {
     try {
@@ -364,6 +373,11 @@ export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
               </div>
             )}
           </div>
+
+          {/* Version */}
+          <p className="text-center text-xs text-cockpit-text-dim pt-1">
+            FlightCheck {appInfo ? `${appInfo.version} (${appInfo.build})` : 'Web'}
+          </p>
         </div>
       </div>
     </>
