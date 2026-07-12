@@ -29,7 +29,9 @@ function readLocalPreferences(): UserPreferences | null {
   try {
     const raw = localStorage.getItem(LS_KEY)
     if (!raw) return null
-    return JSON.parse(raw) as UserPreferences
+    const parsed = { ...DEFAULT_PREFERENCES, ...(JSON.parse(raw) as Partial<UserPreferences>) }
+    if (!COLOR_PALETTES.includes(parsed.color_palette)) parsed.color_palette = DEFAULT_PREFERENCES.color_palette
+    return parsed
   } catch {
     return null
   }
