@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import logoMark from '../assets/logo-mark.png'
 import { AlertCircle } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { hasSavedCredentials } from '../lib/biometric'
@@ -68,10 +69,7 @@ export function LoginScreen() {
         <div className="relative w-full max-w-sm">
           <div className="flex items-center gap-3 mb-8 justify-center">
             <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-cockpit-accent to-cockpit-accent-dim flex items-center justify-center shadow-accent-glow">
-              <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6">
-                <path d="M 3.5 13 Q 5.5 15 8.5 18 Q 9.5 18 14.5 12" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path transform="translate(17.5 8) rotate(-50)" d="M2.5 0 L1.2 -0.45 L1.2 -2.2 L-0.2 -2.2 L-0.2 -0.45 L-2 -0.45 L-2.5 0 L-2 0.45 L-0.2 0.45 L-0.2 2.2 L1.2 2.2 L1.2 0.45 Z" fill="white"/>
-              </svg>
+              <img src={logoMark} alt="" className="w-full h-full" draggable={false} />
             </div>
             <h1 className="text-2xl font-bold text-cockpit-text-primary tracking-tight">
               Flight<span className="text-cockpit-accent">Check</span>
@@ -112,10 +110,7 @@ export function LoginScreen() {
         {/* Logo */}
         <div className="flex items-center gap-3 mb-8 justify-center">
           <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-cockpit-accent to-cockpit-accent-dim flex items-center justify-center shadow-accent-glow">
-            <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6">
-              <path d="M 3.5 13 Q 5.5 15 8.5 18 Q 9.5 18 14.5 12" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
-              <path transform="translate(17.5 8) rotate(-50)" d="M2.5 0 L1.2 -0.45 L1.2 -2.2 L-0.2 -2.2 L-0.2 -0.45 L-2 -0.45 L-2.5 0 L-2 0.45 L-0.2 0.45 L-0.2 2.2 L1.2 2.2 L1.2 0.45 Z" fill="white"/>
-            </svg>
+            <img src={logoMark} alt="" className="w-full h-full" draggable={false} />
           </div>
           <h1 className="text-2xl font-bold text-cockpit-text-primary tracking-tight">
             Flight<span className="text-cockpit-accent">Check</span>

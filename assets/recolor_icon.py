@@ -1,6 +1,12 @@
+"""Regenerate brand assets from the master mark in icon-only.png.
+
+- App icon: white mark preserved exactly, amber->orange gradient replaced
+  with the glass palette gradient (cyan top-left -> deep teal bottom-right).
+- logo-mark.png: the white mark alone on transparency, for the in-app logo.
+"""
 from PIL import Image
 
-SRC = 'assets/icon-source.png'
+SRC = 'assets/icon-only.png'
 TOP = (0x22, 0xD3, 0xEE)   # cyan
 BOT = (0x0E, 0x74, 0x90)   # deep teal
 
@@ -21,7 +27,13 @@ b = src.split()[2]
 alpha = b.point(lambda v: 0 if v < 120 else min(255, round((v - 120) * 255 / 135)))
 white = Image.new('RGB', (w, h), (255, 255, 255))
 bg.paste(white, (0, 0), alpha)
-bg.save(SRC)
+bg.save('assets/icon-source.png')
 bg.resize((1024, 1024), Image.LANCZOS).save(
     'ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png')
-print('icon regenerated', w, h)
+
+# In-app logo: white mark on transparency, full canvas so proportions
+# inside the app's gradient tile match the home-screen icon exactly
+mark = Image.new('RGBA', (w, h), (255, 255, 255, 0))
+mark.paste(white, (0, 0), alpha)
+mark.resize((512, 512), Image.LANCZOS).save('src/assets/logo-mark.png')
+print('regenerated: icon-source.png, AppIcon-512@2x.png, logo-mark.png from', SRC, (w, h))
