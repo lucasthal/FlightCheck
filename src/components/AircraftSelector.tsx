@@ -26,29 +26,29 @@ const CATEGORIES: { key: AircraftCategory | 'All'; label: string }[] = [
 
 const CATEGORY_COLORS: Record<AircraftCategory | 'All', string> = {
   All:        'from-slate-500 to-slate-600',
-  SEP:        'from-sky-500 to-blue-600',
-  MEP:        'from-violet-500 to-purple-600',
-  Turboprop:  'from-amber-500 to-orange-500',
-  Jet:        'from-rose-500 to-red-600',
-  Helicopter: 'from-emerald-500 to-teal-600',
+  SEP:        'from-cockpit-cat-sep to-cockpit-cat-sep-deep',
+  MEP:        'from-cockpit-cat-mep to-cockpit-cat-mep-deep',
+  Turboprop:  'from-cockpit-cat-tp to-cockpit-cat-tp-deep',
+  Jet:        'from-cockpit-cat-jet to-cockpit-cat-jet-deep',
+  Helicopter: 'from-cockpit-cat-heli to-cockpit-cat-heli-deep',
 }
 
 const CATEGORY_TEXT: Record<AircraftCategory | 'All', string> = {
   All:        'text-slate-400',
-  SEP:        'text-sky-400',
-  MEP:        'text-violet-400',
-  Turboprop:  'text-amber-400',
-  Jet:        'text-rose-400',
-  Helicopter: 'text-emerald-400',
+  SEP:        'text-cockpit-cat-sep',
+  MEP:        'text-cockpit-cat-mep',
+  Turboprop:  'text-cockpit-cat-tp',
+  Jet:        'text-cockpit-cat-jet',
+  Helicopter: 'text-cockpit-cat-heli',
 }
 
 const CATEGORY_BG: Record<AircraftCategory | 'All', string> = {
   All:        'bg-slate-500/10 border-slate-500/20',
-  SEP:        'bg-sky-500/10 border-sky-500/20',
-  MEP:        'bg-violet-500/10 border-violet-500/20',
-  Turboprop:  'bg-amber-500/10 border-amber-500/20',
-  Jet:        'bg-rose-500/10 border-rose-500/20',
-  Helicopter: 'bg-emerald-500/10 border-emerald-500/20',
+  SEP:        'bg-cockpit-cat-sep/10 border-cockpit-cat-sep/20',
+  MEP:        'bg-cockpit-cat-mep/10 border-cockpit-cat-mep/20',
+  Turboprop:  'bg-cockpit-cat-tp/10 border-cockpit-cat-tp/20',
+  Jet:        'bg-cockpit-cat-jet/10 border-cockpit-cat-jet/20',
+  Helicopter: 'bg-cockpit-cat-heli/10 border-cockpit-cat-heli/20',
 }
 
 const CATEGORY_SILHOUETTE: Record<AircraftCategory, ReactNode> = {

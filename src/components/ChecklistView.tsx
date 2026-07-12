@@ -34,19 +34,19 @@ import { ReferenceTab } from './ReferenceTab'
 const ACTIVE_ITEM_POSITION_RATIO = 0.85
 
 const CATEGORY_ACCENT: Record<AircraftCategory, string> = {
-  SEP:        'text-sky-400',
-  MEP:        'text-violet-400',
-  Turboprop:  'text-amber-400',
-  Jet:        'text-rose-400',
-  Helicopter: 'text-emerald-400',
+  SEP:        'text-cockpit-cat-sep',
+  MEP:        'text-cockpit-cat-mep',
+  Turboprop:  'text-cockpit-cat-tp',
+  Jet:        'text-cockpit-cat-jet',
+  Helicopter: 'text-cockpit-cat-heli',
 }
 
 const CATEGORY_BORDER: Record<AircraftCategory, string> = {
-  SEP:        'border-sky-500/30',
-  MEP:        'border-violet-500/30',
-  Turboprop:  'border-amber-500/30',
-  Jet:        'border-rose-500/30',
-  Helicopter: 'border-emerald-500/30',
+  SEP:        'border-cockpit-cat-sep/30',
+  MEP:        'border-cockpit-cat-mep/30',
+  Turboprop:  'border-cockpit-cat-tp/30',
+  Jet:        'border-cockpit-cat-jet/30',
+  Helicopter: 'border-cockpit-cat-heli/30',
 }
 
 interface Props {
@@ -422,8 +422,8 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings, onPhaseChange 
               style={{
                 width: `${overallProgress}%`,
                 background: overallProgress === 100
-                  ? '#22c55e'
-                  : `linear-gradient(90deg, #f59e0b, #d97706)`,
+                  ? 'rgb(var(--c-green))'
+                  : `linear-gradient(90deg, rgb(var(--c-accent)), rgb(var(--c-accent-dim)))`,
               }}
             />
           </div>
@@ -690,7 +690,7 @@ function PhaseNavContent({
         </div>
         <div className="h-1.5 bg-cockpit-card rounded-full overflow-hidden">
           <div className="h-full rounded-full transition-all duration-500"
-            style={{ width: `${overallPct}%`, background: overallPct === 100 ? '#22c55e' : '#f59e0b' }} />
+            style={{ width: `${overallPct}%`, background: overallPct === 100 ? 'rgb(var(--c-green))' : 'rgb(var(--c-accent))' }} />
         </div>
       </div>
       <p className="text-xs font-semibold text-cockpit-text-dim uppercase tracking-wider px-2 pb-1.5">Normal Procedures</p>

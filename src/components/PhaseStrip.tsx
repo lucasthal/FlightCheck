@@ -81,7 +81,7 @@ export function PhaseStrip({
                 active
                   ? { borderColor: `${hex}59`, color: hex }
                   : complete
-                  ? { borderColor: '#22c55e33', color: '#22c55e' }
+                  ? { borderColor: '#34d39933', color: '#34d399' }
                   : { borderColor: '#1e3a5f', color: '#475569' }
               }
             >
@@ -94,7 +94,7 @@ export function PhaseStrip({
                 />
               )}
               {complete && !active && (
-                <span className="absolute inset-0 rounded-full" style={{ background: '#22c55e12' }} />
+                <span className="absolute inset-0 rounded-full" style={{ background: '#34d39912' }} />
               )}
               <span className="relative text-[calc(0.875rem*var(--text-scale))] md:text-[calc(1rem*var(--text-scale))] leading-none">{icon}</span>
               <span className="relative">{complete ? `✓ ${phase.name}` : phase.name}</span>

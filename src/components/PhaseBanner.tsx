@@ -78,7 +78,7 @@ export function PhaseBanner({
         {/* Percentage / complete mark */}
         <div
           className="font-mono font-bold text-2xl flex-shrink-0 tabular-nums"
-          style={{ color: isComplete ? '#22c55e' : hex, fontSize: 'calc(1.5rem * var(--text-scale))' }}
+          style={{ color: isComplete ? '#34d399' : hex, fontSize: 'calc(1.5rem * var(--text-scale))' }}
         >
           {isComplete ? '✓' : `${pct}%`}
         </div>
@@ -94,7 +94,7 @@ export function PhaseBanner({
               key={p.id}
               className="flex-1 h-[3px] rounded-full transition-all duration-500"
               style={{
-                background: complete ? '#22c55e' : active ? hex : '#1a2535',
+                background: complete ? '#34d399' : active ? hex : '#1a2535',
               }}
             />
           )

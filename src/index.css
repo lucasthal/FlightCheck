@@ -18,11 +18,22 @@
   --c-accent-dim:     14 116 144;
   --c-accent-bright:  103 232 249;
   --c-on-accent:      0 0 0;
-  --c-caution:        245 158 11;
-  --c-caution-dim:    180 83 9;
-  --c-green:          34 197 94;
+  --c-caution:        251 191 36;
+  --c-caution-dim:    202 138 4;
+  --c-caution-soft:   250 204 21;
+  --c-green:          52 211 153;
   --c-red:            239 68 68;
   --c-extrapolated:   167 139 250;
+  --c-cat-sep:        96 165 250;
+  --c-cat-sep-deep:   37 99 235;
+  --c-cat-mep:        192 132 252;
+  --c-cat-mep-deep:   147 51 234;
+  --c-cat-tp:         251 146 60;
+  --c-cat-tp-deep:    234 88 12;
+  --c-cat-jet:        251 113 133;
+  --c-cat-jet-deep:   225 29 72;
+  --c-cat-heli:       52 211 153;
+  --c-cat-heli-deep:  5 150 105;
   --text-scale:       1;
 }
 
@@ -44,6 +55,17 @@
   --c-accent-dim:     36 86 179;
   --c-accent-bright:  147 190 255;
   --c-extrapolated:   100 175 225;
+  --c-green:          74 222 128;
+  --c-cat-sep:        56 189 248;
+  --c-cat-sep-deep:   2 132 199;
+  --c-cat-mep:        167 139 250;
+  --c-cat-mep-deep:   124 58 237;
+  --c-cat-tp:         251 191 36;
+  --c-cat-tp-deep:    217 119 6;
+  --c-cat-jet:        248 113 113;
+  --c-cat-jet-deep:   220 38 38;
+  --c-cat-heli:       74 222 128;
+  --c-cat-heli-deep:  22 163 74;
 }
 
 .palette-titanium {
@@ -58,6 +80,20 @@
   --c-accent-dim:     4 120 87;
   --c-accent-bright:  110 231 183;
   --c-extrapolated:   100 175 225;
+  --c-green:          163 230 53;
+  --c-caution:        245 158 11;
+  --c-caution-dim:    180 83 9;
+  --c-caution-soft:   234 179 8;
+  --c-cat-sep:        96 165 250;
+  --c-cat-sep-deep:   37 99 235;
+  --c-cat-mep:        232 121 249;
+  --c-cat-mep-deep:   192 38 211;
+  --c-cat-tp:         251 146 60;
+  --c-cat-tp-deep:    194 65 12;
+  --c-cat-jet:        248 113 113;
+  --c-cat-jet-deep:   185 28 28;
+  --c-cat-heli:       45 212 191;
+  --c-cat-heli-deep:  13 148 136;
 }
 
 .palette-indigo {
@@ -72,6 +108,17 @@
   --c-accent-dim:     79 70 229;
   --c-accent-bright:  179 184 251;
   --c-extrapolated:   100 175 225;
+  --c-green:          74 222 128;
+  --c-cat-sep:        56 189 248;
+  --c-cat-sep-deep:   2 132 199;
+  --c-cat-mep:        232 121 249;
+  --c-cat-mep-deep:   192 38 211;
+  --c-cat-tp:         251 191 36;
+  --c-cat-tp-deep:    217 119 6;
+  --c-cat-jet:        251 113 133;
+  --c-cat-jet-deep:   225 29 72;
+  --c-cat-heli:       52 211 153;
+  --c-cat-heli-deep:  5 150 105;
 }
 
 .theme-day {
@@ -91,11 +138,23 @@
   --c-green:          21 128 61;
   --c-red:            220 38 38;
   --c-extrapolated:   29 100 190;
+  --c-caution-soft:   202 138 4;
+  --c-cat-sep:        2 132 199;
+  --c-cat-sep-deep:   2 105 160;
+  --c-cat-mep:        124 58 237;
+  --c-cat-mep-deep:   109 40 217;
+  --c-cat-tp:         194 65 12;
+  --c-cat-tp-deep:    154 52 18;
+  --c-cat-jet:        190 18 60;
+  --c-cat-jet-deep:   159 18 57;
+  --c-cat-heli:       4 120 87;
+  --c-cat-heli-deep:  6 95 70;
 }
 .palette-teal.theme-day       { --c-accent: 13 148 136; --c-accent-dim: 17 94 89;  --c-accent-bright: 15 176 159; }
 .palette-flightdeck.theme-day { --c-accent: 37 99 235;  --c-accent-dim: 30 64 175; --c-accent-bright: 59 118 246; --c-extrapolated: 29 100 190; }
 .palette-titanium.theme-day   { --c-accent: 5 150 105;  --c-accent-dim: 6 95 70;   --c-accent-bright: 8 178 126;  --c-extrapolated: 29 100 190; }
 .palette-indigo.theme-day     { --c-accent: 79 70 229;  --c-accent-dim: 55 48 163; --c-accent-bright: 97 89 240;  --c-extrapolated: 29 100 190; }
+.palette-titanium.theme-day   { --c-green: 101 163 13; }
 
 /* Night vision: always wins — declared after all palette blocks, and
    accent/caution collapse to the same red-orange as everything else. */
@@ -116,6 +175,17 @@
   --c-green:          153 68 0;
   --c-red:            187 0 0;
   --c-extrapolated:   150 60 5;
+  --c-caution-soft:   204 58 0;
+  --c-cat-sep:        204 58 0;
+  --c-cat-sep-deep:   150 40 0;
+  --c-cat-mep:        160 40 0;
+  --c-cat-mep-deep:   120 30 0;
+  --c-cat-tp:         230 85 20;
+  --c-cat-tp-deep:    180 60 10;
+  --c-cat-jet:        187 0 0;
+  --c-cat-jet-deep:   140 0 0;
+  --c-cat-heli:       140 45 0;
+  --c-cat-heli-deep:  100 30 0;
 }
 
 @layer base {

@@ -316,7 +316,7 @@ function SortableItemRow({ item, index, phaseId, editor }: { item: ProfileItem; 
         style={{ transform: CSS.Transform.toString(transform), transition }}
         className={`flex items-center gap-2 px-3 py-2.5 border-b border-cockpit-border/20 last:border-b-0
                     bg-cockpit-card/30 ${isDragging ? 'opacity-50 z-50' : ''}
-                    ${item.note && !noteOpen ? 'border-l-2 border-l-yellow-500' : 'border-l-2 border-l-transparent'}`}
+                    ${item.note && !noteOpen ? 'border-l-2 border-l-cockpit-caution-soft' : 'border-l-2 border-l-transparent'}`}
       >
         <button
           {...attributes}
@@ -361,8 +361,8 @@ function SortableItemRow({ item, index, phaseId, editor }: { item: ProfileItem; 
               <button
                 onClick={openNote}
                 className="text-xs whitespace-nowrap flex-shrink-0 px-2 py-0.5 rounded-md
-                           text-yellow-500 bg-yellow-500/10 border border-yellow-500/30
-                           hover:bg-yellow-500/20 transition-colors"
+                           text-cockpit-caution-soft bg-cockpit-caution-soft/10 border border-cockpit-caution-soft/30
+                           hover:bg-cockpit-caution-soft/20 transition-colors"
               >
                 Edit note
               </button>
@@ -371,7 +371,7 @@ function SortableItemRow({ item, index, phaseId, editor }: { item: ProfileItem; 
                 onClick={openNote}
                 className="text-xs whitespace-nowrap flex-shrink-0 px-2 py-0.5 rounded-md transition-colors
                   text-cockpit-text-secondary border border-cockpit-border/50
-                  hover:text-yellow-400 hover:border-yellow-500/30 hover:bg-yellow-500/10"
+                  hover:text-cockpit-caution-soft hover:border-cockpit-caution-soft/30 hover:bg-cockpit-caution-soft/10"
               >
                 Add note
               </button>
@@ -403,15 +403,15 @@ function SortableItemRow({ item, index, phaseId, editor }: { item: ProfileItem; 
             placeholder="Add a note…"
             autoFocus
             rows={3}
-            className="w-full bg-cockpit-bg border border-yellow-500/30 rounded-lg px-3 py-2
+            className="w-full bg-cockpit-bg border border-cockpit-caution-soft/30 rounded-lg px-3 py-2
                        text-xs text-cockpit-text-primary placeholder-cockpit-text-dim
-                       focus:outline-none focus:border-yellow-500/60 resize-none"
+                       focus:outline-none focus:border-cockpit-caution-soft/60 resize-none"
           />
           <div className="flex gap-2 mt-1.5">
             <button
               onClick={saveNote}
-              className="text-xs px-3 py-1 rounded-md bg-yellow-500/15 border border-yellow-500/40
-                         text-yellow-500 font-semibold hover:bg-yellow-500/25 transition-colors"
+              className="text-xs px-3 py-1 rounded-md bg-cockpit-caution-soft/15 border border-cockpit-caution-soft/40
+                         text-cockpit-caution-soft font-semibold hover:bg-cockpit-caution-soft/25 transition-colors"
             >
               Save
             </button>
@@ -429,12 +429,12 @@ function SortableItemRow({ item, index, phaseId, editor }: { item: ProfileItem; 
       {/* Saved note display (closed state) */}
       {item.note && !noteOpen && (
         <div className="px-3 pb-2.5 pt-0.5">
-          <div className="bg-yellow-500/8 border border-yellow-500/20 rounded-lg px-3 py-2">
+          <div className="bg-cockpit-caution-soft/8 border border-cockpit-caution-soft/20 rounded-lg px-3 py-2">
             <div className="flex items-center gap-1 mb-1">
-              <AlertTriangle className="w-3 h-3 text-yellow-500" />
-              <span className="text-[9px] font-bold text-yellow-500 uppercase tracking-wider">Note</span>
+              <AlertTriangle className="w-3 h-3 text-cockpit-caution-soft" />
+              <span className="text-[9px] font-bold text-cockpit-caution-soft uppercase tracking-wider">Note</span>
             </div>
-            <p className="text-[11px] text-yellow-200 leading-relaxed">{item.note}</p>
+            <p className="text-[11px] text-cockpit-caution-soft leading-relaxed">{item.note}</p>
             <button
               onClick={() => editor.updateItem(phaseId, item.id, {
                 note: undefined,

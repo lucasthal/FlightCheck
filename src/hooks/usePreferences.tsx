@@ -142,6 +142,9 @@ function useProvidePreferences(user: User | null): UsePreferencesResult {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .update({ [key]: value, updated_at: new Date().toISOString() } as any)
         .eq('user_id', user.id)
+        .then(({ error }) => {
+          if (error) console.error('[Preferences] failed to sync', key, error)
+        })
     }
   }
 

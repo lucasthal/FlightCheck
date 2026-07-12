@@ -49,7 +49,7 @@ function ChecklistItemRow({ item, index, checked, onToggle }: RowProps) {
           : isWarning
           ? 'border-cockpit-caution/30 bg-cockpit-caution/5'
           : isCaution
-          ? 'border-yellow-500/20 bg-yellow-500/5'
+          ? 'border-cockpit-caution-soft/20 bg-cockpit-caution-soft/5'
           : isSetup
           ? 'border-cockpit-blue/25 bg-cockpit-blue/5'
           : 'border-cockpit-border bg-cockpit-card/50 hover:border-cockpit-border hover:bg-cockpit-card'
@@ -58,7 +58,7 @@ function ChecklistItemRow({ item, index, checked, onToggle }: RowProps) {
     >
       {/* Left severity stripe */}
       {(isWarning || isCaution || isSetup) && !checked && (
-        <div className={`absolute left-0 top-0 bottom-0 w-0.5 ${isWarning ? 'bg-cockpit-caution' : isCaution ? 'bg-yellow-500' : 'bg-cockpit-blue'}`} />
+        <div className={`absolute left-0 top-0 bottom-0 w-0.5 ${isWarning ? 'bg-cockpit-caution' : isCaution ? 'bg-cockpit-caution-soft' : 'bg-cockpit-blue'}`} />
       )}
 
       <button
@@ -105,7 +105,7 @@ function ChecklistItemRow({ item, index, checked, onToggle }: RowProps) {
 
             {/* Severity icon */}
             {(isWarning || isCaution) && !checked && (
-              <AlertTriangle className={`w-3.5 h-3.5 flex-shrink-0 mt-0.5 ${isWarning ? 'text-cockpit-caution' : 'text-yellow-500'}`} />
+              <AlertTriangle className={`w-3.5 h-3.5 flex-shrink-0 mt-0.5 ${isWarning ? 'text-cockpit-caution' : 'text-cockpit-caution-soft'}`} />
             )}
           </div>
 
@@ -132,7 +132,7 @@ function ChecklistItemRow({ item, index, checked, onToggle }: RowProps) {
             </div>
           )}
           {isCaution && !checked && (
-            <div className="mt-1.5 inline-flex items-center gap-1 text-xs text-yellow-500 font-semibold uppercase tracking-wide">
+            <div className="mt-1.5 inline-flex items-center gap-1 text-xs text-cockpit-caution-soft font-semibold uppercase tracking-wide">
               <AlertTriangle className="w-3 h-3" />
               CAUTION
             </div>
@@ -144,7 +144,7 @@ function ChecklistItemRow({ item, index, checked, onToggle }: RowProps) {
               onClick={e => { e.stopPropagation(); setNoteOpen(v => !v) }}
               className={`mt-2 flex items-center gap-1 text-xs font-medium transition-colors
                 ${noteOpen
-                  ? isCaution ? 'text-yellow-500' : 'text-cockpit-blue'
+                  ? isCaution ? 'text-cockpit-caution-soft' : 'text-cockpit-blue'
                   : 'text-cockpit-text-dim hover:text-cockpit-text-secondary'}`}
             >
               <Info className="w-3.5 h-3.5" />
@@ -157,7 +157,7 @@ function ChecklistItemRow({ item, index, checked, onToggle }: RowProps) {
           {hasNote && noteOpen && (
             <div className={`mt-2 px-3 py-2 rounded-lg text-xs leading-relaxed animate-fade-in
               ${isCaution
-                ? 'bg-yellow-500/10 border border-yellow-500/20 text-yellow-200'
+                ? 'bg-cockpit-caution-soft/10 border border-cockpit-caution-soft/20 text-cockpit-caution-soft'
                 : 'bg-cockpit-blue/10 border border-cockpit-blue/20 text-cockpit-text-secondary'}`}>
               {item.note}
             </div>

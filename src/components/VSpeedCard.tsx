@@ -2,11 +2,11 @@ import { useState } from 'react'
 import type { AircraftCategory } from '../types'
 
 const CATEGORY_ACCENT: Record<AircraftCategory, string> = {
-  SEP:        'text-sky-400',
-  MEP:        'text-violet-400',
-  Turboprop:  'text-amber-400',
-  Jet:        'text-rose-400',
-  Helicopter: 'text-emerald-400',
+  SEP:        'text-cockpit-cat-sep',
+  MEP:        'text-cockpit-cat-mep',
+  Turboprop:  'text-cockpit-cat-tp',
+  Jet:        'text-cockpit-cat-jet',
+  Helicopter: 'text-cockpit-cat-heli',
 }
 
 interface Props {
