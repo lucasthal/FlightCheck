@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { X } from 'lucide-react'
 import { Capacitor } from '@capacitor/core'
 import { usePreferences } from '../hooks/usePreferences'
-import type { Theme, TextSize } from '../types'
+import type { Theme, TextSize, ColorPalette } from '../types'
 import { useAuth } from '../hooks/useAuth'
 import { useEntitlement } from '../hooks/useEntitlement'
 import { supabase } from '../lib/supabase'
@@ -14,9 +14,17 @@ interface SettingsSheetProps {
 }
 
 const THEMES: { value: Theme; label: string }[] = [
-  { value: 'dark',  label: 'Default' },
+  { value: 'dark',  label: 'Dark' },
   { value: 'night', label: 'Night' },
   { value: 'day',   label: 'Day' },
+]
+
+const PALETTES: { value: ColorPalette; label: string; dot: string }[] = [
+  { value: 'glass',      label: 'Glass',      dot: '#22D3EE' },
+  { value: 'teal',       label: 'Teal',       dot: '#2BC8D9' },
+  { value: 'flightdeck', label: 'Flight Deck', dot: '#5B9BFF' },
+  { value: 'titanium',   label: 'Titanium',   dot: '#2DD48F' },
+  { value: 'indigo',     label: 'Indigo',     dot: '#8B93F8' },
 ]
 
 const TEXT_SIZES: { value: TextSize; label: string }[] = [
@@ -184,23 +192,50 @@ export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
             </div>
           )}
 
-          {/* Theme */}
-          <div className="space-y-2">
-            <p className="text-sm font-medium text-cockpit-text-primary">Theme</p>
-            <div className="flex gap-2">
-              {THEMES.map(({ value, label }) => (
-                <button
-                  key={value}
-                  onClick={() => updatePreference('theme', value)}
-                  className={`flex-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                    preferences.theme === value
-                      ? 'bg-cockpit-accent text-cockpit-on-accent'
-                      : 'bg-cockpit-card text-cockpit-text-primary border border-cockpit-border'
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
+          {/* Appearance */}
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-cockpit-text-primary">Mode</p>
+              <div className="flex gap-2">
+                {THEMES.map(({ value, label }) => (
+                  <button
+                    key={value}
+                    onClick={() => updatePreference('theme', value)}
+                    className={`flex-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                      preferences.theme === value
+                        ? 'bg-cockpit-accent text-cockpit-on-accent'
+                        : 'bg-cockpit-card text-cockpit-text-primary border border-cockpit-border'
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-cockpit-text-primary">Color</p>
+              <div className="flex flex-wrap gap-2">
+                {PALETTES.map(({ value, label, dot }) => (
+                  <button
+                    key={value}
+                    onClick={() => updatePreference('color_palette', value)}
+                    className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors border ${
+                      preferences.color_palette === value
+                        ? 'border-cockpit-accent bg-cockpit-accent/10 text-cockpit-text-primary'
+                        : 'border-cockpit-border bg-cockpit-card text-cockpit-text-secondary'
+                    }`}
+                  >
+                    <span className="h-3 w-3 rounded-full" style={{ backgroundColor: dot }} />
+                    {label}
+                  </button>
+                ))}
+              </div>
+              {preferences.theme === 'night' && (
+                <p className="text-xs text-cockpit-text-dim">
+                  Night mode overrides colors for night vision.
+                </p>
+              )}
             </div>
           </div>
 
