@@ -24,13 +24,13 @@ const CATEGORIES: { key: AircraftCategory | 'All'; label: string }[] = [
   { key: 'Helicopter', label: 'Helo'      },
 ]
 
-const CATEGORY_COLORS: Record<AircraftCategory | 'All', string> = {
-  All:        'from-slate-500 to-slate-600',
-  SEP:        'from-cockpit-cat-sep to-cockpit-cat-sep-deep',
-  MEP:        'from-cockpit-cat-mep to-cockpit-cat-mep-deep',
-  Turboprop:  'from-cockpit-cat-tp to-cockpit-cat-tp-deep',
-  Jet:        'from-cockpit-cat-jet to-cockpit-cat-jet-deep',
-  Helicopter: 'from-cockpit-cat-heli to-cockpit-cat-heli-deep',
+const CATEGORY_TINT: Record<AircraftCategory | 'All', string> = {
+  All:        'bg-slate-500/15 border-slate-400/40 text-slate-300',
+  SEP:        'bg-cockpit-cat-sep/15 border-cockpit-cat-sep/40 text-cockpit-cat-sep',
+  MEP:        'bg-cockpit-cat-mep/15 border-cockpit-cat-mep/40 text-cockpit-cat-mep',
+  Turboprop:  'bg-cockpit-cat-tp/15 border-cockpit-cat-tp/40 text-cockpit-cat-tp',
+  Jet:        'bg-cockpit-cat-jet/15 border-cockpit-cat-jet/40 text-cockpit-cat-jet',
+  Helicopter: 'bg-cockpit-cat-heli/15 border-cockpit-cat-heli/40 text-cockpit-cat-heli',
 }
 
 const CATEGORY_TEXT: Record<AircraftCategory | 'All', string> = {
@@ -42,13 +42,12 @@ const CATEGORY_TEXT: Record<AircraftCategory | 'All', string> = {
   Helicopter: 'text-cockpit-cat-heli',
 }
 
-const CATEGORY_BG: Record<AircraftCategory | 'All', string> = {
-  All:        'bg-slate-500/10 border-slate-500/20',
-  SEP:        'bg-cockpit-cat-sep/10 border-cockpit-cat-sep/20',
-  MEP:        'bg-cockpit-cat-mep/10 border-cockpit-cat-mep/20',
-  Turboprop:  'bg-cockpit-cat-tp/10 border-cockpit-cat-tp/20',
-  Jet:        'bg-cockpit-cat-jet/10 border-cockpit-cat-jet/20',
-  Helicopter: 'bg-cockpit-cat-heli/10 border-cockpit-cat-heli/20',
+const CATEGORY_DOT: Record<AircraftCategory, string> = {
+  SEP:        'bg-cockpit-cat-sep',
+  MEP:        'bg-cockpit-cat-mep',
+  Turboprop:  'bg-cockpit-cat-tp',
+  Jet:        'bg-cockpit-cat-jet',
+  Helicopter: 'bg-cockpit-cat-heli',
 }
 
 const CATEGORY_SILHOUETTE: Record<AircraftCategory, ReactNode> = {
@@ -274,12 +273,12 @@ export function AircraftSelector({ onSelect, onOpenSettings }: Props) {
                   onClick={() => setFilter(cat.key)}
                   className={`flex-shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium border transition-all duration-150
                     ${isActive
-                      ? `bg-gradient-to-r ${CATEGORY_COLORS[cat.key]} text-white border-transparent shadow-lg`
+                      ? `${CATEGORY_TINT[cat.key]} shadow-lg`
                       : 'bg-cockpit-card border-cockpit-border text-cockpit-text-secondary hover:border-cockpit-border hover:text-cockpit-text-primary'
                     }`}
                 >
                   <span>{cat.label}</span>
-                  <span className={`text-xs ${isActive ? 'text-white/70' : 'text-cockpit-text-dim'}`}>
+                  <span className={`text-xs ${isActive ? 'opacity-70' : 'text-cockpit-text-dim'}`}>
                     {categoryCount(cat.key)}
                   </span>
                 </button>
@@ -359,7 +358,8 @@ const AircraftCard = memo(function AircraftCard({ aircraft, onSelect, isFavorite
       {/* Card content */}
       <button onClick={() => onSelect(aircraft)} className="w-full text-left block">
         <div className="mb-2 relative">
-          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-bold border ${CATEGORY_BG[cat]} ${CATEGORY_TEXT[cat]}`}>
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-xs font-bold border border-cockpit-border bg-cockpit-card text-cockpit-text-secondary">
+            <span className={`w-1.5 h-1.5 rounded-full ${CATEGORY_DOT[cat]}`} />
             {cat}
           </span>
         </div>
@@ -382,7 +382,7 @@ const AircraftCard = memo(function AircraftCard({ aircraft, onSelect, isFavorite
         </div>
         <div className="flex items-center gap-3 pt-2.5 border-t border-cockpit-border/40 text-xs text-cockpit-text-dim relative">
           <span className="flex items-center gap-1.5">
-            <span className={`w-1.5 h-1.5 rounded-full ${CATEGORY_TEXT[cat].replace('text-', 'bg-')}`} />
+            <span className={`w-1.5 h-1.5 rounded-full ${CATEGORY_DOT[cat]}`} />
             {normalPhases.length} checklists
           </span>
           {emergencyPhases.length > 0 && (

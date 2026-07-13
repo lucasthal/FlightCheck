@@ -18,23 +18,23 @@
   --c-accent-dim:     14 116 144;
   --c-accent-bright:  103 232 249;
   --c-on-accent:      0 0 0;
-  --c-caution:        255 197 61;
-  --c-caution-dim:    202 138 4;
-  --c-caution-soft:   255 216 77;
-  --c-green:          53 224 140;
-  --c-red:            255 82 82;
+  --c-caution:        255 159 10;
+  --c-caution-dim:    194 116 0;
+  --c-caution-soft:   255 214 10;
+  --c-green:          48 209 88;
+  --c-red:            255 69 58;
   --c-extrapolated:   167 139 250;
-  --c-info:           77 159 255;
-  --c-cat-sep:        77 159 255;
-  --c-cat-sep-deep:   29 100 224;
-  --c-cat-mep:        176 124 255;
-  --c-cat-mep-deep:   124 58 237;
-  --c-cat-tp:         255 150 64;
-  --c-cat-tp-deep:    224 100 16;
-  --c-cat-jet:        255 107 133;
-  --c-cat-jet-deep:   225 29 72;
-  --c-cat-heli:       61 220 151;
-  --c-cat-heli-deep:  9 163 102;
+  --c-info:           100 210 255;
+  --c-cat-sep:        46 155 255;
+  --c-cat-sep-deep:   10 95 217;
+  --c-cat-mep:        204 95 230;
+  --c-cat-mep-deep:   147 51 204;
+  --c-cat-tp:         255 182 39;
+  --c-cat-tp-deep:    217 138 0;
+  --c-cat-jet:        255 61 138;
+  --c-cat-jet-deep:   204 31 102;
+  --c-cat-heli:       110 107 255;
+  --c-cat-heli-deep:  70 68 204;
   --text-scale:       1;
 }
 
@@ -56,18 +56,6 @@
   --c-accent-dim:     36 86 179;
   --c-accent-bright:  147 190 255;
   --c-extrapolated:   100 175 225;
-  --c-info:           102 178 255;
-  --c-green:          62 224 127;
-  --c-cat-sep:        61 208 255;
-  --c-cat-sep-deep:   8 145 199;
-  --c-cat-mep:        178 141 255;
-  --c-cat-mep-deep:   124 58 237;
-  --c-cat-tp:         255 197 61;
-  --c-cat-tp-deep:    217 119 6;
-  --c-cat-jet:        255 107 107;
-  --c-cat-jet-deep:   220 38 38;
-  --c-cat-heli:       62 224 127;
-  --c-cat-heli-deep:  22 163 74;
 }
 
 .palette-titanium {
@@ -82,21 +70,6 @@
   --c-accent-dim:     4 120 87;
   --c-accent-bright:  110 231 183;
   --c-extrapolated:   100 175 225;
-  --c-info:           96 165 250;
-  --c-green:          168 226 46;
-  --c-caution:        255 176 32;
-  --c-caution-dim:    180 83 9;
-  --c-caution-soft:   242 206 43;
-  --c-cat-sep:        96 165 250;
-  --c-cat-sep-deep:   37 99 235;
-  --c-cat-mep:        240 128 255;
-  --c-cat-mep-deep:   192 38 211;
-  --c-cat-tp:         255 150 64;
-  --c-cat-tp-deep:    194 65 12;
-  --c-cat-jet:        255 107 107;
-  --c-cat-jet-deep:   185 28 28;
-  --c-cat-heli:       45 224 191;
-  --c-cat-heli-deep:  13 148 136;
 }
 
 .palette-indigo {
@@ -111,18 +84,6 @@
   --c-accent-dim:     79 70 229;
   --c-accent-bright:  179 184 251;
   --c-extrapolated:   100 175 225;
-  --c-info:           61 208 255;
-  --c-green:          62 224 127;
-  --c-cat-sep:        61 208 255;
-  --c-cat-sep-deep:   2 132 199;
-  --c-cat-mep:        240 128 255;
-  --c-cat-mep-deep:   192 38 211;
-  --c-cat-tp:         255 197 61;
-  --c-cat-tp-deep:    217 119 6;
-  --c-cat-jet:        255 107 133;
-  --c-cat-jet-deep:   225 29 72;
-  --c-cat-heli:       61 220 151;
-  --c-cat-heli-deep:  5 150 105;
 }
 
 .theme-day {
@@ -137,29 +98,28 @@
   --c-accent-dim:     21 94 117;
   --c-accent-bright:  6 166 206;
   --c-on-accent:      255 255 255;
-  --c-caution:        217 119 6;
+  --c-caution:        201 52 0;
   --c-caution-dim:    146 64 14;
-  --c-green:          21 128 61;
-  --c-red:            220 38 38;
+  --c-green:          36 138 61;
+  --c-red:            215 0 21;
   --c-extrapolated:   29 100 190;
-  --c-info:           29 78 216;
-  --c-caution-soft:   202 138 4;
-  --c-cat-sep:        2 132 199;
-  --c-cat-sep-deep:   2 105 160;
-  --c-cat-mep:        124 58 237;
-  --c-cat-mep-deep:   109 40 217;
-  --c-cat-tp:         194 65 12;
-  --c-cat-tp-deep:    154 52 18;
-  --c-cat-jet:        190 18 60;
-  --c-cat-jet-deep:   159 18 57;
-  --c-cat-heli:       4 120 87;
-  --c-cat-heli-deep:  6 95 70;
+  --c-info:           0 113 164;
+  --c-caution-soft:   178 80 0;
+  --c-cat-sep:        0 113 227;
+  --c-cat-sep-deep:   0 86 173;
+  --c-cat-mep:        166 63 217;
+  --c-cat-mep-deep:   122 46 158;
+  --c-cat-tp:         199 138 0;
+  --c-cat-tp-deep:    153 106 0;
+  --c-cat-jet:        230 46 115;
+  --c-cat-jet-deep:   179 30 87;
+  --c-cat-heli:       75 73 199;
+  --c-cat-heli-deep:  55 53 158;
 }
 .palette-teal.theme-day       { --c-accent: 13 148 136; --c-accent-dim: 17 94 89;  --c-accent-bright: 15 176 159; }
 .palette-flightdeck.theme-day { --c-accent: 37 99 235;  --c-accent-dim: 30 64 175; --c-accent-bright: 59 118 246; --c-extrapolated: 29 100 190; }
 .palette-titanium.theme-day   { --c-accent: 5 150 105;  --c-accent-dim: 6 95 70;   --c-accent-bright: 8 178 126;  --c-extrapolated: 29 100 190; }
 .palette-indigo.theme-day     { --c-accent: 79 70 229;  --c-accent-dim: 55 48 163; --c-accent-bright: 97 89 240;  --c-extrapolated: 29 100 190; }
-.palette-titanium.theme-day   { --c-green: 101 163 13; }
 
 /* Night vision: always wins — declared after all palette blocks, and
    accent/caution collapse to the same red-orange as everything else. */
