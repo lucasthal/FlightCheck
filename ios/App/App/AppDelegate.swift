@@ -1,4 +1,5 @@
 import UIKit
+import WebKit
 import Capacitor
 
 @UIApplicationMain
@@ -7,8 +8,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        clearStaleWebDataIfUpdated()
         return true
+    }
+
+    // WKWebView's data store (HTTP caches, service worker registrations from
+    // early builds) survives app updates and can serve a stale copy of the
+    // bundled web assets. Wipe it once per new build so the WebView always
+    // loads the assets that shipped with this binary.
+    private func clearStaleWebDataIfUpdated() {
+        let current = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? ""
+        let key = "lastCleanedWebCacheBuild"
+        guard UserDefaults.standard.string(forKey: key) != current else { return }
+        let types: Set<String> = [
+            WKWebsiteDataTypeDiskCache,
+            WKWebsiteDataTypeMemoryCache,
+            WKWebsiteDataTypeOfflineWebApplicationCache,
+            WKWebsiteDataTypeServiceWorkerRegistrations,
+            WKWebsiteDataTypeFetchCache,
+        ]
+        WKWebsiteDataStore.default().removeData(ofTypes: types, modifiedSince: .distantPast) {
+            UserDefaults.standard.set(current, forKey: key)
+        }
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
