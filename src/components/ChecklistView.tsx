@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useLayoutEffect, useCallback } from 'react'
-import type { Aircraft, ChecklistPhase, AircraftCategory, PhaseCategory } from '../types'
+import type { Aircraft, ChecklistPhase, PhaseCategory } from '../types'
 import { useChecklist } from '../hooks/useChecklist'
 import { useProfiles } from '../hooks/useProfiles'
 import { useProfileEditor } from '../hooks/useProfileEditor'
@@ -32,22 +32,6 @@ import { ReferenceTab } from './ReferenceTab'
 // but require more checked items above before early items can reach the
 // landing point via scroll (without a top spacer).
 const ACTIVE_ITEM_POSITION_RATIO = 0.85
-
-const CATEGORY_ACCENT: Record<AircraftCategory, string> = {
-  SEP:        'text-cockpit-cat-sep',
-  MEP:        'text-cockpit-cat-mep',
-  Turboprop:  'text-cockpit-cat-tp',
-  Jet:        'text-cockpit-cat-jet',
-  Helicopter: 'text-cockpit-cat-heli',
-}
-
-const CATEGORY_BORDER: Record<AircraftCategory, string> = {
-  SEP:        'border-cockpit-cat-sep/30',
-  MEP:        'border-cockpit-cat-mep/30',
-  Turboprop:  'border-cockpit-cat-tp/30',
-  Jet:        'border-cockpit-cat-jet/30',
-  Helicopter: 'border-cockpit-cat-heli/30',
-}
 
 interface Props {
   aircraft: Aircraft
@@ -121,8 +105,8 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings, onPhaseChange 
   const totalChecked = normalPhases.reduce((sum, p) => sum + getPhaseProgress(p.id).checked, 0)
   const overallProgress = totalItems > 0 ? Math.round((totalChecked / totalItems) * 100) : 0
 
-  const accentColor = CATEGORY_ACCENT[aircraft.category]
-  const accentBorder = CATEGORY_BORDER[aircraft.category]
+  const accentColor = 'text-cockpit-accent'
+  const accentBorder = 'border-cockpit-accent/30'
 
   useEffect(() => {
     contentRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
@@ -367,7 +351,7 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings, onPhaseChange 
             <div className="flex-shrink-0 hidden sm:flex items-center gap-2">
               <div className={`text-xs font-mono font-semibold px-2.5 py-1 rounded-lg border ${
                 overallProgress === 100
-                  ? 'bg-cockpit-green/10 border-cockpit-green/30 text-cockpit-green'
+                  ? 'bg-cockpit-accent/10 border-cockpit-accent/30 text-cockpit-accent'
                   : 'bg-cockpit-card border-cockpit-border text-cockpit-text-secondary'
               }`}>
                 {overallProgress}%
@@ -422,7 +406,7 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings, onPhaseChange 
               style={{
                 width: `${overallProgress}%`,
                 background: overallProgress === 100
-                  ? 'rgb(var(--c-green))'
+                  ? 'rgb(var(--c-accent))'
                   : `linear-gradient(90deg, rgb(var(--c-accent)), rgb(var(--c-accent-dim)))`,
               }}
             />
@@ -540,7 +524,7 @@ export function ChecklistView({ aircraft, onBack, onOpenSettings, onPhaseChange 
                     disabled={!phaseAllChecked}
                     className={`w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl font-semibold text-sm border transition-all duration-200
                       ${phaseAllChecked
-                        ? 'bg-cockpit-green/15 border-cockpit-green/40 text-cockpit-green hover:bg-cockpit-green/25 shadow-green-glow active:scale-98'
+                        ? 'bg-cockpit-accent/15 border-cockpit-accent/40 text-cockpit-accent hover:bg-cockpit-accent/25 shadow-accent-glow active:scale-98'
                         : 'bg-cockpit-card/30 border-cockpit-border/30 text-cockpit-text-dim cursor-not-allowed'
                       }`}
                   >
@@ -690,7 +674,7 @@ function PhaseNavContent({
         </div>
         <div className="h-1.5 bg-cockpit-card rounded-full overflow-hidden">
           <div className="h-full rounded-full transition-all duration-500"
-            style={{ width: `${overallPct}%`, background: overallPct === 100 ? 'rgb(var(--c-green))' : 'rgb(var(--c-accent))' }} />
+            style={{ width: `${overallPct}%`, background: 'rgb(var(--c-accent))' }} />
         </div>
       </div>
       <p className="text-xs font-semibold text-cockpit-text-dim uppercase tracking-wider px-2 pb-1.5">Normal Procedures</p>

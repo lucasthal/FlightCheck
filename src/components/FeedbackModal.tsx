@@ -209,7 +209,7 @@ export function FeedbackModal({ isOpen, onClose, aircraft, phaseName }: Props) {
               disabled={submitting || !message.trim()}
               className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 cursor-pointer disabled:opacity-50
                 ${success
-                  ? 'bg-cockpit-green/20 text-cockpit-green border border-cockpit-green/30'
+                  ? 'bg-cockpit-accent/20 text-cockpit-accent border border-cockpit-accent/30'
                   : 'bg-cockpit-accent text-cockpit-on-accent hover:opacity-90'
                 }`}
             >

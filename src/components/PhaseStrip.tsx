@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react'
 import { AlertTriangle, RotateCcw } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import type { AircraftCategory, ChecklistPhase } from '../types'
-import { PHASE_ICONS, ACCENT_VAR } from './phaseConstants'
+import { PHASE_ICONS } from './phaseConstants'
 
 interface Props {
   normalPhases: ChecklistPhase[]
@@ -26,7 +26,7 @@ export function PhaseStrip({
   onReset,
   category,
 }: Props) {
-  const accentVar = ACCENT_VAR[category]
+  const accentVar = '--c-accent'
   const accent = `rgb(var(${accentVar}))`
   const stripRef = useRef<HTMLDivElement>(null)
 
@@ -82,7 +82,7 @@ export function PhaseStrip({
                 active
                   ? { borderColor: `rgb(var(${accentVar}) / 0.35)`, color: accent }
                   : complete
-                  ? { borderColor: 'rgb(var(--c-green) / 0.2)', color: 'rgb(var(--c-green))' }
+                  ? { borderColor: 'rgb(var(--c-accent) / 0.2)', color: 'rgb(var(--c-accent))' }
                   : { borderColor: 'rgb(var(--c-border))', color: 'rgb(var(--c-text-dim))' }
               }
             >
@@ -95,7 +95,7 @@ export function PhaseStrip({
                 />
               )}
               {complete && !active && (
-                <span className="absolute inset-0 rounded-full" style={{ background: 'rgb(var(--c-green) / 0.07)' }} />
+                <span className="absolute inset-0 rounded-full" style={{ background: 'rgb(var(--c-accent) / 0.07)' }} />
               )}
               <span className="relative text-[calc(0.875rem*var(--text-scale))] md:text-[calc(1rem*var(--text-scale))] leading-none">{icon}</span>
               <span className="relative">{complete ? `✓ ${phase.name}` : phase.name}</span>

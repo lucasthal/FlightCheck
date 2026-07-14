@@ -17,7 +17,6 @@ export default {
           caution:         'rgb(var(--c-caution)         / <alpha-value>)',
           'caution-dim':   'rgb(var(--c-caution-dim)     / <alpha-value>)',
           'caution-soft':  'rgb(var(--c-caution-soft)    / <alpha-value>)',
-          green:           'rgb(var(--c-green)           / <alpha-value>)',
           red:             'rgb(var(--c-red)             / <alpha-value>)',
           extrapolated:    'rgb(var(--c-extrapolated)    / <alpha-value>)',
           'cat-sep':       'rgb(var(--c-cat-sep)         / <alpha-value>)',
@@ -73,7 +72,6 @@ export default {
       boxShadow: {
         'cockpit': '0 4px 24px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05)',
         'accent-glow': '0 0 12px rgb(var(--c-accent) / 0.3)',
-        'green-glow': '0 0 12px rgb(var(--c-green) / 0.3)',
         'red-glow': '0 0 20px rgb(var(--c-red) / 0.4)',
       }
     },

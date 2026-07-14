@@ -23,8 +23,8 @@ export function WelcomeScreen({ isRestore, onSignIn }: Props) {
 
         <div className="bg-cockpit-panel border border-cockpit-border rounded-2xl p-6 shadow-cockpit">
           {/* Success icon */}
-          <div className="w-14 h-14 rounded-full bg-cockpit-green/10 border border-cockpit-green/30 flex items-center justify-center mx-auto mb-4">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-7 h-7 text-cockpit-green">
+          <div className="w-14 h-14 rounded-full bg-cockpit-accent/10 border border-cockpit-accent/30 flex items-center justify-center mx-auto mb-4">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-7 h-7 text-cockpit-accent">
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
             </svg>
           </div>

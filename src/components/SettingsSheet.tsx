@@ -21,7 +21,6 @@ const THEMES: { value: Theme; label: string }[] = [
 
 const PALETTES: { value: ColorPalette; label: string; dot: string }[] = [
   { value: 'glass',      label: 'Glass',      dot: '#22D3EE' },
-  { value: 'teal',       label: 'Teal',       dot: '#2BC8D9' },
   { value: 'flightdeck', label: 'Flight Deck', dot: '#5B9BFF' },
   { value: 'titanium',   label: 'Titanium',   dot: '#2DD48F' },
   { value: 'indigo',     label: 'Indigo',     dot: '#8B93F8' },
@@ -155,7 +154,7 @@ export function SettingsSheet({ isOpen, onClose }: SettingsSheetProps) {
               </button>
             </div>
             {nameStatus === 'saved' && (
-              <p className="text-xs text-cockpit-green">Name updated</p>
+              <p className="text-xs text-cockpit-accent">Name updated</p>
             )}
             {nameStatus === 'error' && (
               <p className="text-xs text-cockpit-red">Could not save name. Please try again.</p>

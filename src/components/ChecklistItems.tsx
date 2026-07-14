@@ -45,11 +45,11 @@ function ChecklistItemRow({ item, index, checked, onToggle }: RowProps) {
       className={`
         relative rounded-lg border transition-all duration-150 overflow-hidden
         ${checked
-          ? 'border-cockpit-green/20 bg-cockpit-green/5'
+          ? 'border-cockpit-accent/20 bg-cockpit-accent/5'
           : isWarning
           ? 'border-cockpit-caution/30 bg-cockpit-caution/5'
           : isCaution
-          ? 'border-cockpit-caution-soft/20 bg-cockpit-caution-soft/5'
+          ? 'border-cockpit-caution/20 bg-cockpit-caution/[0.03]'
           : isSetup
           ? 'border-cockpit-info/25 bg-cockpit-info/5'
           : 'border-cockpit-border bg-cockpit-card/50 hover:border-cockpit-border hover:bg-cockpit-card'
@@ -58,7 +58,7 @@ function ChecklistItemRow({ item, index, checked, onToggle }: RowProps) {
     >
       {/* Left severity stripe */}
       {(isWarning || isCaution || isSetup) && !checked && (
-        <div className={`absolute left-0 top-0 bottom-0 w-0.5 ${isWarning ? 'bg-cockpit-caution' : isCaution ? 'bg-cockpit-caution-soft' : 'bg-cockpit-info'}`} />
+        <div className={`absolute left-0 top-0 bottom-0 w-0.5 ${isWarning ? 'bg-cockpit-caution' : isCaution ? 'bg-cockpit-caution/60' : 'bg-cockpit-info'}`} />
       )}
 
       <button
@@ -70,14 +70,14 @@ function ChecklistItemRow({ item, index, checked, onToggle }: RowProps) {
         <div className={`
           flex-shrink-0 mt-0.5 w-5 h-5 rounded border-2 flex items-center justify-center transition-all duration-200
           ${checked
-            ? 'border-cockpit-green bg-cockpit-green shadow-green-glow'
+            ? 'border-cockpit-accent bg-cockpit-accent shadow-accent-glow'
             : isWarning
             ? 'border-cockpit-caution/60'
             : 'border-cockpit-border'
           }
         `}>
           {checked && (
-            <svg className="w-3 h-3 text-cockpit-bg animate-check-bounce" fill="none" viewBox="0 0 12 12" stroke="currentColor" strokeWidth={2.5}>
+            <svg className="w-3 h-3 text-cockpit-on-accent animate-check-bounce" fill="none" viewBox="0 0 12 12" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M1.5 6L4.5 9L10.5 3" />
             </svg>
           )}
@@ -105,7 +105,7 @@ function ChecklistItemRow({ item, index, checked, onToggle }: RowProps) {
 
             {/* Severity icon */}
             {(isWarning || isCaution) && !checked && (
-              <AlertTriangle className={`w-3.5 h-3.5 flex-shrink-0 mt-0.5 ${isWarning ? 'text-cockpit-caution' : 'text-cockpit-caution-soft'}`} />
+              <AlertTriangle className={`w-3.5 h-3.5 flex-shrink-0 mt-0.5 ${isWarning ? 'text-cockpit-caution' : 'text-cockpit-caution/80'}`} />
             )}
           </div>
 
@@ -115,7 +115,7 @@ function ChecklistItemRow({ item, index, checked, onToggle }: RowProps) {
               <span className="text-xs text-cockpit-text-dim flex-shrink-0 font-mono mt-0.5">→</span>
               <span
                 className={`text-sm font-mono font-semibold tracking-tight ${
-                  checked ? 'text-cockpit-green/70' : 'text-cockpit-accent'
+                  checked ? 'text-cockpit-text-dim' : 'text-cockpit-accent'
                 }`}
                 style={{ fontSize: 'calc(0.75rem * var(--text-scale))' }}
               >
@@ -132,7 +132,7 @@ function ChecklistItemRow({ item, index, checked, onToggle }: RowProps) {
             </div>
           )}
           {isCaution && !checked && (
-            <div className="mt-1.5 inline-flex items-center gap-1 text-xs text-cockpit-caution-soft font-semibold uppercase tracking-wide">
+            <div className="mt-1.5 inline-flex items-center gap-1 text-xs text-cockpit-caution/80 font-semibold uppercase tracking-wide">
               <AlertTriangle className="w-3 h-3" />
               CAUTION
             </div>

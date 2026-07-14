@@ -96,8 +96,8 @@ export type ViewMode = 'home' | 'checklist' | 'emergency'
 // ── User Preferences ─────────────────────────────────────────────
 export type Theme    = 'dark' | 'night' | 'day'
 export type TextSize = 'sm' | 'md' | 'lg' | 'xl'
-export type ColorPalette = 'glass' | 'teal' | 'flightdeck' | 'titanium' | 'indigo'
-export const COLOR_PALETTES: ColorPalette[] = ['glass', 'teal', 'flightdeck', 'titanium', 'indigo']
+export type ColorPalette = 'glass' | 'flightdeck' | 'titanium' | 'indigo'
+export const COLOR_PALETTES: ColorPalette[] = ['glass', 'flightdeck', 'titanium', 'indigo']
 
 export interface UserPreferences {
   theme:               Theme

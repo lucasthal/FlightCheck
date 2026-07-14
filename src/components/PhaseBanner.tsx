@@ -1,7 +1,7 @@
 // src/components/PhaseBanner.tsx
 import { CheckCircle2 } from 'lucide-react'
 import type { AircraftCategory, ChecklistPhase } from '../types'
-import { PHASE_ICONS, ACCENT_VAR } from './phaseConstants'
+import { PHASE_ICONS } from './phaseConstants'
 
 interface Props {
   phase: ChecklistPhase
@@ -24,7 +24,7 @@ export function PhaseBanner({
   isPhaseComplete,
   category,
 }: Props) {
-  const accentVar = ACCENT_VAR[category]
+  const accentVar = '--c-accent'
   const accent = `rgb(var(${accentVar}))`
   const pct = total > 0 ? Math.round((checked / total) * 100) : 0
   const icon = PHASE_ICONS[phase.category]
@@ -64,7 +64,7 @@ export function PhaseBanner({
             style={{ fontSize: 'calc(0.75rem * var(--text-scale))' }}
           >
             {isComplete ? (
-              <span className="flex items-center gap-1 text-cockpit-green">
+              <span className="flex items-center gap-1 text-cockpit-accent">
                 <CheckCircle2 className="w-3 h-3" />
                 {checked} of {total} · complete
               </span>
@@ -79,7 +79,7 @@ export function PhaseBanner({
         {/* Percentage / complete mark */}
         <div
           className="font-mono font-bold text-2xl flex-shrink-0 tabular-nums"
-          style={{ color: isComplete ? 'rgb(var(--c-green))' : accent, fontSize: 'calc(1.5rem * var(--text-scale))' }}
+          style={{ color: isComplete ? 'rgb(var(--c-accent))' : accent, fontSize: 'calc(1.5rem * var(--text-scale))' }}
         >
           {isComplete ? '✓' : `${pct}%`}
         </div>
@@ -95,7 +95,7 @@ export function PhaseBanner({
               key={p.id}
               className="flex-1 h-[3px] rounded-full transition-all duration-500"
               style={{
-                background: complete ? 'rgb(var(--c-green))' : active ? accent : 'rgb(var(--c-card))',
+                background: complete ? 'rgb(var(--c-accent))' : active ? accent : 'rgb(var(--c-card))',
               }}
             />
           )

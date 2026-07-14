@@ -131,7 +131,7 @@ export function LoginScreen() {
           </p>
 
           {accountDeleted && mode === 'signin' && (
-            <div className="text-xs text-cockpit-green bg-cockpit-green/10 border border-cockpit-green/20 rounded-lg px-3 py-2 mb-4">
+            <div className="text-xs text-cockpit-accent bg-cockpit-accent/10 border border-cockpit-accent/20 rounded-lg px-3 py-2 mb-4">
               Your account has been permanently deleted.
             </div>
           )}
@@ -214,7 +214,7 @@ export function LoginScreen() {
               </div>
             )}
             {resetSent && (
-              <div className="text-xs text-cockpit-green bg-cockpit-green/10 border border-cockpit-green/20 rounded-lg px-3 py-2">
+              <div className="text-xs text-cockpit-accent bg-cockpit-accent/10 border border-cockpit-accent/20 rounded-lg px-3 py-2">
                 Reset link sent — check your email.
               </div>
             )}

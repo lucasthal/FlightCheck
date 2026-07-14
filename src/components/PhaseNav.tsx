@@ -36,7 +36,7 @@ export function PhaseNav({ phase, isActive, isComplete, progress, onClick }: Pro
       <span className="flex-1 text-left truncate text-sm">{phase.name}</span>
 
       {isComplete ? (
-        <CheckCircle2 className="w-4 h-4 text-cockpit-green flex-shrink-0" />
+        <CheckCircle2 className="w-4 h-4 text-cockpit-accent flex-shrink-0" />
       ) : progress.checked > 0 ? (
         <span className="text-xs font-mono text-cockpit-text-dim flex-shrink-0 tabular-nums">
           {progress.checked}/{progress.total}

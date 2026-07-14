@@ -21,7 +21,6 @@
   --c-caution:        255 159 10;
   --c-caution-dim:    194 116 0;
   --c-caution-soft:   255 214 10;
-  --c-green:          48 209 88;
   --c-red:            255 69 58;
   --c-extrapolated:   167 139 250;
   --c-info:           100 210 255;
@@ -36,12 +35,6 @@
   --c-cat-heli:       110 107 255;
   --c-cat-heli-deep:  70 68 204;
   --text-scale:       1;
-}
-
-.palette-teal {
-  --c-accent:         43 200 217;
-  --c-accent-dim:     15 118 110;
-  --c-accent-bright:  94 234 212;
 }
 
 .palette-flightdeck {
@@ -100,7 +93,6 @@
   --c-on-accent:      255 255 255;
   --c-caution:        201 52 0;
   --c-caution-dim:    146 64 14;
-  --c-green:          36 138 61;
   --c-red:            215 0 21;
   --c-extrapolated:   29 100 190;
   --c-info:           0 113 164;
@@ -116,7 +108,6 @@
   --c-cat-heli:       75 73 199;
   --c-cat-heli-deep:  55 53 158;
 }
-.palette-teal.theme-day       { --c-accent: 13 148 136; --c-accent-dim: 17 94 89;  --c-accent-bright: 15 176 159; }
 .palette-flightdeck.theme-day { --c-accent: 37 99 235;  --c-accent-dim: 30 64 175; --c-accent-bright: 59 118 246; --c-extrapolated: 29 100 190; }
 .palette-titanium.theme-day   { --c-accent: 5 150 105;  --c-accent-dim: 6 95 70;   --c-accent-bright: 8 178 126;  --c-extrapolated: 29 100 190; }
 .palette-indigo.theme-day     { --c-accent: 79 70 229;  --c-accent-dim: 55 48 163; --c-accent-bright: 97 89 240;  --c-extrapolated: 29 100 190; }
@@ -137,7 +128,6 @@
   --c-on-accent:      0 0 0;
   --c-caution:        204 58 0;
   --c-caution-dim:    122 34 0;
-  --c-green:          153 68 0;
   --c-red:            187 0 0;
   --c-extrapolated:   150 60 5;
   --c-info:           204 58 0;
@@ -211,7 +201,7 @@
     box-shadow: inset 0 0 0 1px rgb(var(--c-accent) / 0.2);
   }
   .phase-nav-btn.completed {
-    @apply text-cockpit-green;
+    @apply text-cockpit-accent/70;
   }
 
   /* ─── Emergency button ───────────────────────────────────────── */
@@ -231,7 +221,7 @@
            hover:border-cockpit-border hover:bg-white/[0.03];
   }
   .check-item.checked {
-    @apply border-cockpit-green/15 bg-cockpit-green/[0.04];
+    @apply border-cockpit-accent/15 bg-cockpit-accent/[0.04];
   }
   .check-item.severity-warning {
     @apply border-l-2 border-l-cockpit-caution;

@@ -1,14 +1,6 @@
 import { useState } from 'react'
 import type { AircraftCategory } from '../types'
 
-const CATEGORY_ACCENT: Record<AircraftCategory, string> = {
-  SEP:        'text-cockpit-cat-sep',
-  MEP:        'text-cockpit-cat-mep',
-  Turboprop:  'text-cockpit-cat-tp',
-  Jet:        'text-cockpit-cat-jet',
-  Helicopter: 'text-cockpit-cat-heli',
-}
-
 interface Props {
   vSpeeds: Record<string, string>
   category: AircraftCategory
@@ -16,7 +8,7 @@ interface Props {
 
 export function VSpeedCard({ vSpeeds, category }: Props) {
   const [active, setActive] = useState<string | null>(null)
-  const accentColor = CATEGORY_ACCENT[category]
+  const accentColor = 'text-cockpit-accent'
 
   const numericPart = (value: string) => value.split(' ')[0]
 
