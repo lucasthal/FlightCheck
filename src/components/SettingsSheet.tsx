@@ -22,7 +22,7 @@ const THEMES: { value: Theme; label: string }[] = [
 const PALETTES: { value: ColorPalette; label: string; dot: string }[] = [
   { value: 'glass',      label: 'Glass',      dot: '#22D3EE' },
   { value: 'flightdeck', label: 'Flight Deck', dot: '#5B9BFF' },
-  { value: 'titanium',   label: 'Titanium',   dot: '#2DD48F' },
+  { value: 'titanium',   label: 'HUD',        dot: '#2DD48F' },
   { value: 'indigo',     label: 'Indigo',     dot: '#8B93F8' },
 ]
 
