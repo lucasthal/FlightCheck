@@ -16,7 +16,7 @@ Apple is merchant of record in the EU, so VAT, invoices, refunds, and the 14-day
 ## Phase 0 — Decisions (Week 1)
 
 **0.1 Public business identity — DECIDED (2026-07-13): Path A, individual trader.**
-- Virtual business address: acquired ✓. Dedicated phone (Google Voice or VoIP) + trader declaration next.
+- Virtual business address: acquired ✓. Dedicated phone: acquired ✓ (2026-07-13). Support email (support@flightcheckapp.com): live ✓ (2026-07-13) — support-site pages updated to use it. Trader declaration next.
 - Entity analysis: Louie is a California resident operating from home. An out-of-state (WY/DE) LLC would still constitute "doing business in California" → foreign registration + the $800/yr CA franchise tax anyway — strictly worse than a CA LLC. Decision: no LLC for now; revisit "CA LLC yes/no" when revenue justifies $800/yr.
 - Risk layer staged instead: price tech E&O / product liability insurance (~$500–1,500/yr) BEFORE forming the LLC — insurance pays defense costs; the entity only shields assets. ⚖️ CPA/attorney hour still recommended before the LLC decision.
 
@@ -32,7 +32,7 @@ FlightCheck's posture is strong: no ads, no analytics SDKs, no tracking — data
 2. **DPAs:** accept/countersign Supabase's DPA and RevenueCat's DPA (both self-serve). Record whether each participates in the EU-US Data Privacy Framework and/or relies on SCCs; note it in the data map.
 3. **⚖️ EU Representative (GDPR Art. 27):** a non-EU business offering services to EU residents generally needs a designated EU rep (a mailbox service for supervisory authorities, ~€100–500/yr — DataRep, EDPO, etc.). Order one; add to privacy policy.
 4. **Privacy policy update:** add EU lawful bases, data-subject rights (access/portability/erasure — in-app account deletion already exists ✓), international-transfer mechanisms, the EU rep's contact, retention periods. Host at the existing GitHub Pages privacy URL (App Information URLs are editable any time without review).
-5. **Erasure path check:** confirm the delete-account Edge Function actually erases Supabase rows (not just auth) and note RevenueCat deletion procedure.
+5. **Erasure path check — VERIFIED ✓ (2026-07-13):** `supabase/functions/delete-account/index.ts` deletes the RevenueCat customer first (aborts on failure other than 404), then all Supabase data rows child-first (profile_items → profile_phases → checklist_profiles, favorites, user_preferences, feedback), then the auth user. Full erasure, not just auth.
 
 ## Phase 2 — App Store Connect mechanics (Weeks 1–4)
 
