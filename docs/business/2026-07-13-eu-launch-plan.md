@@ -15,9 +15,10 @@ Apple is merchant of record in the EU, so VAT, invoices, refunds, and the 14-day
 
 ## Phase 0 — Decisions (Week 1)
 
-**0.1 Public business identity.** DSA trader status publishes your address, phone, and email on the App Store product page in the EU — visible to everyone. Do NOT use a home address.
-- If you have an LLC: use its registered address + a business phone (Google Voice or similar is acceptable).
-- If you sell as an individual: get a virtual business address (~$10–30/mo) and dedicated number first. ⚖️ Consider whether now is the moment to form the LLC regardless (liability for an aviation-adjacent app is its own conversation).
+**0.1 Public business identity — DECIDED (2026-07-13): Path A, individual trader.**
+- Virtual business address: acquired ✓. Dedicated phone (Google Voice or VoIP) + trader declaration next.
+- Entity analysis: Louie is a California resident operating from home. An out-of-state (WY/DE) LLC would still constitute "doing business in California" → foreign registration + the $800/yr CA franchise tax anyway — strictly worse than a CA LLC. Decision: no LLC for now; revisit "CA LLC yes/no" when revenue justifies $800/yr.
+- Risk layer staged instead: price tech E&O / product liability insurance (~$500–1,500/yr) BEFORE forming the LLC — insurance pays defense costs; the entity only shields assets. ⚖️ CPA/attorney hour still recommended before the LLC decision.
 
 **0.2 Storefront scope.** Recommendation: all 27 EU storefronts + EEA (Norway, Iceland, Liechtenstein) in one go, plus the UK (separate regime — no DSA trader requirement, no extra work). Optional conservative variant: Ireland-only for 2 weeks as an English-language soft launch, then the rest.
 
